@@ -1,5 +1,5 @@
 /**
- * Rhythm - Real-time Hybrid Traffic History Monitor
+ * RHYTHM - Real-time Hybrid Traffic History Monitor
  * Copyright (c) 2025 Aidgn
  * GPL-3.0-or-later - See LICENSE file for details
  * 
@@ -305,5 +305,6 @@ class Rhythm { // Client-Side Analytics Engine
 		window.addEventListener('pagehide', (e) => { if (!e.persisted) end(); }); // Second attempt
 	}
 }
+
 
 new Rhythm();
