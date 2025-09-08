@@ -1,0 +1,2 @@
+# fullscore
+Analytics without servers
