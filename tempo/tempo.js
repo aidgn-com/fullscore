@@ -1,5 +1,5 @@
 /**
- * Tempo - Touch Event Maestro Performance Optimizer
+ * TEMPO - Touch Event Maestro Performance Optimizer
  * Copyright (c) 2025 Aidgn
  * MIT License - See LICENSE file for details
  * 
@@ -54,5 +54,6 @@ function tempo(rhythm) { // Touch Event Maestro Performance Optimizer
 		document.addEventListener("click", e => rhythm.click(e.target, e), { capture: true }); // Desktop Rhythm integration
 	}
 }
+
 
 // tempo(); // Uncomment for standalone use
