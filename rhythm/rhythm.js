@@ -13,8 +13,9 @@
 
 const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 	PIN: [				// Session endpoint (default: '/rhythm/ping')
-		'/rhythm/ping'
+		'/rhythm/ping'	// Edge can access cookies directly without webhooks
 		// 'https://n8n.yourdomain.com/webhook/yourcode' // Secondary: Webhook endpoint
+		// ⚠️ CAUTION: Webhook URLs are public. Configure IP whitelist on webhook service
 	],
 	HIT: '/rhythm',		// Session activation and Edge transmission (default: '/rhythm') - Path isolation enhances Edge network
 	TAP: 3,				// Session refresh cycle (default: 3 clicks)
@@ -308,3 +309,4 @@ class Rhythm { // Client-Side Analytics Engine
 
 
 new Rhythm();
+
