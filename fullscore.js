@@ -21,7 +21,33 @@
  * Will you join the performance?
  */
 
-const BEAT = {
+const RHYTHM = { // Real-time Hybrid Traffic History Monitor
+	PIN: [				// Session endpoint (default: '/rhythm/ping')
+		'/rhythm/ping'	// Edge can access cookies directly without webhooks - completely safe, no exposure
+		// 'https://n8n.yourdomain.com/webhook/yourcode' // Secondary: Webhook endpoint (optional fallback)
+		// ⚠️ CAUTION: Webhook URLs are public. Configure IP whitelist on webhook service
+		// 💡 RECOMMENDED: Use reverse proxy (nginx/caddy) or internal API for better security
+	],
+	HIT: '/rhythm',		// Session activation and Edge transmission (default: '/rhythm') // Path isolation enhances Edge network
+	TAP: 3,				// Session refresh cycle (default: 3 clicks)
+	THR: 20,			// Session refresh throttle (default: 20ms)
+	AGE: 259200,		// Session retention period (default: 3 days)
+	MAX: 6,				// Maximum session count (default: 6)
+	CAP: 3900,			// Maximum session capacity (default: 3900 bytes)
+	ACT: 600,			// Session recovery time (default: 10 minutes) // Session recovery on reconnection after abnormal termination
+	DEL: 0,				// Session deletion criteria (default: 0 clicks) // Below threshold not transmitted, 0 clicks means unlimited transmission
+	DEF: '/404',		// Bot blocking path (default: /404 page) - Path isolation between Edge and cookies temporarily prevents escape
+	REF: {				// Referrer mapping (0=direct, 1=internal, 2=unknown, 3-255=specific domains)
+		'google.com': 3,
+		'youtube.com': 4,
+		'cloudflare.com': 5,
+		'claude.ai': 6,
+		'chatgpt.com': 7,
+		'meta.com': 8
+	}
+};
+
+const BEAT = { // Behavioral Event Analytics Transform
 	TIC: 100,	// Time (default: 100ms)
 	TOK: {		// Actions (examples: P:@, E:#, T:> A:& L:+ ) // Free variations possible, but cookie-safe strings without encoding recommended
 		P: '!',			// Page
@@ -42,51 +68,23 @@ const BEAT = {
 	}
 };
 
-const RHYTHM = {
-	PIN: [				// Session endpoint (default: '/rhythm/ping')
-		'/rhythm/ping'	// Edge can access cookies directly without webhooks
-		// 'https://n8n.yourdomain.com/webhook/yourcode' // Secondary: Webhook endpoint
-		// ⚠️ CAUTION: Webhook URLs are public. Configure IP whitelist on webhook service
-	],
-	HIT: '/rhythm',		// Session activation and Edge transmission (default: '/rhythm') - Path isolation enhances Edge network
-	TAP: 3,				// Session refresh cycle (default: 3 clicks)
-	THR: 15,			// Session refresh throttle (default: 15ms)
-	AGE: 259200,		// Session retention period (default: 3 days)
-	MAX: 6,				// Maximum session count (default: 6)
-	CAP: 3900,			// Maximum session capacity (default: 3900 bytes)
-	ACT: 600,			// Session recovery time (default: 10 minutes) // Session recovery on reconnection after abnormal termination
-	DEL: 0,				// Session deletion criteria (default: 0 clicks) // Below threshold not transmitted, 0 clicks means unlimited transmission
-	DEF: '/404',		// Bot blocking path (default: /404 page) - Path isolation between Edge and cookies temporarily prevents escape
-	REF: {				// Referrer mapping (0=internal, 1=direct, 2=default)
-		'google.com': 3,
-		'youtube.com': 4,
-		'cloudflare.com': 5,
-		'claude.ai': 6,
-		'chatgpt.com': 7,
-		'meta.com': 8
-	}
-};
-
 function tempo(rhythm) { // Touch Event Maestro Performance Optimizer
 	if (document.tempo) return;
 	document.tempo = true;
 	if ("ontouchstart" in window || navigator.maxTouchPoints > 0) { // Mobile environment detection
 		const pending = new Set(); // Track pending native click blockers
 		let moved = false;
-		document.addEventListener("touchstart", () => {
-			moved = false;
-			for (const block of pending) document.removeEventListener("click", block, true);
-			pending.clear();
-		}, { capture: true, passive: true });
-		document.addEventListener("touchmove", () => moved = true, { capture: true, passive: true });
-		document.addEventListener("touchcancel", () => moved = true, { capture: true, passive: true });
+		document.addEventListener("touchstart", () => (moved = false, pending.forEach(b => document.removeEventListener("click", b, true)), pending.clear()), {capture: true, passive: true}); // Reset moved
+		document.addEventListener("touchmove", () => moved = true, {capture: true, passive: true}); // Mark as moved
+		document.addEventListener("touchcancel", () => moved = true, {capture: true, passive: true}); // Mark as cancelled
 		document.addEventListener("touchend", (e) => {
+
 			// if (e.target.closest(".nofasttouch")) return; // Uncomment to exclude specific elements
-			if (moved || !e.changedTouches?.[0]) return;
+
+			if (moved || !e.changedTouches?.[0]) return; // Skip if moved or no touch
 			let once = true;
-			const block = (ev) => { // Block native click events to prevent duplication
-				if (ev.detail === -1 || !ev.isTrusted) return; // Allow tempo clicks and synthetic events
-				if (once) {
+			const block = (ev) => { // Block native click once
+				if (once && ev.isTrusted) {
 					ev.preventDefault();
 					ev.stopImmediatePropagation();
 					once = false;
@@ -95,21 +93,25 @@ function tempo(rhythm) { // Touch Event Maestro Performance Optimizer
 				}
 			};
 			pending.add(block);
-			document.addEventListener("click", block, { capture: true });
-			let el = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-			const label = el?.closest('label');
-			el = label?.control || label?.querySelector('input,textarea,select') || el; // Label-to-control redirect
-			if (rhythm) el = rhythm.click(el, e); // Mobile Rhythm integration
-			for (let i = 0; el && i < 4; i++) { // Bubble up to find clickable parent (max 4 levels)
-				if (el.onclick || el.hasAttribute("onclick") || typeof el.click === "function") {
-					el.dispatchEvent(new MouseEvent("click", {bubbles:true, cancelable:true, view:window, detail:-1})); // Fire synthetic click with tempo marker
-					break;
-				}
-				el = el.parentElement;
+			document.addEventListener("click", block, {capture: true}); // Register blocker
+			let t = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY); // Get target at touch point
+			const label = t?.closest('label');
+			t = label?.control || label?.querySelector('input,textarea,select,button') || t; // Label to control redirect
+			rhythm && (t = rhythm.click(t, e)); // Rhythm integration, null blocks click
+			if (t) for (let i = 0; i < 8; i++) { // Find clickable parent, max 8 levels
+				if (typeof t.click === "function") {t.click(); break;} // Native click method
+				if (t.onclick) {t.dispatchEvent(new MouseEvent("click", {bubbles: true, cancelable: true})); break;} // Onclick handler
+				if (!(t = t.parentElement)) break; // Move to parent or exit
 			}
-		}, { capture: true, passive: true });
+		}, {capture: true, passive: true});
 	} else if (rhythm) { // Desktop environment detection
-		document.addEventListener("click", e => rhythm.click(e.target, e), { capture: true }); // Desktop Rhythm integration
+		let used = false; // Gesture already used
+		document.addEventListener("mousedown", () => used = false, {capture: true}); // Reset on mouse down
+		document.addEventListener("keydown", e => !e.repeat && (e.key === "Enter" || e.key === " ") && (used = false), {capture: true}); // Reset on Enter/Space
+		document.addEventListener("click", e => {
+			if (used) return; // Skip if already used
+			used = true, rhythm.click(e.target.closest('label')?.control || e.target, e); // Process once, label to control redirect
+		}, {capture: true});
 	}
 }
 
@@ -124,7 +126,8 @@ class Beat { // Behavioral Event Analytics Transform
 		this.lastTime = Date.now();
 		this.lastElement = null;
 
-		// this.scrolling = false; // Scroll recording additional option (default: disabled)
+		// this.scrolling = false; // Scroll recording // uncomment to enable
+		// document.addEventListener('scroll', () => (!this.scrolling && this.scroll(), clearTimeout(this.s), this.s = setTimeout(() => this.scrolling = false, 150)), {capture: true, passive: true});
 
 	}
 	time() { // Record elapsed time
@@ -149,7 +152,7 @@ class Beat { // Behavioral Event Analytics Transform
 	}
 
 	/*
-	scroll() { // Scroll recording option - uncomment when using (user customization required)
+	scroll() { // Scroll recording // uncomment to enable
 		if (!this.scrolling) {
 			this.time();
 			this.sequence.push('^' + Math.round(window.scrollY)); // Scroll start position px recording option (example: ^450)
@@ -159,15 +162,14 @@ class Beat { // Behavioral Event Analytics Transform
 	*/
 
 	note(n) { // Compress repetitive elements
-		if (this.lastElement === n && this.sequence.length > 1) {
-			const last = this.sequence[this.sequence.length - 1];
-			if (last.startsWith(BEAT.TOK.T)) {
-				const t = last.substring(1), prev = this.sequence[this.sequence.length - 2];
-				if (prev && prev.endsWith(n)) {
-					const head = prev.substring(0, prev.length - n.length);
-					this.sequence[this.sequence.length - 2] = head ? head + BEAT.TOK.A + t + n : BEAT.TOK.T + t + n; // Calculate time accumulation
-					return void this.sequence.pop();
-				}
+		const len = this.sequence.length;
+		if (len > 1 && this.sequence[len - 1].startsWith(BEAT.TOK.T)) { // Time-based compression
+			const t = this.sequence[len - 1].substring(1), prev = this.sequence[len - 2];
+			if (prev.endsWith(n)) {
+				this.sequence[len - 2] = prev.substring(0, prev.length - n.length) + BEAT.TOK.A + t + n;
+				this.sequence.pop(); // Remove time token
+				this.lastElement = n;
+				return;
 			}
 		}
 		this.sequence.push(n);
@@ -188,15 +190,15 @@ class Beat { // Behavioral Event Analytics Transform
 	flow() { return this.sequence.join(''); } // Generate final BEAT string
 }
 
-class Rhythm { // Real-time Hybrid Traffic History Monitor
-	get(n) { // Session preparation
-		const v = '; ' + document.cookie;
-		const parts = v.split('; ' + n + '=');
-		if (parts.length === 2) return parts[1].split(';')[0];
-		if (RHYTHM.HIT !== '/') return localStorage.getItem(n);
+class Rhythm {
+	get(g) { // Get cookie or localStorage value
+		const c = '; ' + document.cookie; // Prepend for first cookie edge case
+		const p = c.split('; ' + g + '=');
+		if (p.length === 2) return p[1].split(';')[0];
+		if (RHYTHM.HIT !== '/') return localStorage.getItem(g); // Path-based fallback
 		return null;
 	}
-	clean(force = false) { // Delete ping=1 sessions + reset
+	clean(force = false) { // Delete ping=1 sessions + force reset
 		for (let i = 1; i <= RHYTHM.MAX; i++) {
 			const name = 'rhythm_0' + i;
 			const raw = this.get(name);
@@ -206,8 +208,8 @@ class Rhythm { // Real-time Hybrid Traffic History Monitor
 			}
 		}
 		if (force) {
-			localStorage.setItem('rhythm_reset', Date.now()); // Broadcast reset signal to other tabs
-			this.data = null; // Switch self to standby state
+			localStorage.setItem('rhythm_reset', Date.now()); // Broadcast to other tabs
+			this.data = null; // Standby mode
 			sessionStorage.removeItem('session');
 		}
 	}
@@ -223,8 +225,10 @@ class Rhythm { // Real-time Hybrid Traffic History Monitor
 					if (Math.floor(Date.now() / 1000) - (+parts[5] + +parts[6]) <= RHYTHM.ACT) return;
 				}
 				if (!localCleaned) { // Remove localStorage for all sessions if detected as abnormal termination pattern
-					for (let k in localStorage) 
-						if (k[0] === 't') localStorage.removeItem(k);
+					for (let i = localStorage.length - 1; i >= 0; i--) {
+						const k = localStorage.key(i);
+						if (k && k[0] === 't') localStorage.removeItem(k);
+					}
 					localCleaned = true;
 				}
 				const copy = '1' + raw.substring(1);
@@ -280,7 +284,7 @@ class Rhythm { // Real-time Hybrid Traffic History Monitor
 						scrolls: +parts[8]
 					};
 					if (this.hasBeat) {
-						this.beat = new Beat(this.config);
+						this.beat = new Beat();
 						if (parts[9]) {
 							this.beat.sequence = [parts[9]];
 							this.beat.lastTime = Date.now(); // Initialize timing
@@ -293,7 +297,7 @@ class Rhythm { // Real-time Hybrid Traffic History Monitor
 				sessionStorage.removeItem('session'); // Clean invalid session
 			}
 		}
-		let name = null; // Session variable
+		let name = null; // Available session slot finder
 		for (let i = 1; i <= RHYTHM.MAX; i++) {
 			if (!this.get('rhythm_0' + i)) {
 				name = 'rhythm_0' + i;
@@ -305,9 +309,9 @@ class Rhythm { // Real-time Hybrid Traffic History Monitor
 			name = 'rhythm_01';
 		}
 		if (storage) sessionStorage.setItem('session', name); // Save session to storage
-		const ua = navigator.userAgent; // Check device
-		const r = document.referrer; // Check referrer
-		let ref = !r ? 1 : r.indexOf(location.hostname) > -1 ? 0 : 2;
+		const ua = navigator.userAgent; // User agent for device detection
+		const r = document.referrer; // Referrer URL for traffic source analysis
+		let ref = !r ? 0 : r.indexOf(location.hostname) > -1 ? 1 : 2; // Calculate base referrer type
 		if (r && ref === 2) {
 			const domain = r.match(/\/\/([^\/]+)/)?.[1];
 			if (domain) {
@@ -322,41 +326,41 @@ class Rhythm { // Real-time Hybrid Traffic History Monitor
 		this.data = { // Create new session
 			name: name,
 			time: Math.floor(Date.now() / 1000),
-			device: /mobi/i.test(ua) ? 1 : /tablet|ipad/i.test(ua) ? 2 : 0,
+			device: /mobi/i.test(ua) ? 1 : /tablet|ipad/i.test(ua) ? 2 : 0, // Device type: 0=desktop, 1=mobile, 2=tablet
 			referrer: ref,
 			clicks: 0,
 			scrolls: 0
 		};
 		if (this.hasBeat) {
-			this.beat = new Beat(this.config); // Create new BEAT instance
+			this.beat = new Beat(); // Create new BEAT instance
 			this.beat.page(location.pathname); // Add current page to BEAT
 		}
 		this.save(); // Save new session
 	}
-	click(el, e) { // Click action and cookie refresh (customizable considering trade-offs)
+	click(el, e) { // Click action and cookie refresh // customizable considering trade-offs
 		this.data || this.session();
 		this.data.clicks++;
 		if (this.hasBeat && this.beat) this.beat.element(el);
 		this.save();
-		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 1: Performance type (cookie refresh rarely fails but consumes almost no network bandwidth)
-			const controller = new AbortController();
-			const pingPath = RHYTHM.HIT === '/' ? '/?LiveStreaming' : RHYTHM.HIT + '/?LiveStreaming';
-			fetch(pingPath, {method: 'HEAD', signal: controller.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
-			setTimeout(() => controller.abort(), RHYTHM.THR);
+		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 1: Performance type // cookie refresh rarely fails but consumes almost no network bandwidth
+			const c = new AbortController();
+			fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?LiveStreaming', 
+				{method: 'HEAD', signal: c.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
+			setTimeout(() => c.abort(), RHYTHM.THR);
 		}
 
 		/*
-		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 2: Balance type (cookie refresh is stable but may consume network bandwidth)
+		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 2: Balance type // cookie refresh is stable but may consume network bandwidth
 			const controller = new AbortController(); // RTT automation example: wired 5ms→10ms, LTE 15ms→30ms, 3G 300ms→100ms(upper limit)
 			const timeout = navigator.connection?.rtt ? Math.min(navigator.connection.rtt * 2, 100) : RHYTHM.THR; // Use default if RTT check fails
-			const pingPath = RHYTHM.HIT === '/' ? '/?LiveStreaming' : RHYTHM.HIT + '/?LiveStreaming';
-			fetch(pingPath, {method: 'HEAD', signal: controller.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
+			fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?LiveStreaming', 
+				{method: 'HEAD', signal: controller.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
 			setTimeout(() => controller.abort(), timeout);
 		}
-		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 3: Safe type (cookie refresh is successful but consumes network bandwidth)
+		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 3: Safe type // cookie refresh is successful but consumes network bandwidth
 			fetch('/favicon.ico?ping=' + this.data.clicks, {method: 'HEAD', credentials: 'include'}).catch(() => {}); // Does not use RHYTHM.THR
 		}
-		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 4: Power type (cookie refresh is very successful but consumes additional network bandwidth and complex setup)
+		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 4: Power type // cookie refresh is very successful but consumes additional network bandwidth and complex setup
 			navigator.sendBeacon('/.well-known/ping'); // Requires Post and return 204 settings on server, does not use RHYTHM.THR
 		}
 		*/
@@ -365,29 +369,28 @@ class Rhythm { // Real-time Hybrid Traffic History Monitor
 	}
 
 	/*
-	spa() { // SPA only - uncomment when using (user customization required)
+	spa() { // SPA only // uncomment when using, user customization required
 		const rhythm = this;
 		const originalPush = history.pushState;
 		const originalReplace = history.replaceState;
 		history.pushState = function(state, title, url) { // Detect browser page navigation
 			originalPush.call(history, state, title, url);
-			rhythm.beat.page(location.pathname);
+			if (rhythm.hasBeat && rhythm.beat) rhythm.beat.page(location.pathname);
 			rhythm.save();
 		};
 		history.replaceState = function(state, title, url) { // Detect browser filter/query changes etc.
 			originalReplace.call(history, state, title, url);
-			rhythm.beat.page(location.pathname);
+			if (rhythm.hasBeat && rhythm.beat) rhythm.beat.page(location.pathname);
 			rhythm.save();
 		};
 		window.addEventListener('popstate', () => { // Detect browser forward/back buttons
-			rhythm.beat.page(location.pathname);
+			if (rhythm.hasBeat && rhythm.beat) rhythm.beat.page(location.pathname);
 			rhythm.save();
 		});
 	}
 	*/
 
-	constructor(config = {}) { // Rhythm starting point
-		this.config = config;
+	constructor() { // Rhythm engine start
 		this.hasBeat = typeof Beat !== 'undefined';
 		this.hasTempo = typeof tempo !== 'undefined';
 		this.ended = false;
@@ -395,12 +398,11 @@ class Rhythm { // Real-time Hybrid Traffic History Monitor
 			if (e.key === 'rhythm_reset') {
 				this.data = null; // Switch to standby state
 				sessionStorage.removeItem('session');
-				const restore = () => { this.session(); window.removeEventListener('focus', restore); };
-				window.addEventListener('focus', restore, { once: true }); // Hard-stop with focus-gated synchronization (Lock-free Total Serialization)
+				window.addEventListener('focus', () => this.session(), { once: true }); // Hard-stop with focus-gated synchronization // Lock-free Total Serialization
 			}
 		});
 		this.cookieAttrs = '; Max-Age=' + RHYTHM.AGE + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
-		for (let i = 1; i <= RHYTHM.MAX; i++) { // Check security=2 (determined by Edge and executed blocking together)
+		for (let i = 1; i <= RHYTHM.MAX; i++) { // Check security=2 // determined by Edge and executed blocking together
 			const raw = this.get('rhythm_0' + i);
 			if (raw && raw.split('_')[1] === '2') {
 				if (location.pathname !== RHYTHM.DEF) {
@@ -413,15 +415,15 @@ class Rhythm { // Real-time Hybrid Traffic History Monitor
 		localStorage.setItem('t' + this.tabId, '1');
 		this.clean(); // Clean normal termination sessions
 		this.batch(); // Clean abnormal termination sessions
-		this.session(); // Start session (create new or relocate from storage)
+		this.session(); // Start session // create new or relocate from storage
 		setInterval(() => { // Perform save to activate ACT if no activity for 5 minutes
 			if (this.data) {
 				const duration = Math.floor(Date.now() / 1000) - this.data.time;
-				if (duration > 300) { this.save(); }
+				if (duration > 300) this.save();
 			}
 		}, 300000);
 		this.hasTempo ? tempo(this) : document.addEventListener('click', e => this.click(e.target, e), { capture: true }); // Tempo integration
-		let scrolling = false; // Detect scroll gesture
+		let scrolling = false; // Debounce to count once per scroll gesture
 		const scroll = () => {
 			this.data || this.session();
 			if (!scrolling) {
@@ -429,8 +431,8 @@ class Rhythm { // Real-time Hybrid Traffic History Monitor
 				this.data.scrolls++;
 				this.save();
 			}
-			clearTimeout(this.scrollTimer);
-			this.scrollTimer = setTimeout(() => scrolling = false, 150);
+			clearTimeout(this.s);
+			this.s = setTimeout(() => scrolling = false, 150); // Reset after 150ms
 		};
 		document.addEventListener('scroll', scroll, { capture: true, passive: true });
 
@@ -459,4 +461,4 @@ class Rhythm { // Real-time Hybrid Traffic History Monitor
 	}
 }
 
-new Rhythm();
+document.addEventListener('DOMContentLoaded', () => new Rhythm());
