@@ -19,7 +19,9 @@ function tempo(rhythm) { // Touch Event Maestro Performance Optimizer
 		document.addEventListener("touchmove", () => moved = true, {capture: true, passive: true}); // Mark as moved
 		document.addEventListener("touchcancel", () => moved = true, {capture: true, passive: true}); // Mark as cancelled
 		document.addEventListener("touchend", (e) => {
+
 			// if (e.target.closest(".nofasttouch")) return; // Uncomment to exclude specific elements
+
 			if (moved || !e.changedTouches?.[0]) return; // Skip if moved or no touch
 			let once = true;
 			const block = (ev) => { // Block native click once
