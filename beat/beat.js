@@ -41,7 +41,8 @@ class Beat { // Behavioral Event Analytics Transform
 		this.lastTime = Date.now();
 		this.lastElement = null;
 
-		// this.scrolling = false; // Scroll recording additional option (default: disabled)
+		// this.scrolling = false; // Scroll recording // uncomment to enable
+		// document.addEventListener('scroll', () => (!this.scrolling && this.scroll(), clearTimeout(this.s), this.s = setTimeout(() => this.scrolling = false, 150)), {capture: true, passive: true});
 
 	}
 	time() { // Record elapsed time
@@ -66,7 +67,7 @@ class Beat { // Behavioral Event Analytics Transform
 	}
 
 	/*
-	scroll() { // Scroll recording option - uncomment when using (user customization required)
+	scroll() { // Scroll recording // uncomment to enable
 		if (!this.scrolling) {
 			this.time();
 			this.sequence.push('^' + Math.round(window.scrollY)); // Scroll start position px recording option (example: ^450)
