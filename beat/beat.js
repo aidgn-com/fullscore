@@ -76,15 +76,14 @@ class Beat { // Behavioral Event Analytics Transform
 	*/
 
 	note(n) { // Compress repetitive elements
-		if (this.lastElement === n && this.sequence.length > 1) {
-			const last = this.sequence[this.sequence.length - 1];
-			if (last.startsWith(BEAT.TOK.T)) {
-				const t = last.substring(1), prev = this.sequence[this.sequence.length - 2];
-				if (prev && prev.endsWith(n)) {
-					const head = prev.substring(0, prev.length - n.length);
-					this.sequence[this.sequence.length - 2] = head ? head + BEAT.TOK.A + t + n : BEAT.TOK.T + t + n; // Calculate time accumulation
-					return void this.sequence.pop();
-				}
+		const len = this.sequence.length;
+		if (len > 1 && this.sequence[len - 1].startsWith(BEAT.TOK.T)) { // Time-based compression
+			const t = this.sequence[len - 1].substring(1), prev = this.sequence[len - 2];
+			if (prev.endsWith(n)) {
+				this.sequence[len - 2] = prev.substring(0, prev.length - n.length) + BEAT.TOK.A + t + n;
+				this.sequence.pop(); // Remove time token
+				this.lastElement = n;
+				return;
 			}
 		}
 		this.sequence.push(n);
