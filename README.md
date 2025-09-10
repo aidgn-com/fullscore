@@ -723,7 +723,9 @@ The browser was the eternal stage that was always there. Cookies were the music 
 
 The singer-songwriter finally realized. New web technology doesn't suddenly appear some future day. When cookies and Edge meet in the AI era, like Bach's fugue meeting jazz swing, harmony transcending time resonates. We just hadn't realized—perfection was always there.
 
-### And the Harmony Begins
+<br />
+
+## And the Harmony Begins
 
 The singer-songwriter strikes a new chord.
 The result of practice's Tempo, composition's Rhythm, performance's BEAT.
