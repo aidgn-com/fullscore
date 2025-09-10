@@ -650,7 +650,7 @@ WAF doesn't ignore noisy sounds echoing from BEAT but executes summary judgment.
 
 Before music begins, the moment of silence as the conductor holds the baton is most important. Full Score is the same.
 
-No personal information collected means nothing to leak. Nothing stored on servers means nothing to hack. No network requests means nothing to intercept. Hacking Full Score's data means hacking every user's browser visiting the website. Though only simple patterns are recorded, not sensitive personal information (PII).
+Since no personal information is collected, there's nothing to leak. With nothing stored on servers, there's nothing to hack. Without network requests, there's nothing to intercept. Hacking Full Score's data means hacking every user's browser visiting the website. Though only simple patterns are recorded, not sensitive personal information (PII).
 
 Faster page loads are just the beginning. The real key is that without requesting or sending data, Edge completes real-time analysis just by listening to Rhythm already flowing in the air. While traditional tools prepare numerous instruments for collection, transmission, processing, and storage, Full Score quickly begins the next performance.
 
@@ -759,8 +759,8 @@ See individual source files for detailed license information.
 ## Resources
 
 - **Live Demo**: [YouTube Video](링크)
-- **Edge Worker**: Under Development (Ultra-lightweight analytics and security engine running on edge)
 - **GitHub**: [github.com/your-username/fullscore](링크)
+- **Edge Worker**: Under Development (Ultra-lightweight analytics and security engine running on edge)
 
 <br />
 
