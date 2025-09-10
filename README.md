@@ -739,3 +739,33 @@ Everything is contained within this small Full Score.
 **Will you join the performance? 🎵**
 
 <br />
+
+## Usage
+
+Full Score is an incredibly lightweight tool. For detailed usage and customization, please refer to the comments in the fullscore.js file.
+
+<br />
+
+## License
+
+- **Tempo** - MIT License
+- **Rhythm** - GPL-3.0 License  
+- **BEAT** - AGPL-3.0 License
+
+See individual source files for detailed license information.
+
+<br />
+
+## Resources
+
+- **Live Demo**: [YouTube Video](링크)
+- **Edge Worker**: Under Development (Ultra-lightweight analytics dashboard)
+- **GitHub**: [github.com/your-username/fullscore](링크)
+
+<br />
+
+## Author
+
+[Your Name] - [GitHub Profile](링크)
+
+<br />
