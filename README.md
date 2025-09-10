@@ -1,6 +1,6 @@
 # Full Score - Web's Native Analytics
 
-
+<br />
 
 ## Preface: When Will the Next Web Technology Appear?
 
@@ -10,7 +10,7 @@ Web technology has been a history of addition. More features, more data, more la
 
 Full Score chose a different path. With less than 7KB of code, here's how to create real-time web interaction analytics and security layers.
 
-
+<br />
 
 ## First Movement: Web Interactions Become Music
 
@@ -32,7 +32,7 @@ Full Score consists of three independent technologies. Each is useful alone, yet
 
 These three technologies are like a jazz trio—each solo performance is excellent, but together they create true harmony.
 
-
+<br />
 
 ## Second Movement: Tempo - The Piano Tuner's Gift
 
@@ -180,7 +180,7 @@ Each line performs a precise role. At touch or click start, it clears echoes fro
 
 These 50 lines synchronize tempo across all devices. Like a perfectly tuned concert grand.
 
-
+<br />
 
 ## Third Movement: Rhythm - Music in the Browser
 
@@ -297,7 +297,7 @@ Ping signals the performance's start and end. 0 means the singer-songwriter take
 
 When the singer-songwriter finishes a wonderful performance and leaves the stage, Edge detects ping=1 and ends livestreaming. Today's performance—recording nothing but pure rhythm without IP or names—archives privately or disappears as a one-time performance remaining only briefly in people's memories.
 
-
+<br />
 
 ## Fourth Movement: BEAT - Actions Become Performance
 
@@ -445,7 +445,7 @@ No encoding/decoding process needed, with 60-75% compression versus JSON expecte
 
 This means 50x smaller total data volume compared to traditional analytics, enabling real-time analysis without delays in both browsers and Edge.
 
-
+<br />
 
 ## Fifth Movement: System Integration and Practice
 
@@ -584,7 +584,7 @@ rhythm_01 = "1_0_0_0_1_1735740600_900_89_45_..." // All performances perfectly r
 
 Today's performances—recording nothing but pure rhythm without IP or names—each carrying their own stories, archive privately or disappear as special experiences remaining only briefly in people's memories.
 
-
+<br />
 
 ## Sixth Movement: Actual Performance and Value
 
@@ -656,7 +656,7 @@ Faster page loads are just the beginning. The real key is that without requestin
 
 Cookies automatically disappear after a few days. GDPR risk is much lower than existing analytics tools. Like street music scattering in the wind, data naturally dissipates over time. Free because it doesn't promise eternity.
 
-
+<br />
 
 ## Final Movement: Return of the Singer-Songwriter
 
