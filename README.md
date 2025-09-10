@@ -281,7 +281,7 @@ Singer-songwriters can manage multiple sessions simultaneously. For smooth perfo
 
 Limiting to 6 sessions prevents audience confusion from constantly changing setlists during one performance. Exceeding this number suggests noise pollution rather than pure busking—likely a bot signal.
 
-Edge also has limits. Famous CDN/edge networks typically set header size limits at 8-32KB. While sufficient for streaming 4KB cookie sessions, too many sessions risk disconnection. When performances run too long, livestreaming stops at the singer-songwriter's signal (ping=1). The performance data archives privately, then new streaming begins. This circular structure enables practically unlimited performances.
+Edge also has limits. Famous CDN/edge networks typically set header size limits at 8~32KB. While sufficient for streaming 4KB cookie sessions, too many sessions risk disconnection. When performances run too long, livestreaming stops at the singer-songwriter's signal (ping=1). The performance data archives privately, then new streaming begins. This circular structure enables practically unlimited performances.
 
 Edge is a good friend who asks for no compensation for management activities, but may grumble and request small rewards if livestreaming restarts too frequently.
 
