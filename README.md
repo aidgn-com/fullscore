@@ -739,9 +739,13 @@ Everything is contained within this small Full Score.
 **Will you join the performance? 🎵**
 
 <br />
+<br />
+<br />
 
 ---
 
+<br />
+<br />
 <br />
 
 ## Usage
