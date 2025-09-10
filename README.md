@@ -736,6 +736,6 @@ The intuition to understand users without personal information.
 
 Everything is contained within this small Full Score.
 
-**🎵 Will you join the performance?**
+**Will you join the performance? 🎵**
 
 <br />
