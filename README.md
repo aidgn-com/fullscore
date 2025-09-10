@@ -754,7 +754,11 @@ Everything is contained within this small Full Score.
 
 ## Usage
 
-Full Score is an incredibly lightweight tool. For detailed usage and customization, please refer to the comments in the fullscore.js file.
+Full Score is an incredibly lightweight tool. For detailed usage and customization, please refer to the comments in the fullscore.js file. The code works immediately when copied and pasted into your website without any additional configuration.
+
+The BEAT format recorded in browser cookies can be observed and analyzed in Edge Workers at no additional cost. You can limit Edge's role to observation and analysis, while storing behavioral data on your web server or sending it to webhook services like n8n.
+
+For real-time bot detection logic, we recommend implementing it in Edge Workers rather than client-side JavaScript. The Full Score developer is preparing an easy-to-use Edge Worker, and a basic example is available on GitHub for reference.
 
 <br />
 
