@@ -1,4 +1,4 @@
-# Full Score - Web's Native Analytics
+# 🎻 Full Score - Web's Native Analytics
 
 <br />
 
