@@ -740,6 +740,10 @@ Everything is contained within this small Full Score.
 
 <br />
 
+---
+
+<br />
+
 ## Usage
 
 Full Score is an incredibly lightweight tool. For detailed usage and customization, please refer to the comments in the fullscore.js file.
