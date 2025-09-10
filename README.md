@@ -759,7 +759,7 @@ See individual source files for detailed license information.
 ## Resources
 
 - **Live Demo**: [YouTube Video](링크)
-- **Edge Worker**: Under Development (Ultra-lightweight analytics dashboard)
+- **Edge Worker**: Under Development (Ultra-lightweight analytics and security engine running on edge)
 - **GitHub**: [github.com/your-username/fullscore](링크)
 
 <br />
