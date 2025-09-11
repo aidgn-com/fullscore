@@ -20,7 +20,7 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 	],
 	HIT: '/rhythm',		// Session activation and Edge transmission (default: '/rhythm') // Path isolation enhances Edge network
 	TAP: 3,				// Session refresh cycle (default: 3 clicks)
-	THR: 30,			// Session refresh throttle (default: 15ms)
+	THR: 30,			// Session refresh throttle (default: 30ms)
 	AGE: 259200,		// Session retention period (default: 3 days)
 	MAX: 6,				// Maximum session count (default: 6)
 	CAP: 3900,			// Maximum session capacity (default: 3900 bytes)
@@ -311,3 +311,4 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm());
+
