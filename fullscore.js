@@ -338,8 +338,8 @@ class Rhythm {
 			this.beat = new Beat(); // Create new BEAT instance
 			if (RHYTHM.ADD?.TAB) { // Initial tab switch detection
 				let last = '';
-				try { last = localStorage.getItem('last_active') || ''; } catch {} // Get previous tab
-				if (last && last !== name) this.beat.sequence.push('___' + last.split('_').pop()); // Record tab origin if different
+				try { last = localStorage.getItem('last_active') || ''; } catch {} // Get last active session
+				if (last && last !== name && this.get(last)) this.beat.sequence.push('___' + last.split('_').pop()); // Record origin if exists
 				try { localStorage.setItem('last_active', name); } catch {} // Mark as active tab
 			}
 			this.beat.page(location.pathname); // Add current page to BEAT
@@ -400,11 +400,18 @@ class Rhythm {
 		this.hasTempo = typeof tempo !== 'undefined';
 		this.ended = false;
 		this.rootFallback = false; // localStorage failure flag // once true, maintains root cookie sync for session lifetime
-		window.addEventListener('storage', (e) => { // Receive reset signal from other tabs
+		window.addEventListener('storage', (e) => { // Receive reset signal from other tabs + catch late writes
 			if (e.key === 'rhythm_reset') {
-				this.data = null; // Switch to standby state
-				sessionStorage.removeItem('session');
-				window.addEventListener('focus', () => this.session(), { once: true }); // Hard-stop with focus-gated synchronization // Lock-free Total Serialization
+				this.data = null, sessionStorage.removeItem('session'); // Switch to standby state
+				window.addEventListener('focus', () => this.session(), { once: true }); // Hard-stop with focus-gated synchronization
+				return;
+			}
+			if (e.key === 'last_active' && !document.hidden && this.data && this.beat && RHYTHM.ADD?.TAB) { // Catch late tab switch writes
+				const v = e.newValue || '';
+				if (v && v !== this.data.name) {
+					const tok = '___' + v.split('_').pop(), len = this.beat.sequence.length; // New tab token
+					if (!len || this.beat.sequence[len - 1] !== tok) this.beat.time(), this.beat.sequence.push(tok); // Record if not duplicate
+				}
 			}
 		});
 		this.cookieAttrs = '; Max-Age=' + RHYTHM.AGE + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // Cookie attributes reused for all writes
@@ -443,10 +450,7 @@ class Rhythm {
 			if (document.hidden || !this.data || !this.beat) return;
 			let last = '';
 			try { last = localStorage.getItem('last_active') || ''; } catch {} // Read last active tab
-			if (last && last !== this.data.name) {
-				this.beat.time(); // Record time before tab switch
-				this.beat.sequence.push('___' + last.split('_').pop()); // Record every tab switch without deduplication
-			}
+			if (last && last !== this.data.name) this.beat.time(), this.beat.sequence.push('___' + last.split('_').pop()); // Record tab switch
 			try { localStorage.setItem('last_active', this.data.name); } catch {} // Track active tab for switch detection
 		});
 		this.hasBeat && RHYTHM.ADD?.SPA && this.spa(); // Single Page Application addon
@@ -474,4 +478,5 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm());
+
 
