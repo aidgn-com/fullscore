@@ -30,7 +30,7 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 	],
 	HIT: '/rhythm',		// Session activation and Edge transmission (default: '/rhythm') // Path isolation enhances Edge network
 	TAP: 3,				// Session refresh cycle (default: 3 clicks)
-	THR: 20,			// Session refresh throttle (default: 20ms)
+	THR: 30,			// Session refresh throttle (default: 20ms)
 	AGE: 259200,		// Session retention period (default: 3 days)
 	MAX: 6,				// Maximum session count (default: 6)
 	CAP: 3900,			// Maximum session capacity (default: 3900 bytes)
@@ -204,6 +204,7 @@ class Rhythm {
 			const raw = this.get(name);
 			if (raw && raw[0] === '1') {
 				document.cookie = name + '=; Max-Age=0; Path=' + RHYTHM.HIT + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+				if (RHYTHM.HIT !== '/') document.cookie = name + '=; Max-Age=0; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
 				if (RHYTHM.HIT !== '/') localStorage.removeItem(name);
 			}
 		}
@@ -344,7 +345,7 @@ class Rhythm {
 		this.save();
 		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 1: Performance type // cookie refresh rarely fails but consumes almost no network bandwidth
 			const c = new AbortController();
-			fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?LiveStreaming', 
+			fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?liveStreaming', 
 				{method: 'HEAD', signal: c.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
 			setTimeout(() => c.abort(), RHYTHM.THR);
 		}
@@ -353,7 +354,7 @@ class Rhythm {
 		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 2: Balance type // cookie refresh is stable but may consume network bandwidth
 			const controller = new AbortController(); // RTT automation example: wired 5ms→10ms, LTE 15ms→30ms, 3G 300ms→100ms(upper limit)
 			const timeout = navigator.connection?.rtt ? Math.min(navigator.connection.rtt * 2, 100) : RHYTHM.THR; // Use default if RTT check fails
-			fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?LiveStreaming', 
+			fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?liveStreaming', 
 				{method: 'HEAD', signal: controller.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
 			setTimeout(() => controller.abort(), timeout);
 		}
@@ -443,6 +444,7 @@ class Rhythm {
 			this.ended = true;
 			if (RHYTHM.DEL && this.data.clicks < RHYTHM.DEL) { // Discard without sending if clicks less than DEL
 				document.cookie = this.data.name + '=; Max-Age=0; Path=' + RHYTHM.HIT + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+				if (RHYTHM.HIT !== '/') document.cookie = this.data.name + '=; Max-Age=0; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
 				if (RHYTHM.HIT !== '/') localStorage.removeItem(this.data.name);
 				localStorage.removeItem('t' + this.tabId);
 				return;
