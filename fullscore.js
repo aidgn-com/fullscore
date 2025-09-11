@@ -33,7 +33,7 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 	THR: 30,			// Session refresh throttle (default: 30ms)
 	AGE: 259200,		// Session retention period (default: 3 days)
 	MAX: 6,				// Maximum session count (default: 6)
-	CAP: 3900,			// Maximum session capacity (default: 3900 bytes)
+	CAP: 3600,			// Maximum session capacity (default: 3500 bytes)
 	ACT: 600,			// Session recovery time (default: 10 minutes) // Session recovery on reconnection after abnormal termination
 	DEL: 0,				// Session deletion criteria (default: 0 clicks) // Below threshold not transmitted, 0 clicks means unlimited transmission
 	DEF: '/404',		// Bot blocking path (default: /404 page) - Path isolation between Edge and cookies temporarily prevents escape
@@ -444,10 +444,8 @@ class Rhythm {
 			let last = '';
 			try { last = localStorage.getItem('last_active') || ''; } catch {} // Read last active tab
 			if (last && last !== this.data.name) {
-				this.beat.time();
-				const newTok = '___' + last.split('_').pop(), len = this.beat.sequence.length; // Extract tab number token
-				const lastTok = len ? this.beat.sequence[len - 1].match(/___\d+/)?.[0] : null; // Find existing tab token in last element
-				if (lastTok !== newTok) this.beat.sequence.push(newTok); // Add only if different from last tab token
+				this.beat.time(); // Record time before tab switch
+				this.beat.sequence.push('___' + last.split('_').pop()); // Record every tab switch without deduplication
 			}
 			try { localStorage.setItem('last_active', this.data.name); } catch {} // Track active tab for switch detection
 		});
@@ -476,3 +474,4 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm());
+
