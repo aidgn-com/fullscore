@@ -46,7 +46,7 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 		'meta.com': 8,
 	},
 	ADD: { 		// Addon features
-		TAB: true,		// BEAT Tab switch tracking addon (default: true)
+		TAB: false,		// BEAT Tab switch tracking addon (default: false)
 		SCR: false,		// BEAT Scroll position tracking addon (default: false)
 		SPA: false,		// Single Page Application addon (default: false)
 	}
@@ -485,4 +485,5 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm());
+
 
