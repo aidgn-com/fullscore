@@ -83,9 +83,6 @@ function tempo(rhythm) { // Touch Event Maestro Performance Optimizer
 		document.addEventListener("touchmove", () => moved = true, {capture: true, passive: true}); // Mark as moved
 		document.addEventListener("touchcancel", () => moved = true, {capture: true, passive: true}); // Mark as cancelled
 		document.addEventListener("touchend", (e) => {
-
-			// if (e.target.closest(".nofasttouch")) return; // Uncomment to exclude specific elements
-
 			if (moved || !e.changedTouches?.[0]) return; // Skip if moved or no touch
 			let once = true;
 			const block = (ev) => { // Block native click once
@@ -119,9 +116,7 @@ function tempo(rhythm) { // Touch Event Maestro Performance Optimizer
 		}, {capture: true});
 	}
 }
-
 // tempo(); // Uncomment for standalone use
-
 class Beat { // Behavioral Event Analytics Transform
 	constructor(config = {}) {
 		this.config = { timeUnit: BEAT.TIC, ...config };
@@ -129,7 +124,6 @@ class Beat { // Behavioral Event Analytics Transform
 		this.hashTable = {};
 		this.mappings = { pages: { ...BEAT.MAP.P }, elements: { ...BEAT.MAP.E } };
 		this.lastTime = Date.now();
-		this.lastElement = null;
 	}
 	time() { // Record elapsed time
 		const now = Date.now(), elapsed = Math.floor((now - this.lastTime) / this.config.timeUnit);
@@ -158,12 +152,10 @@ class Beat { // Behavioral Event Analytics Transform
 			if (prev.endsWith(n)) {
 				this.sequence[len - 2] = prev.substring(0, prev.length - n.length) + BEAT.TOK.A + t + n;
 				this.sequence.pop(); // Remove time token
-				this.lastElement = n;
 				return;
 			}
 		}
 		this.sequence.push(n);
-		this.lastElement = n;
 	}
 	element(e) { // Record element clicks - list DOM depth as 3D linear string
 		if (!e || e.nodeType === 3 && !(e = e.parentElement)) return;
@@ -366,23 +358,6 @@ class Rhythm {
 				{method: 'HEAD', signal: c.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
 			setTimeout(() => c.abort(), RHYTHM.THR);
 		}
-
-		/*
-		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 2: Balance type // cookie refresh is stable but may consume network bandwidth
-			const controller = new AbortController(); // RTT automation example: wired 5ms→10ms, LTE 15ms→30ms, 3G 300ms→100ms(upper limit)
-			const timeout = navigator.connection?.rtt ? Math.min(navigator.connection.rtt * 2, 100) : RHYTHM.THR; // Use default if RTT check fails
-			fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?liveStreaming', 
-				{method: 'HEAD', signal: controller.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
-			setTimeout(() => controller.abort(), timeout);
-		}
-		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 3: Safe type // cookie refresh is successful but consumes network bandwidth
-			fetch('/favicon.ico?ping=' + this.data.clicks, {method: 'HEAD', credentials: 'include'}).catch(() => {}); // Does not use RHYTHM.THR
-		}
-		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 4: Power type // cookie refresh is very successful but consumes additional network bandwidth and complex setup
-			navigator.sendBeacon('/.well-known/ping'); // Requires Post and return 204 settings on server, does not use RHYTHM.THR
-		}
-		*/
-
 		return el; // Block click if null returned
 	}
 	spa() { // SPA only
@@ -462,28 +437,40 @@ class Rhythm {
 		document.addEventListener('scroll', scroll, { capture: true, passive: true });
 		this.hasBeat && RHYTHM.ADD?.SPA && this.spa(); // Single Page Application addon
 		const end = () => { // Rhythm engine stop
-			if (this.ended) return;
+			if (this.ended) return; // Prevent multiple executions
 			this.ended = true;
-			if (RHYTHM.DEL && this.data && this.data.clicks < RHYTHM.DEL) { // Discard if below threshold
+			if (RHYTHM.DEL && this.data && this.data.clicks < RHYTHM.DEL) { // Discard sessions below threshold
 				document.cookie = this.data.name + '=; Max-Age=0; Path=' + RHYTHM.HIT + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
 				if (RHYTHM.HIT !== '/') {
-					document.cookie = this.data.name + '=; Max-Age=0; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // Clean root fallback
-					try { localStorage.removeItem(this.data.name); } catch {} // Clean localStorage
+					document.cookie = this.data.name + '=; Max-Age=0; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+					try { localStorage.removeItem(this.data.name); } catch {}
 				}
 				try { localStorage.removeItem('t' + this.tabId); } catch {} // Clean tab marker
 				return;
 			}
-			const isNavigation = this.data && sessionStorage.getItem('session') === this.data.name, myKey = 't' + this.tabId; // Navigation check
-			try { localStorage.removeItem(myKey); } catch {} // Remove tab marker
-			if (isNavigation) return; // Skip if navigating
-			try { for (let i = 0; i < localStorage.length; i++) if (localStorage.key(i)?.startsWith('t')) return; } catch {} // Check other tabs
-			this.batch(true); // Last tab sends all
+			const myKey = 't' + this.tabId; // My tab marker key
+			try { localStorage.removeItem(myKey); } catch {} // Remove my tab marker
+			if (sessionStorage.getItem('session') === this.data?.name) return; // Skip if navigation
+			const elect = (retry = 2) => { // Election process with retry mechanism
+				try {
+					for (let i = 0; i < localStorage.length; i++) {
+						const k = localStorage.key(i);
+						if (k?.startsWith('t')) { // Other tab found
+							if (retry > 0) setTimeout(() => elect(retry - 1), 120); // Retry after delay
+							return;
+						}
+					}
+				} catch {
+					this.batch(true); // Storage access failed, send immediately
+					return;
+				}
+				this.batch(true); // Last tab confirmed, send all sessions
+			};
+			elect(); // Start election process
 		};
 		window.addEventListener('beforeunload', end); // Capture tab/window close
-		window.addEventListener('pagehide', (e) => { if (!e.persisted) end(); }); // Fallback for mobile browsers
+		window.addEventListener('pagehide', e => { if (!e.persisted) end(); }); // Fallback for mobile browsers
 	}
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm());
-
-
