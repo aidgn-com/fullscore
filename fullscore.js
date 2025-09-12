@@ -139,7 +139,7 @@ class Beat { // Behavioral Event Analytics Transform
 		for (let i = 0; i < p.length; i++) hash = ((hash << 5) + hash) + p.charCodeAt(i);
 		const chars = '0123456789abcdefghijklmnopqrstuvwxyz', limit = p.length <= 7 ? 3 : p.length <= 14 ? 4 : 5; // Dynamic hash by URL length
 		let result = '', n = Math.abs(hash);
-		for (let i = 0; i < limit; i++) result += chars[n % 36], n = Math.floor(n / 36); // Base36 encoding
+		for (let j = 0; j < limit; j++) result += chars[n % 36], n = Math.floor(n / 36); // Base36 encoding
 		let token = BEAT.TOK.P + result, dots = ''; // Hash collision handling: add dots(.) in front to ensure uniqueness
 		while (this.hashTable[token] && this.hashTable[token] !== p) dots += BEAT.TOK.L, token = BEAT.TOK.P + dots + result;
 		this.hashTable[token] = p;
@@ -208,8 +208,8 @@ class Rhythm {
 					if (Math.floor(Date.now() / 1000) - (+parts[5] + +parts[6]) <= RHYTHM.ACT) return; // ACT window check // preserve sessions that may still reconnect
 				}
 				if (!localCleaned) { // Remove localStorage for all sessions if detected as abnormal termination pattern
-					try { for (let i = localStorage.length - 1; i >= 0; i--) { 
-						const k = localStorage.key(i); 
+					try { for (let j = localStorage.length - 1; j >= 0; j--) { 
+						const k = localStorage.key(j); 
 						if (k?.startsWith('t')) try { localStorage.removeItem(k); } catch {} // Clean tab marker
 					}} catch {} // Prevent localStorage access failures
 					localCleaned = true;
@@ -418,12 +418,9 @@ class Rhythm {
 		this.clean(); // Clean normal termination sessions
 		this.batch(); // Clean abnormal termination sessions
 		this.session(); // Start session // create new or relocate from storage
-		setInterval(() => { // Perform save to activate ACT if no activity for 5 minutes
-			if (this.data) {
-				const duration = Math.floor(Date.now() / 1000) - this.data.time;
-				if (duration > 300) this.save();
-			}
-		}, 300000);
+		setInterval(() => {
+		    if (this.data && Math.floor(Date.now() / 1000) - this.data.time > RHYTHM.ACT / 2) this.save(); // Session heartbeat
+		}, RHYTHM.ACT / 2 * 1000);
 		this.hasTempo ? tempo(this) : document.addEventListener('click', e => this.click(e.target, e), { capture: true }); // Tempo integration
 		this.scrolling = false; // Debounce to count once per scroll gesture
 		const scroll = () => {
@@ -453,8 +450,8 @@ class Rhythm {
 			if (sessionStorage.getItem('session') === this.data?.name) return; // Skip if navigation
 			const elect = (retry = 2) => { // Election process with retry mechanism
 				try {
-					for (let i = 0; i < localStorage.length; i++) {
-						const k = localStorage.key(i);
+					for (let j = 0; j < localStorage.length; j++) {
+						const k = localStorage.key(j);
 						if (k?.startsWith('t')) { // Other tab found
 							if (retry > 0) setTimeout(() => elect(retry - 1), 120); // Retry after delay
 							return;
