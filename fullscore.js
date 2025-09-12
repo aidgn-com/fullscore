@@ -447,7 +447,7 @@ class Rhythm {
 			}
 			const myKey = 't' + this.tabId; // My tab marker key
 			try { localStorage.removeItem(myKey); } catch {} // Remove my tab marker
-			if (sessionStorage.getItem('session') === this.data?.name) return; // Skip if navigation
+			try { if (sessionStorage.getItem('session') === this.data?.name) return; } catch {} // Skip if navigation
 			const elect = (retry = 2) => { // Election process with retry mechanism
 				try {
 					for (let j = 0; j < localStorage.length; j++) {
@@ -471,5 +471,3 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm());
-
-
