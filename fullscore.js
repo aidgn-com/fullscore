@@ -347,8 +347,8 @@ class Rhythm {
 		if (this.hasBeat) {
 			this.beat = new Beat(); // Create new BEAT instance
 			if (RHYTHM.ADD?.TAB) {
-				const currentTab = name.split('_')[1]; // Extract session number as tab ID
-				this.beat.sequence.push('___' + currentTab); // Record tab start marker
+				const currentTab = name.slice(7); // Extract session number as tab ID
+				const tok='___'+currentTab, s=this.beat.sequence; if (s[s.length-1]!==tok) s.push(tok); // Record tab start marker with duplicate prevention
 				try { localStorage.setItem('active_tab', currentTab); } catch {} // Set as active tab
 			}
 			this.beat.page(location.pathname); // Add current page to BEAT
