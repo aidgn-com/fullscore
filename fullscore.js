@@ -247,41 +247,42 @@ class Rhythm {
 	}
 	save() { // Save data with automatic fallback
 		if (RHYTHM.ADD?.TAB && this.hasBeat && this.beat && (this.data.clicks + this.data.scrolls > 0)) { // Tab switch tracking
-			let prevName = '', prevActivity = -1;
+			let prevName = '', prevActivity = -1; // Find most recently active tab
 			for (let i = 1; i <= RHYTHM.MAX; i++) {
 				const name = 'rhythm_' + i;
-				if (name === this.data.name) continue;
+				if (name === this.data.name) continue; // Skip current tab
 				const raw = this.get(name);
-				if (raw && raw[0] === '0') {
-					const activity = (+raw.split('_')[5]) + (+raw.split('_')[6]);
+				if (raw?.[0] === '0') {
+					const parts = raw.split('_');
+					const activity = +parts[5] + +parts[6]; // Start time + duration
 					if (activity > prevActivity) prevName = name, prevActivity = activity;
 				}
 			}
 			if (prevName) {
-				const prevRaw = this.get(prevName), parts = prevRaw.split('_'), prevBeat = parts.slice(9).join('_');
+				const prevRaw = this.get(prevName);
 				const marker = '___' + this.data.name.slice(7);
-				if (!prevBeat.endsWith(marker)) {
-					const newBeat = prevBeat + marker, newSave = parts.slice(0, 9).concat([newBeat]).join('_');
+				if (!prevRaw.endsWith(marker)) { // Prevent duplicate markers
+					const newSave = prevRaw + marker; // Append to BEAT field
 					if (newSave.length <= RHYTHM.CAP) {
 						document.cookie = prevName + '=' + newSave + '; Path=' + RHYTHM.HIT + this.cookieAttrs;
 						if (RHYTHM.HIT !== '/') try { localStorage.setItem(prevName, newSave); } catch {}
-						try { localStorage.setItem('rhythm_sync_' + prevName, Date.now()); } catch {}
+						try { localStorage.setItem('rhythm_sync_' + prevName, Date.now()); } catch {} // Tab sync signal
 					}
 				}
 			}
 		}
-		const save = [0, 0, 0, this.data.device, this.data.referrer, this.data.time, Math.floor(Date.now() / 1000) - this.data.time, this.data.clicks, this.data.scrolls, this.beat ? this.beat.flow() : ''].join('_'); // BEAT integration
+		const save = [0, 0, 0, this.data.device, this.data.referrer, this.data.time, Math.floor(Date.now() / 1000) - this.data.time, this.data.clicks, this.data.scrolls, this.beat?.flow() || ''].join('_'); // Build session string
 		document.cookie = this.data.name + '=' + save + '; Path=' + RHYTHM.HIT + this.cookieAttrs;
-		if (RHYTHM.HIT !== '/') {
+		if (RHYTHM.HIT !== '/') { // Path isolation backup
 			try {
-				localStorage.setItem(this.data.name, save); // Try localStorage backup
-				if (this.rootFallback) document.cookie = this.data.name + '=' + save + '; Path=/' + this.cookieAttrs; // Maintain root sync if fallback active
+				localStorage.setItem(this.data.name, save);
+				if (this.rootFallback) document.cookie = this.data.name + '=' + save + '; Path=/' + this.cookieAttrs;
 			} catch {
 				this.rootFallback = true; // Activate fallback mode
-				document.cookie = this.data.name + '=' + save + '; Path=/' + this.cookieAttrs; // Rotate if capacity exceeded
+				document.cookie = this.data.name + '=' + save + '; Path=/' + this.cookieAttrs;
 			}
 		}
-		if (save.length > RHYTHM.CAP) return void this.session(true);
+		if (save.length > RHYTHM.CAP) return void this.session(true); // Rotate session if capacity exceeded
 	}
 	session(force = false) { // Session management
 		const storage = typeof sessionStorage !== 'undefined';
@@ -291,7 +292,6 @@ class Rhythm {
 				const raw = this.get(stored);
 				if (raw && raw[0] === '0') { // Start script restoration if ping=0 session
 					const parts = raw.split('_');
-					const beatStr = parts.slice(9).join('_'); // Safe BEAT restoration
 					this.data = { // Convert string to object
 						name: stored,
 						time: +parts[5],
@@ -302,10 +302,6 @@ class Rhythm {
 					};
 					if (this.hasBeat) {
 						this.beat = new Beat();
-						if (beatStr) {
-							this.beat.sequence = [beatStr];
-							this.beat.lastTime = Date.now(); // Initialize timing
-						}
 						this.beat.page(location.pathname); // Add current page to BEAT
 					}
 					this.save(); // Save updated session
