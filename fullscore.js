@@ -23,7 +23,7 @@
 
 const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 	PIN: [				// Session endpoint (default: '/rhythm/ping')
-		'/rhythm/ping'	// Edge can access cookies directly without webhooks - completely safe, no exposure
+		'/rhythm/ping',	// Edge can access cookies directly without webhooks - completely safe, no exposure
 		// 'https://n8n.yourdomain.com/webhook/yourcode' // Secondary: Webhook endpoint (optional fallback)
 		// ⚠️ CAUTION: Webhook URLs are public. Configure IP whitelist on webhook service
 		// 💡 RECOMMENDED: Use reverse proxy (nginx/caddy) or internal API for better security
@@ -33,7 +33,7 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 	THR: 30,			// Session refresh throttle (default: 30ms)
 	AGE: 259200,		// Session retention period (default: 3 days)
 	MAX: 6,				// Maximum session count (default: 6)
-	CAP: 3600,			// Maximum session capacity (default: 3500 bytes)
+	CAP: 3500,			// Maximum session capacity (default: 3500 bytes)
 	ACT: 600,			// Session recovery time (default: 10 minutes) // Session recovery on reconnection after abnormal termination
 	DEL: 0,				// Session deletion criteria (default: 0 clicks) // Below threshold not transmitted, 0 clicks means unlimited transmission
 	DEF: '/404',		// Bot blocking path (default: /404 page) - Path isolation between Edge and cookies temporarily prevents escape
@@ -46,7 +46,7 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 		'meta.com': 8,
 	},
 	ADD: { 		// Addon features
-		TAB: false,		// BEAT Tab switch tracking addon (default: false)
+		TAB: true,		// BEAT Tab switch tracking addon (default: true)
 		SCR: false,		// BEAT Scroll position tracking addon (default: false)
 		SPA: false,		// Single Page Application addon (default: false)
 	}
@@ -474,3 +474,4 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm());
+
