@@ -292,6 +292,7 @@ class Rhythm {
 				const raw = this.get(stored);
 				if (raw && raw[0] === '0') { // Start script restoration if ping=0 session
 					const parts = raw.split('_');
+					const beatStr = parts.slice(9).join('_'); // Safe BEAT restoration
 					this.data = { // Convert string to object
 						name: stored,
 						time: +parts[5],
@@ -302,6 +303,10 @@ class Rhythm {
 					};
 					if (this.hasBeat) {
 						this.beat = new Beat();
+						if (beatStr) {
+							this.beat.sequence = [beatStr];
+							this.beat.lastTime = Date.now(); // Initialize timing
+						}
 						this.beat.page(location.pathname); // Add current page to BEAT
 					}
 					this.save(); // Save updated session
@@ -480,3 +485,4 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm());
+
