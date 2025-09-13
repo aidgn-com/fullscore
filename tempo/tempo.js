@@ -15,13 +15,12 @@ function tempo(rhythm) { // Touch Event Maestro Performance Optimizer
 	if ("ontouchstart" in window || navigator.maxTouchPoints > 0) { // Mobile environment detection
 		const pending = new Set(); // Track pending native click blockers
 		let moved = false;
-		document.addEventListener("touchstart", () => (moved = false, pending.forEach(b => document.removeEventListener("click", b, true)), pending.clear()), {capture: true, passive: true}); // Reset moved
+		document.addEventListener("touchstart", () => {
+			moved = false; for (const b of pending) document.removeEventListener("click", b, true); pending.clear(); // Reset moved
+		}, {capture: true, passive: true});
 		document.addEventListener("touchmove", () => moved = true, {capture: true, passive: true}); // Mark as moved
 		document.addEventListener("touchcancel", () => moved = true, {capture: true, passive: true}); // Mark as cancelled
 		document.addEventListener("touchend", (e) => {
-
-			// if (e.target.closest(".nofasttouch")) return; // Uncomment to exclude specific elements
-
 			if (moved || !e.changedTouches?.[0]) return; // Skip if moved or no touch
 			let once = true;
 			const block = (ev) => { // Block native click once
@@ -55,5 +54,4 @@ function tempo(rhythm) { // Touch Event Maestro Performance Optimizer
 		}, {capture: true});
 	}
 }
-
 // tempo(); // Uncomment for standalone use
