@@ -79,7 +79,9 @@ function tempo(rhythm) { // Touch Event Maestro Performance Optimizer
 	if ("ontouchstart" in window || navigator.maxTouchPoints > 0) { // Mobile environment detection
 		const pending = new Set(); // Track pending native click blockers
 		let moved = false;
-		document.addEventListener("touchstart", () => (moved = false, pending.forEach(b => document.removeEventListener("click", b, true)), pending.clear()), {capture: true, passive: true}); // Reset moved
+		document.addEventListener("touchstart", () => {
+		    moved = false; for (const b of pending) document.removeEventListener("click", b, true); pending.clear(); // Reset moved
+		}, {capture: true, passive: true});
 		document.addEventListener("touchmove", () => moved = true, {capture: true, passive: true}); // Mark as moved
 		document.addEventListener("touchcancel", () => moved = true, {capture: true, passive: true}); // Mark as cancelled
 		document.addEventListener("touchend", (e) => {
@@ -318,7 +320,7 @@ class Rhythm {
 			this.batch(true); // batch automatically calls clean()
 			name = 'rhythm_1';
 		}
-		if (storage) sessionStorage.setItem('session', name); // Save session to storage
+		if (storage) { try { sessionStorage.setItem('session', name); } catch {} } // Save session to storage
 		const ua = navigator.userAgent; // User agent for device detection
 		const r = document.referrer; // Referrer URL for traffic source analysis
 		let ref = !r ? 0 : r.indexOf(location.hostname) > -1 ? 1 : 2; // Calculate base referrer type
@@ -445,8 +447,18 @@ class Rhythm {
 				try { localStorage.removeItem('t' + this.tabId); } catch {} // Clean tab marker
 				return;
 			}
-			const myKey = 't' + this.tabId; // My tab marker key
-			try { localStorage.removeItem(myKey); } catch {} // Remove my tab marker
+			try { localStorage.removeItem('t' + this.tabId); } catch {} // Remove my tab marker
+			let hasOthers = false; // Check for other tabs
+			try {
+				for (let i = 0; i < localStorage.length; i++) {
+					const k = localStorage.key(i);
+					if (k && k.startsWith('t')) { hasOthers = true; break; }
+				}
+			} catch {
+				this.batch(true); // Storage access failed, send immediately
+				return;
+			}
+			if (!hasOthers) { this.batch(true); return; } // Last tab confirmed, send all sessions
 			try { if (sessionStorage.getItem('session') === this.data?.name) return; } catch {} // Skip if navigation
 			const elect = (retry = 2) => { // Election process with retry mechanism
 				try {
@@ -470,4 +482,5 @@ class Rhythm {
 	}
 }
 
-document.addEventListener('DOMContentLoaded', () => new Rhythm());
+if (document.readyState !== 'loading') new Rhythm();
+else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
