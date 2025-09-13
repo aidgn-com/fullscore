@@ -447,6 +447,7 @@ class Rhythm {
 				try { localStorage.removeItem('t' + this.tabId); } catch {} // Clean tab marker
 				return;
 			}
+			try { if (sessionStorage.getItem('session') === this.data?.name) return; } catch {} // Skip if navigation
 			try { localStorage.removeItem('t' + this.tabId); } catch {} // Remove my tab marker
 			let hasOthers = false; // Check for other tabs
 			try {
@@ -459,7 +460,6 @@ class Rhythm {
 				return;
 			}
 			if (!hasOthers) { this.batch(true); return; } // Last tab confirmed, send all sessions
-			try { if (sessionStorage.getItem('session') === this.data?.name) return; } catch {} // Skip if navigation
 			const elect = (retry = 2) => { // Election process with retry mechanism
 				try {
 					for (let j = 0; j < localStorage.length; j++) {
@@ -484,5 +484,6 @@ class Rhythm {
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
