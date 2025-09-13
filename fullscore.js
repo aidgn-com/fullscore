@@ -233,7 +233,7 @@ class Rhythm {
 		if (!batch.length) return; // Abort if no sessions to send
 		const payload = batch.join('\n');
 		for (const pin of RHYTHM.PIN) { // Send to all configured endpoints
-			const url = pin[0] === '/' ? location.origin + pin : pin; // Relative path gets current origin, absolute URL stays as-is
+			const url = new URL(pin, location.origin).href; // Relative path gets current origin, absolute URL stays as-is
 			const sent = navigator.sendBeacon && navigator.sendBeacon(url, payload); // sendBeacon returns boolean
 			if (!sent) fetch(url, {method: 'POST', body: payload, keepalive: true}).catch(() => {}); // Immediate fallback if sendBeacon fails
 		}
@@ -356,8 +356,8 @@ class Rhythm {
 		this.save();
 		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 1: Performance type // cookie refresh rarely fails but consumes almost no network bandwidth
 			const c = new AbortController();
-			fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?liveStreaming', 
-				{method: 'HEAD', signal: c.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
+			const refreshUrl = new URL(RHYTHM.HIT + '/?liveStreaming', location.origin);
+			fetch(refreshUrl.href, {method: 'HEAD', signal: c.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
 			setTimeout(() => c.abort(), RHYTHM.THR);
 		}
 		return el; // Block click if null returned
@@ -484,3 +484,4 @@ class Rhythm {
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
