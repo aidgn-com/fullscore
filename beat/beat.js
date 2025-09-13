@@ -11,23 +11,23 @@
  * it maintains the versatility to work with other systems.
  */
 
-const BEAT = {
+const BEAT = { 	// Behavioral Event Analytics Transform
 	TIC: 100,	// Time (default: 100ms)
 	TOK: {		// Actions (examples: P:@, E:#, T:> A:& L:+ ) // Free variations possible, but cookie-safe strings without encoding recommended
 		P: '!',			// Page
 		E: '*',			// Element
 		T: '~',			// Time
 		A: '.',			// Again
-		L: '.'			// Loop
+		L: '.',			// Loop
 	},
 	MAP: {				// Manual mapping (default: automatic)
 		P: {					// Page URL paths
 			'/': 'home', 		// Homepage reserved word (result: !home)
-			'/english/': 'en' 	// Multilingual path example (result: !en)
+			'/english/': 'en', 	// Multilingual path example (result: !en)
 		},
 		E: {					// Element id or class selectors
 			'#close-button': 'close',	// Close button example (result: *close)
-			'.open-modal': 'm'			// Modal button example (result: *m)
+			'.open-modal': 'm',			// Modal button example (result: *m)
 		}
 	}
 };
@@ -39,11 +39,6 @@ class Beat { // Behavioral Event Analytics Transform
 		this.hashTable = {};
 		this.mappings = { pages: { ...BEAT.MAP.P }, elements: { ...BEAT.MAP.E } };
 		this.lastTime = Date.now();
-		this.lastElement = null;
-
-		// this.scrolling = false; // Scroll recording // uncomment to enable
-		// document.addEventListener('scroll', () => (!this.scrolling && this.scroll(), clearTimeout(this.s), this.s = setTimeout(() => this.scrolling = false, 150)), {capture: true, passive: true});
-
 	}
 	time() { // Record elapsed time
 		const now = Date.now(), elapsed = Math.floor((now - this.lastTime) / this.config.timeUnit);
@@ -59,23 +54,12 @@ class Beat { // Behavioral Event Analytics Transform
 		for (let i = 0; i < p.length; i++) hash = ((hash << 5) + hash) + p.charCodeAt(i);
 		const chars = '0123456789abcdefghijklmnopqrstuvwxyz', limit = p.length <= 7 ? 3 : p.length <= 14 ? 4 : 5; // Dynamic hash by URL length
 		let result = '', n = Math.abs(hash);
-		for (let i = 0; i < limit; i++) result += chars[n % 36], n = Math.floor(n / 36); // Base36 encoding
+		for (let j = 0; j < limit; j++) result += chars[n % 36], n = Math.floor(n / 36); // Base36 encoding
 		let token = BEAT.TOK.P + result, dots = ''; // Hash collision handling: add dots(.) in front to ensure uniqueness
 		while (this.hashTable[token] && this.hashTable[token] !== p) dots += BEAT.TOK.L, token = BEAT.TOK.P + dots + result;
 		this.hashTable[token] = p;
 		this.sequence.push(token);
 	}
-
-	/*
-	scroll() { // Scroll recording // uncomment to enable
-		if (!this.scrolling) {
-			this.time();
-			this.sequence.push('^' + Math.round(window.scrollY)); // Scroll start position px recording option (example: ^450)
-			this.scrolling = true;
-		}
-	}
-	*/
-
 	note(n) { // Compress repetitive elements
 		const len = this.sequence.length;
 		if (len > 1 && this.sequence[len - 1].startsWith(BEAT.TOK.T)) { // Time-based compression
@@ -83,12 +67,10 @@ class Beat { // Behavioral Event Analytics Transform
 			if (prev.endsWith(n)) {
 				this.sequence[len - 2] = prev.substring(0, prev.length - n.length) + BEAT.TOK.A + t + n;
 				this.sequence.pop(); // Remove time token
-				this.lastElement = n;
 				return;
 			}
 		}
 		this.sequence.push(n);
-		this.lastElement = n;
 	}
 	element(e) { // Record element clicks - list DOM depth as 3D linear string
 		if (!e || e.nodeType === 3 && !(e = e.parentElement)) return;
