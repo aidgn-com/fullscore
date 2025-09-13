@@ -101,7 +101,7 @@ class Rhythm {
 		if (!batch.length) return; // Abort if no sessions to send
 		const payload = batch.join('\n');
 		for (const pin of RHYTHM.PIN) { // Send to all configured endpoints
-			const url = pin[0] === '/' ? location.origin + pin : pin; // Relative path gets current origin, absolute URL stays as-is
+			const url = new URL(pin, location.origin).href; // Relative path gets current origin, absolute URL stays as-is
 			const sent = navigator.sendBeacon && navigator.sendBeacon(url, payload); // sendBeacon returns boolean
 			if (!sent) fetch(url, {method: 'POST', body: payload, keepalive: true}).catch(() => {}); // Immediate fallback if sendBeacon fails
 		}
@@ -224,8 +224,8 @@ class Rhythm {
 		this.save();
 		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 1: Performance type // cookie refresh rarely fails but consumes almost no network bandwidth
 			const c = new AbortController();
-			fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?liveStreaming', 
-				{method: 'HEAD', signal: c.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
+			const refreshUrl = new URL(RHYTHM.HIT + '/?liveStreaming', location.origin);
+			fetch(refreshUrl.href, {method: 'HEAD', signal: c.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
 			setTimeout(() => c.abort(), RHYTHM.THR);
 		}
 		return el; // Block click if null returned
@@ -289,7 +289,7 @@ class Rhythm {
 		this.batch(); // Clean abnormal termination sessions
 		this.session(); // Start session // create new or relocate from storage
 		setInterval(() => {
-			if (this.data && Math.floor(Date.now() / 1000) - this.data.time > RHYTHM.ACT / 2) this.save(); // Session heartbeat
+		    if (this.data && Math.floor(Date.now() / 1000) - this.data.time > RHYTHM.ACT / 2) this.save(); // Session heartbeat
 		}, RHYTHM.ACT / 2 * 1000);
 		this.hasTempo ? tempo(this) : document.addEventListener('click', e => this.click(e.target, e), { capture: true }); // Tempo integration
 		this.scrolling = false; // Debounce to count once per scroll gesture
