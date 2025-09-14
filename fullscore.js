@@ -185,8 +185,8 @@ class Rhythm {
 	clean(force = false) { // Delete ping=1 sessions + force reset
 		for (let i = 1; i <= RHYTHM.MAX; i++) {
 			const name = 'rhythm_' + i;
-			const raw = this.get(name);
-			if (raw && raw[0] === '1') {
+			const ses = this.get(name);
+			if (ses && ses[0] === '1') {
 				document.cookie = name + '=; Max-Age=0; Path=' + RHYTHM.HIT + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
 				if (RHYTHM.HIT !== '/') document.cookie = name + '=; Max-Age=0; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
 				if (RHYTHM.HIT !== '/') try { localStorage.removeItem(name); } catch {} // Remove session backup
@@ -200,23 +200,23 @@ class Rhythm {
 	}
 	batch(force = false) { // Convert all sessions ping 0→1 and permit Edge transmission
 		const batch = [];
-		let localCleaned = false;
+		let once = false;
 		for (let i = 1; i <= RHYTHM.MAX; i++) {
 			const name = 'rhythm_' + i;
-			const raw = this.get(name);
-			if (raw && raw[0] === '0') {
-				const parts = raw.split('_'); // Keep session ping=0 if detected as abnormal termination pattern within RHYTHM.ACT time
+			const ses = this.get(name);
+			if (ses && ses[0] === '0') {
+				const parts = ses.split('_'); // Keep session ping=0 if detected as abnormal termination pattern within RHYTHM.ACT time
 				if (!force) {
 					if (Math.floor(Date.now() / 1000) - (+parts[5] + +parts[6]) <= RHYTHM.ACT) return; // ACT window check // preserve sessions that may still reconnect
 				}
-				if (!localCleaned) { // Remove localStorage for all sessions if detected as abnormal termination pattern
+				if (!once) { // Remove localStorage for all sessions if detected as abnormal termination pattern
 					try { for (let j = localStorage.length - 1; j >= 0; j--) { 
 						const k = localStorage.key(j); 
 						if (k?.startsWith('t')) try { localStorage.removeItem(k); } catch {} // Clean tab marker
 					}} catch {} // Prevent localStorage access failures
-					localCleaned = true;
+					once = true;
 				}
-				const copy = '1' + raw.substring(1);
+				const copy = '1' + ses.substring(1);
 				document.cookie = name + '=' + copy + '; Path=' + RHYTHM.HIT + this.cookieAttrs; // Normal termination changes ping=1
 				if (RHYTHM.HIT !== '/') {
 					try {
@@ -245,18 +245,18 @@ class Rhythm {
 			for (let i = 1; i <= RHYTHM.MAX; i++) {
 				const name = 'rhythm_' + i;
 				if (name === this.data.name) continue; // Skip current tab
-				const raw = this.get(name);
-				if (raw?.[0] === '0') {
-					const parts = raw.split('_');
+				const ses = this.get(name);
+				if (ses?.[0] === '0') {
+					const parts = ses.split('_');
 					const activity = +parts[5] + +parts[6]; // Start time + duration
 					if (activity > prevActivity) prevName = name, prevActivity = activity;
 				}
 			}
 			if (prevName) {
-				const prevRaw = this.get(prevName);
+				const prevSes = this.get(prevName);
 				const marker = '___' + this.data.name.slice(7);
-				if (!prevRaw.endsWith(marker)) { // Prevent duplicate markers
-					const newSave = prevRaw + marker; // Append to BEAT field
+				if (!prevSes.endsWith(marker)) { // Prevent duplicate markers
+					const newSave = prevSes + marker; // Append to BEAT field
 					if (newSave.length <= RHYTHM.CAP) {
 						document.cookie = prevName + '=' + newSave + '; Path=' + RHYTHM.HIT + this.cookieAttrs;
 						if (RHYTHM.HIT !== '/') try { localStorage.setItem(prevName, newSave); } catch {}
@@ -283,9 +283,9 @@ class Rhythm {
 		if (!force && storage) { // Page restoration using session storage
 			const stored = sessionStorage.getItem('session');
 			if (stored) {
-				const raw = this.get(stored);
-				if (raw && raw[0] === '0') { // Start script restoration if ping=0 session
-					const parts = raw.split('_');
+				const ses = this.get(stored);
+				if (ses && ses[0] === '0') { // Start script restoration if ping=0 session
+					const parts = ses.split('_');
 					const beatStr = parts.slice(9).join('_'); // Safe BEAT restoration
 					this.data = { // Convert string to object
 						name: stored,
@@ -395,9 +395,9 @@ class Rhythm {
 				const target = e.key.slice('rhythm_sync_'.length);
 				const mine = sessionStorage.getItem('session');
 				if (mine !== target) return; // Not for this tab
-				const raw = this.get(mine);
-				if (!raw || raw[0] !== '0') return; // Invalid session
-				const beatStr = raw.split('_').slice(9).join('_');
+				const ses = this.get(mine);
+				if (!ses || ses[0] !== '0') return; // Invalid session
+				const beatStr = ses.split('_').slice(9).join('_');
 				if (this.hasBeat) {
 					if (!this.beat) this.beat = new Beat();
 					this.beat.sequence = beatStr ? [beatStr] : [];
@@ -407,8 +407,8 @@ class Rhythm {
 		});
 		this.cookieAttrs = '; Max-Age=' + RHYTHM.AGE + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // Cookie attributes reused for all writes
 		for (let i = 1; i <= RHYTHM.MAX; i++) { // Check security=1 // determined by Edge and executed blocking together
-			const raw = this.get('rhythm_' + i);
-			if (raw && raw.split('_')[1] === '1') {
+			const ses = this.get('rhythm_' + i);
+			if (ses && ses.split('_')[1] === '1') {
 				if (location.pathname !== RHYTHM.DEF) {
 					window.location.href = RHYTHM.DEF; // Send to prison
 				}
@@ -460,3 +460,4 @@ class Rhythm {
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
