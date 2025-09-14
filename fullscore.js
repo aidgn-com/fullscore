@@ -447,43 +447,33 @@ class Rhythm {
 				try { localStorage.removeItem('t' + this.tabId); } catch {} // Clean tab marker
 				return;
 			}
-			try { if (sessionStorage.getItem('session') === this.data?.name) return; } catch {} // Skip if navigation
-			try { localStorage.removeItem('t' + this.tabId); } catch {} // Remove my tab marker
-			let hasOthers = false; // Check for other tabs
-			try {
-				for (let i = 0; i < localStorage.length; i++) {
-					const k = localStorage.key(i);
-					if (k && k.startsWith('t')) { hasOthers = true; break; }
-				}
-			} catch {
-				this.batch(true); // Storage access failed, send immediately
-				return;
-			}
-			if (!hasOthers) { this.batch(true); return; } // Last tab confirmed, send all sessions
-			const elect = (retry = 2) => { // Election process with retry mechanism
-				try {
-					for (let j = 0; j < localStorage.length; j++) {
-						const k = localStorage.key(j);
-						if (k?.startsWith('t')) { // Other tab found
-							if (retry > 0) setTimeout(() => elect(retry - 1), 120); // Retry after delay
-							return;
-						}
-					}
-				} catch {
-					this.batch(true); // Storage access failed, send immediately
+
+			const end = () => { // Rhythm engine stop
+				if (this.ended) return; // Prevent multiple executions
+				this.ended = true; // Set termination flag
+				try { localStorage.removeItem('t' + this.tabId); } catch {} // Remove tab marker
+				if (RHYTHM.DEL && this.data && this.data.clicks < RHYTHM.DEL) {
+					document.cookie = this.data.name + '=; Max-Age=0; Path=' + RHYTHM.HIT + '; SameSite=Lax' + (location.protocol==='https:'?'; Secure':'');
+					if (RHYTHM.HIT !== '/') { document.cookie = this.data.name + '=; Max-Age=0; Path=/; SameSite=Lax' + (location.protocol==='https:'?'; Secure':''); try { localStorage.removeItem(this.data.name); } catch {} }
 					return;
 				}
-				this.batch(true); // Last tab confirmed, send all sessions
+				setTimeout(() => { // Yield to next macrotask, adjusts execution order not waiting for page load
+					try {
+						for (let i = 0; i < localStorage.length; i++) {
+							const k = localStorage.key(i);
+							if (k && k.startsWith('t')) return; // Other tab exists
+						}
+					} catch {}
+					this.batch(true); // Last tab confirmed
+				}, 1);
 			};
-			elect(); // Start election process
-		};
-		window.addEventListener('beforeunload', end); // Capture tab/window close
-		window.addEventListener('pagehide', e => { if (!e.persisted) end(); }); // Fallback for mobile browsers
+			window.addEventListener('pagehide', () => end(), { capture: true }); // All pagehide events trigger termination check
 	}
 }
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
