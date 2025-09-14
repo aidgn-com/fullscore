@@ -437,43 +437,26 @@ class Rhythm {
 		this.hasBeat && RHYTHM.ADD?.SPA && this.spa(); // Single Page Application addon
 		const end = () => { // Rhythm engine stop
 			if (this.ended) return; // Prevent multiple executions
-			this.ended = true;
-			if (RHYTHM.DEL && this.data && this.data.clicks < RHYTHM.DEL) { // Discard sessions below threshold
-				document.cookie = this.data.name + '=; Max-Age=0; Path=' + RHYTHM.HIT + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
-				if (RHYTHM.HIT !== '/') {
-					document.cookie = this.data.name + '=; Max-Age=0; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
-					try { localStorage.removeItem(this.data.name); } catch {}
-				}
-				try { localStorage.removeItem('t' + this.tabId); } catch {} // Clean tab marker
+			this.ended = true; // Set termination flag
+			try { localStorage.removeItem('t' + this.tabId); } catch {} // Remove tab marker
+			if (RHYTHM.DEL && this.data && this.data.clicks < RHYTHM.DEL) {
+				document.cookie = this.data.name + '=; Max-Age=0; Path=' + RHYTHM.HIT + '; SameSite=Lax' + (location.protocol==='https:'?'; Secure':'');
+				if (RHYTHM.HIT !== '/') { document.cookie = this.data.name + '=; Max-Age=0; Path=/; SameSite=Lax' + (location.protocol==='https:'?'; Secure':''); try { localStorage.removeItem(this.data.name); } catch {} }
 				return;
 			}
-
-			const end = () => { // Rhythm engine stop
-				if (this.ended) return; // Prevent multiple executions
-				this.ended = true; // Set termination flag
-				try { localStorage.removeItem('t' + this.tabId); } catch {} // Remove tab marker
-				if (RHYTHM.DEL && this.data && this.data.clicks < RHYTHM.DEL) {
-					document.cookie = this.data.name + '=; Max-Age=0; Path=' + RHYTHM.HIT + '; SameSite=Lax' + (location.protocol==='https:'?'; Secure':'');
-					if (RHYTHM.HIT !== '/') { document.cookie = this.data.name + '=; Max-Age=0; Path=/; SameSite=Lax' + (location.protocol==='https:'?'; Secure':''); try { localStorage.removeItem(this.data.name); } catch {} }
-					return;
-				}
-				setTimeout(() => { // Yield to next macrotask, adjusts execution order not waiting for page load
-					try {
-						for (let i = 0; i < localStorage.length; i++) {
-							const k = localStorage.key(i);
-							if (k && k.startsWith('t')) return; // Other tab exists
-						}
-					} catch {}
-					this.batch(true); // Last tab confirmed
-				}, 1);
-			};
-			window.addEventListener('pagehide', () => end(), { capture: true }); // All pagehide events trigger termination check
+			setTimeout(() => { // Yield to next macrotask, adjusts execution order not waiting for page load
+				try {
+					for (let i = 0; i < localStorage.length; i++) {
+						const k = localStorage.key(i);
+						if (k && k.startsWith('t')) return; // Other tab exists
+					}
+				} catch {}
+				this.batch(true); // Last tab confirmed
+			}, 1);
+		};
+		window.addEventListener('pagehide', () => end(), { capture: true }); // All pagehide events trigger termination check
 	}
 }
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
-
-
-
-
