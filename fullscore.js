@@ -449,22 +449,28 @@ class Rhythm {
 				if (RHYTHM.HIT !== '/') { document.cookie = this.data.name + '=; Max-Age=0; Path=/; SameSite=Lax' + (location.protocol==='https:'?'; Secure':''); try { localStorage.removeItem(this.data.name); } catch {} } // Remove localStorage backup
 				return;
 			}
-			setTimeout(() => { // Yield to next macrotask, adjusts execution order not waiting for page load
-				try {
-					for (let i = 0; i < localStorage.length; i++) {
-						const k = localStorage.key(i);
-						if (k && k.startsWith('t')) return; // Other tab exists
-					}
-				} catch {}
-				this.batch(true); // Last tab confirmed
-			}, 1);
+		    const elect = (retry = 2) => { // Yield to next macrotask, adjusts execution order not waiting for page load
+		        try {
+		            for (let i = 0; i < localStorage.length; i++) {
+		                const k = localStorage.key(i);
+		                if (k && k.startsWith('t')) {
+		                    if (retry > 0) setTimeout(() => elect(retry - 1), 120); // 120ms re-election
+		                    return;
+		                }
+		            }
+		        } catch {}
+		        this.batch(true); // Last tab confirmed
+		    };
+		    setTimeout(elect, 1); // Start election process
 		};
-		window.addEventListener('pagehide', () => end(), { capture: true }); // All pagehide events trigger termination check
+		window.addEventListener('pagehide', end, { capture: true }); // All pagehide events trigger termination check
+		window.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && setTimeout(end, 50), { capture: true }); // Mobile protection
 	}
 }
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
