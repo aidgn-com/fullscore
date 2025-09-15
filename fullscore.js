@@ -467,31 +467,29 @@ class Rhythm {
 			if (this.ended) return; // Prevent multiple executions
 			this.ended = true; // Set termination flag
 			try { localStorage.removeItem('t' + this.tabId); } catch {} // Remove tab marker
-			if (RHYTHM.DEL && this.data && this.data.clicks < RHYTHM.DEL) {
-				document.cookie = this.data.name + '=; Max-Age=0; Path=' + RHYTHM.HIT + '; SameSite=Lax' + (location.protocol==='https:'?'; Secure':'');
-				if (RHYTHM.HIT !== '/') { document.cookie = this.data.name + '=; Max-Age=0; Path=/; SameSite=Lax' + (location.protocol==='https:'?'; Secure':''); try { localStorage.removeItem(this.data.name); } catch {} } // Remove localStorage backup
-				return;
+			if (RHYTHM.DEL !== 0) {
+				for (let i = 1; i <= RHYTHM.MAX; i++) {
+					const name = 'rhythm_' + i, ses = this.get(name);
+					if (ses && +(ses.split('_')[7] || 0) < RHYTHM.DEL) {
+						document.cookie = name + '=; Max-Age=0; Path=' + RHYTHM.HIT + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+						if (RHYTHM.HIT !== '/') { document.cookie = name + '=; Max-Age=0; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); try { localStorage.removeItem(name); } catch {} }
+					}
+				}
 			}
-			if (this.fallback) { // Fallback mode immediate batch execution
-				this.batch(true);
+			if (this.fallback) {
+				this.batch(true); // Fallback mode immediate batch execution
 			} else {
-				setTimeout(() => { // Yield to next macrotask, adjusts execution order not waiting for page load
-					try {
-						for (let i = 0; i < localStorage.length; i++) {
-							const k = localStorage.key(i);
-							if (k && k.startsWith('t')) return; // Other tab exists
-						}
-					} catch {}
-					this.batch(true); // Last tab confirmed
-				}, 1);
+				setTimeout(() => { try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith('t')) return; } } catch {} this.batch(true); }, 1); // Wait for other tabs
 			}
 		};
-		window.addEventListener('pagehide', () => end(), { capture: true }); // All pagehide events trigger termination check
+		this.fallback && document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && end(), { capture: true }); // Fallback mode enhanced termination detection
+		window.addEventListener('pagehide', end, { capture: true }); // All pagehide events trigger termination check
 	}
 }
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
