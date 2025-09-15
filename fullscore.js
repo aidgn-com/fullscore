@@ -194,8 +194,11 @@ class Rhythm {
 		}
 		if (force) {
 			try { 
-				localStorage.removeItem('rhythm_lock'); // Remove abnormal termination cleanup lock
-				localStorage.setItem('rhythm_reset', Date.now()); // Remove old reset signal and broadcast new one to other tabs
+				for (let i = localStorage.length - 1; i >= 0; i--) { // Clean all rhythm-related localStorage items
+					const k = localStorage.key(i);
+					if (k?.startsWith('rhythm_') || k?.startsWith('t')) localStorage.removeItem(k);
+				}
+				localStorage.setItem('rhythm_reset', Date.now()); // Broadcast reset signal to other tabs
 			} catch {}
 			this.data = null; // Standby mode
 			sessionStorage.removeItem('session'); // Remove sessionStorage for force reset
@@ -209,13 +212,15 @@ class Rhythm {
 			const ses = this.get(name);
 			if (ses && ses[0] === '0') {
 				const parts = ses.split('_'); // Keep session ping=0 if detected as abnormal termination pattern within RHYTHM.ACT time
-				if (!force) {
+				if (!force && !this.fallback) {
 					if (Math.floor(Date.now() / 1000) - (+parts[5] + +parts[6]) <= RHYTHM.ACT) { // Session within ACT recovery window
-						if (!localStorage.getItem('rhythm_lock')) { // Multiple sessions cleanup with once-only execution lock
-							let cnt = 0;
-							for (let x = 1; x <= RHYTHM.MAX && cnt <= 1; x++) cnt += this.get('rhythm_' + x) ? 1 : 0;
-							if (cnt > 1) try { for (let j = localStorage.length - 1; j >= 0; j--) { const k = localStorage.key(j); if (k?.startsWith('t') && k !== 't' + this.tabId) localStorage.removeItem(k); } localStorage.setItem('rhythm_lock', Date.now()); } catch {}
-						}
+						try {
+							if (!localStorage.getItem('rhythm_lock')) { // Multiple sessions cleanup with once-only execution lock
+								let count = 0;
+								for (let x = 1; x <= RHYTHM.MAX && count <= 1; x++) count += this.get('rhythm_' + x) ? 1 : 0;
+								if (count > 1) { for (let j = localStorage.length - 1; j >= 0; j--) { const k = localStorage.key(j); if (k?.startsWith('t') && k !== 't' + this.tabId) localStorage.removeItem(k); } localStorage.setItem('rhythm_lock', Date.now()); }
+							}
+						} catch {}
 						return; // Preserve sessions that may still reconnect within ACT window
 					}
 				}
@@ -389,6 +394,11 @@ class Rhythm {
 		});
 	}
 	constructor() { // Rhythm engine start
+		this.hasBeat = typeof Beat !== 'undefined';
+		this.hasTempo = typeof tempo !== 'undefined';
+		this.ended = false;
+		this.fallback = false; // Root cookie mode when localStorage fails
+		try { localStorage.setItem('rhythm_test','1'); localStorage.removeItem('rhythm_test'); } catch { this.fallback = true; }
 		for (let i = 1; i <= RHYTHM.MAX; i++) { // Bot blocking check set by Edge and run by both sides
 			const ses = this.get('rhythm_' + i);
 			if (ses && ses.split('_')[1] === '1') {
@@ -396,10 +406,6 @@ class Rhythm {
 				return;
 			}
 		}
-		this.hasBeat = typeof Beat !== 'undefined';
-		this.hasTempo = typeof tempo !== 'undefined';
-		this.ended = false;
-		this.fallback = false; // Root cookie mode when localStorage fails
 		window.addEventListener('storage', (e) => {
 			if (e.key === 'rhythm_reset') { // Force reset signal from another tab
 				this.data = null;
@@ -449,33 +455,23 @@ class Rhythm {
 				if (RHYTHM.HIT !== '/') { document.cookie = this.data.name + '=; Max-Age=0; Path=/; SameSite=Lax' + (location.protocol==='https:'?'; Secure':''); try { localStorage.removeItem(this.data.name); } catch {} } // Remove localStorage backup
 				return;
 			}
-		    const elect = (retry = 2) => { // Yield to next macrotask, adjusts execution order not waiting for page load
-		        try {
-		            for (let i = 0; i < localStorage.length; i++) {
-		                const k = localStorage.key(i);
-		                if (k && k.startsWith('t')) {
-		                    if (retry > 0) setTimeout(() => elect(retry - 1), 120); // 120ms re-election
-		                    return;
-		                }
-		            }
-		        } catch {}
-		        this.batch(true); // Last tab confirmed
-		    };
-		    setTimeout(elect, 1); // Start election process
+			if (this.fallback) { // Fallback mode immediate batch execution
+				this.batch(true);
+			} else {
+				setTimeout(() => { // Yield to next macrotask, adjusts execution order not waiting for page load
+					try {
+						for (let i = 0; i < localStorage.length; i++) {
+							const k = localStorage.key(i);
+							if (k && k.startsWith('t')) return; // Other tab exists
+						}
+					} catch {}
+					this.batch(true); // Last tab confirmed
+				}, 1);
+			}
 		};
-		window.addEventListener('pagehide', end, { capture: true }); // All pagehide events trigger termination check
+		window.addEventListener('pagehide', () => end(), { capture: true }); // All pagehide events trigger termination check
 	}
 }
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
-
-
-
-
-
-
-
-
-
-
