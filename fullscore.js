@@ -195,7 +195,7 @@ class Rhythm {
 		if (force) {
 			try { localStorage.setItem('rhythm_reset', Date.now()); } catch {} // Broadcast to other tabs
 			this.data = null; // Standby mode
-			sessionStorage.removeItem('session');
+			sessionStorage.removeItem('session'); // Remove sessionStorage for invalid session
 		}
 	}
 	batch(force = false) { // Send expired ping=0 sessions as ping=1 beyond ACT time
@@ -289,7 +289,7 @@ class Rhythm {
 				const ses = this.get(stored);
 				if (ses && ses[0] === '0') { // Start script restoration if ping=0 session
 					const parts = ses.split('_');
-					const flow = parts.slice(9).join('_'); // Safe BEAT restoration
+					const flow = parts.slice(9).join('_'); // Extract BEAT flow from session
 					this.data = { // Convert string to object
 						name: stored,
 						time: +parts[5],
@@ -309,7 +309,7 @@ class Rhythm {
 					this.save(); // Save updated session
 					return;
 				}
-				sessionStorage.removeItem('session'); // Clean invalid session
+				sessionStorage.removeItem('session'); // Remove sessionStorage for invalid session
 			}
 		}
 		let name = null; // Available session slot finder
@@ -323,7 +323,7 @@ class Rhythm {
 			this.batch(true); // batch automatically calls clean()
 			name = 'rhythm_1';
 		}
-		if (storage) { try { sessionStorage.setItem('session', name); } catch {} } // Save session to storage
+		if (storage) { try { sessionStorage.setItem('session', name); } catch {} } // Save to sessionStorage
 		const ua = navigator.userAgent; // User agent for device detection
 		const ref = document.referrer; // Referrer URL for traffic source analysis
 		let index = !ref ? 0 : ref.indexOf(location.hostname) > -1 ? 1 : 2; // Calculate base referrer type
@@ -348,7 +348,7 @@ class Rhythm {
 		};
 		if (this.hasBeat) {
 			this.beat = new Beat(); // Create new BEAT instance
-			this.beat.page(location.pathname); // Add current page to BEAT
+			this.beat.page(location.pathname);
 		}
 		this.save(); // Save new session
 	}
@@ -399,7 +399,7 @@ class Rhythm {
 		window.addEventListener('storage', (e) => {
 			if (e.key === 'rhythm_reset') { // Force reset signal from another tab
 				this.data = null;
-				sessionStorage.removeItem('session');
+				sessionStorage.removeItem('session'); // Remove sessionStorage for invalid session
 				window.addEventListener('focus', () => this.session(), { once: true });
 			} else if (e.key && e.key.startsWith('rhythm_sync_')) { // Reload BEAT flow written by another tab
 				const target = e.key.slice('rhythm_sync_'.length);
@@ -461,4 +461,5 @@ class Rhythm {
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
