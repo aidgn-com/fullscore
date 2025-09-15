@@ -464,12 +464,13 @@ class Rhythm {
 		    setTimeout(elect, 1); // Start election process
 		};
 		window.addEventListener('pagehide', end, { capture: true }); // All pagehide events trigger termination check
-		window.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && setTimeout(end, 50), { capture: true }); // Mobile protection
+		window.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && !document.hasFocus()) end(); }, { capture: true }); // Mobile protection
 	}
 }
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
