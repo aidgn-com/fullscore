@@ -224,9 +224,9 @@ class Rhythm {
 				if (RHYTHM.HIT !== '/') {
 					try {
 						localStorage.setItem(name, copy); // Try localStorage update
-						if (this.rootFallback) document.cookie = name + '=' + copy + '; Path=/' + this.cookieAttrs; // Sync root if needed
+						if (this.fallback) document.cookie = name + '=' + copy + '; Path=/' + this.cookieAttrs; // Sync root if needed
 					} catch {
-						this.rootFallback = true; // Activate fallback
+						this.fallback = true; // Activate fallback
 						document.cookie = name + '=' + copy + '; Path=/' + this.cookieAttrs; // Root fallback
 					}
 				}
@@ -273,9 +273,9 @@ class Rhythm {
 		if (RHYTHM.HIT !== '/') { // Path isolation backup
 			try {
 				localStorage.setItem(this.data.name, save);
-				if (this.rootFallback) document.cookie = this.data.name + '=' + save + '; Path=/' + this.cookieAttrs;
+				if (this.fallback) document.cookie = this.data.name + '=' + save + '; Path=/' + this.cookieAttrs;
 			} catch {
-				this.rootFallback = true; // Activate fallback mode
+				this.fallback = true; // Activate fallback mode
 				document.cookie = this.data.name + '=' + save + '; Path=/' + this.cookieAttrs;
 			}
 		}
@@ -289,7 +289,7 @@ class Rhythm {
 				const ses = this.get(stored);
 				if (ses && ses[0] === '0') { // Start script restoration if ping=0 session
 					const parts = ses.split('_');
-					const beatStr = parts.slice(9).join('_'); // Safe BEAT restoration
+					const flow = parts.slice(9).join('_'); // Safe BEAT restoration
 					this.data = { // Convert string to object
 						name: stored,
 						time: +parts[5],
@@ -300,8 +300,8 @@ class Rhythm {
 					};
 					if (this.hasBeat) {
 						this.beat = new Beat();
-						if (beatStr) {
-							this.beat.score = [beatStr];
+						if (flow) {
+							this.beat.score = [flow];
 							this.beat.tick = Date.now(); // Initialize timing
 						}
 						this.beat.page(location.pathname); // Add current page to BEAT
@@ -388,7 +388,7 @@ class Rhythm {
 		this.hasBeat = typeof Beat !== 'undefined';
 		this.hasTempo = typeof tempo !== 'undefined';
 		this.ended = false;
-		this.rootFallback = false; // localStorage failure flag // once true, maintains root cookie sync for session lifetime
+		this.fallback = false; // localStorage failure flag // once true, maintains root cookie sync for session lifetime
 		window.addEventListener('storage', (e) => {
 			if (e.key === 'rhythm_reset') {
 				this.data = null;
@@ -400,10 +400,10 @@ class Rhythm {
 				if (mine !== target) return; // Not for this tab
 				const ses = this.get(mine);
 				if (!ses || ses[0] !== '0') return; // Invalid session
-				const beatStr = ses.split('_').slice(9).join('_');
+				const flow = ses.split('_').slice(9).join('_');
 				if (this.hasBeat) {
 					if (!this.beat) this.beat = new Beat();
-					this.beat.score = beatStr ? [beatStr] : [];
+					this.beat.score = flow ? [flow] : [];
 					this.beat.tick = Date.now(); // Refresh memory from cookie
 				}
 			}
@@ -463,6 +463,7 @@ class Rhythm {
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
