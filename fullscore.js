@@ -375,8 +375,8 @@ class Rhythm {
 
 		/*
 		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 2: Balance type // cookie refresh is stable but may consume network bandwidth
-			const ctrl = new AbortController(); // RTT automation example: wired 5ms→10ms, LTE 15ms→30ms, 3G 300ms→100ms(upper limit)
-			const timeout = navigator.connection?.rtt ? Math.min(navigator.connection.rtt * 2, 100) : RHYTHM.THR; // Use default if RTT check fails
+			const ctrl = new AbortController(); // RTT automation example: wired 5ms→10ms, LTE 15ms→30ms, 3G 300ms→200ms(upper limit)
+			const timeout = navigator.connection?.rtt ? Math.min(navigator.connection.rtt * 2, 200) : RHYTHM.THR; // Use default if RTT check fails
 			fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?liveStreaming', 
 				{method: 'HEAD', signal: ctrl.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
 			setTimeout(() => ctrl.abort(), timeout);
@@ -492,4 +492,5 @@ class Rhythm {
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
