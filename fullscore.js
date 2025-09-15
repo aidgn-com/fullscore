@@ -193,7 +193,10 @@ class Rhythm {
 			}
 		}
 		if (force) {
-			try { localStorage.setItem('rhythm_reset', Date.now()); } catch {} // Broadcast to other tabs
+			try { 
+				localStorage.removeItem('rhythm_lock'); // Remove abnormal termination cleanup lock
+				localStorage.setItem('rhythm_reset', Date.now()); // Remove old reset signal and broadcast new one to other tabs
+			} catch {}
 			this.data = null; // Standby mode
 			sessionStorage.removeItem('session'); // Remove sessionStorage for force reset
 		}
@@ -208,8 +211,9 @@ class Rhythm {
 				const parts = ses.split('_'); // Keep session ping=0 if detected as abnormal termination pattern within RHYTHM.ACT time
 				if (!force) {
 					if (Math.floor(Date.now() / 1000) - (+parts[5] + +parts[6]) <= RHYTHM.ACT) { // Session within ACT recovery window
-						if (this.get('rhythm_2') && !localStorage.getItem('rhythm_lock')) { // Execute only for multiple sessions with global lock check
-							try { for (let j = localStorage.length - 1; j >= 0; j--) { const k = localStorage.key(j); if (k?.startsWith('t') && k !== 't' + this.tabId) localStorage.removeItem(k); } localStorage.setItem('rhythm_lock', Date.now()); } catch {} // Clean ghost tab markers and set global lock
+						if (!localStorage.getItem('rhythm_lock')) { // Multiple sessions cleanup with once-only execution lock
+							for (let x = 1, cnt = 0; x <= RHYTHM.MAX && cnt <= 1; x++) cnt += this.get('rhythm_' + x) ? 1 : 0;
+							if (cnt > 1) try { for (let j = localStorage.length - 1; j >= 0; j--) { const k = localStorage.key(j); if (k?.startsWith('t') && k !== 't' + this.tabId) localStorage.removeItem(k); } localStorage.setItem('rhythm_lock', Date.now()); } catch {}
 						}
 						return; // Preserve sessions that may still reconnect within ACT window
 					}
@@ -460,6 +464,7 @@ class Rhythm {
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
