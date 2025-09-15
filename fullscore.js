@@ -487,9 +487,4 @@ class Rhythm {
 	}
 }
 
-if (document.readyState !== 'loading') new Rhythm();
-else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
-
-
-
-
+document.addEventListener('DOMContentLoaded', () => new Rhythm());
