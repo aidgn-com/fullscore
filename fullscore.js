@@ -176,9 +176,9 @@ class Beat { // Behavioral Event Analytics Transform
 
 class Rhythm {
 	get(g) { // Get cookie or localStorage value
-		const c = '; ' + document.cookie; // Prepend '; ' to handle first cookie edge case - ensures consistent split pattern
-		const p = c.split('; ' + g + '=');
-		if (p.length === 2) return p[1].split(';')[0];
+		const cookie = '; ' + document.cookie; // Prepend '; ' to handle first cookie edge case - ensures consistent split pattern
+		const parts = cookie.split('; ' + g + '=');
+		if (parts.length === 2) return parts[1].split(';')[0];
 		if (RHYTHM.HIT !== '/') try { return localStorage.getItem(g); } catch { return null; } // Path-based fallback
 		return null;
 	}
@@ -207,13 +207,16 @@ class Rhythm {
 			if (ses && ses[0] === '0') {
 				const parts = ses.split('_'); // Keep session ping=0 if detected as abnormal termination pattern within RHYTHM.ACT time
 				if (!force) {
-					if (Math.floor(Date.now() / 1000) - (+parts[5] + +parts[6]) <= RHYTHM.ACT) return; // ACT window check // preserve sessions that may still reconnect
+					if (Math.floor(Date.now() / 1000) - (+parts[5] + +parts[6]) <= RHYTHM.ACT) {
+						if (!this.only) { // ACT cleaner guard per instance one time
+							try { for (let j = localStorage.length - 1; j >= 0; j--) { const k = localStorage.key(j); if (k?.startsWith('t')) try { localStorage.removeItem(k); } catch {} } } catch {} // Prevent localStorage access failures
+							this.only = 1; // Mark as executed
+						}
+						return; // Preserve sessions that may still reconnect within ACT window
+					}
 				}
-				if (!once) { // Remove localStorage for all sessions if detected as abnormal termination pattern
-					try { for (let j = localStorage.length - 1; j >= 0; j--) { 
-						const k = localStorage.key(j); 
-						if (k?.startsWith('t')) try { localStorage.removeItem(k); } catch {} // Clean tab marker
-					}} catch {} // Prevent localStorage access failures
+				if (!once) { // Batch cleaner flag per function call
+					try { for (let j = localStorage.length - 1; j >= 0; j--) { const k = localStorage.key(j); if (k?.startsWith('t')) try { localStorage.removeItem(k); } catch {} } } catch {} // Prevent localStorage access failures
 					once = true;
 				}
 				const copy = '1' + ses.substring(1);
@@ -241,15 +244,15 @@ class Rhythm {
 	}
 	save() { // Save data with automatic fallback
 		if (RHYTHM.ADD?.TAB && this.hasBeat && this.beat && (this.data.clicks + this.data.scrolls > 0)) { // Tab switch tracking
-			let prevName = '', prevActivity = -1; // Find most recently active tab
+			let prevName = '', prevAct = -1; // Find most recently active tab
 			for (let i = 1; i <= RHYTHM.MAX; i++) {
 				const name = 'rhythm_' + i;
 				if (name === this.data.name) continue; // Skip current tab
 				const ses = this.get(name);
 				if (ses?.[0] === '0') {
 					const parts = ses.split('_');
-					const activity = +parts[5] + +parts[6]; // Start time + duration
-					if (activity > prevActivity) prevName = name, prevActivity = activity;
+					const act = +parts[5] + +parts[6]; // Start time + duration
+					if (act > prevAct) prevName = name, prevAct = act;
 				}
 			}
 			if (prevName) {
@@ -322,14 +325,14 @@ class Rhythm {
 		}
 		if (storage) { try { sessionStorage.setItem('session', name); } catch {} } // Save session to storage
 		const ua = navigator.userAgent; // User agent for device detection
-		const r = document.referrer; // Referrer URL for traffic source analysis
-		let ref = !r ? 0 : r.indexOf(location.hostname) > -1 ? 1 : 2; // Calculate base referrer type
-		if (r && ref === 2) {
-			const domain = r.match(/\/\/([^\/]+)/)?.[1];
+		const ref = document.referrer; // Referrer URL for traffic source analysis
+		let index = !ref ? 0 : ref.indexOf(location.hostname) > -1 ? 1 : 2; // Calculate base referrer type
+		if (ref && index === 2) {
+			const domain = ref.match(/\/\/([^\/]+)/)?.[1];
 			if (domain) {
 				for (const key in RHYTHM.REF) {
 					if (domain === key || domain.endsWith('.' + key)) {
-						ref = RHYTHM.REF[key];
+						index = RHYTHM.REF[key];
 						break;
 					}
 				}
@@ -339,7 +342,7 @@ class Rhythm {
 			name: name,
 			time: Math.floor(Date.now() / 1000),
 			device: /mobi/i.test(ua) ? 1 : /tablet|ipad/i.test(ua) ? 2 : 0, // Device type: 0=desktop, 1=mobile, 2=tablet
-			referrer: ref,
+			referrer: index,
 			clicks: 0,
 			scrolls: 0
 		};
@@ -460,5 +463,6 @@ class Rhythm {
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
