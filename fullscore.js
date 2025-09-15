@@ -212,7 +212,8 @@ class Rhythm {
 				if (!force) {
 					if (Math.floor(Date.now() / 1000) - (+parts[5] + +parts[6]) <= RHYTHM.ACT) { // Session within ACT recovery window
 						if (!localStorage.getItem('rhythm_lock')) { // Multiple sessions cleanup with once-only execution lock
-							for (let x = 1, cnt = 0; x <= RHYTHM.MAX && cnt <= 1; x++) cnt += this.get('rhythm_' + x) ? 1 : 0;
+							let cnt = 0;
+							for (let x = 1; x <= RHYTHM.MAX && cnt <= 1; x++) cnt += this.get('rhythm_' + x) ? 1 : 0;
 							if (cnt > 1) try { for (let j = localStorage.length - 1; j >= 0; j--) { const k = localStorage.key(j); if (k?.startsWith('t') && k !== 't' + this.tabId) localStorage.removeItem(k); } localStorage.setItem('rhythm_lock', Date.now()); } catch {}
 						}
 						return; // Preserve sessions that may still reconnect within ACT window
@@ -464,6 +465,7 @@ class Rhythm {
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
