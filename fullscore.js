@@ -80,7 +80,7 @@ function tempo(rhythm) { // Touch Event Maestro Performance Optimizer
 		const pending = new Set(); // Track pending native click blockers
 		let moved = false;
 		document.addEventListener("touchstart", () => {
-		    moved = false; for (const b of pending) document.removeEventListener("click", b, true); pending.clear(); // Reset moved
+			moved = false; for (const b of pending) document.removeEventListener("click", b, true); pending.clear(); // Reset moved
 		}, {capture: true, passive: true});
 		document.addEventListener("touchmove", () => moved = true, {capture: true, passive: true}); // Mark as moved
 		document.addEventListener("touchcancel", () => moved = true, {capture: true, passive: true}); // Mark as cancelled
@@ -385,59 +385,57 @@ class Rhythm {
 		});
 	}
 	constructor() { // Rhythm engine start
+		for (let i = 1; i <= RHYTHM.MAX; i++) { // Bot blocking check set by Edge and run by both sides
+			const ses = this.get('rhythm_' + i);
+			if (ses && ses.split('_')[1] === '1') {
+				if (location.pathname !== RHYTHM.DEF) window.location.href = RHYTHM.DEF; // Send to prison
+				return;
+			}
+		}
 		this.hasBeat = typeof Beat !== 'undefined';
 		this.hasTempo = typeof tempo !== 'undefined';
 		this.ended = false;
-		this.fallback = false; // localStorage failure flag // once true, maintains root cookie sync for session lifetime
+		this.fallback = false; // Root cookie mode when localStorage fails
 		window.addEventListener('storage', (e) => {
-			if (e.key === 'rhythm_reset') {
+			if (e.key === 'rhythm_reset') { // Force reset signal from another tab
 				this.data = null;
 				sessionStorage.removeItem('session');
 				window.addEventListener('focus', () => this.session(), { once: true });
-			} else if (e.key && e.key.startsWith('rhythm_sync_')) { // Targeted tab sync
+			} else if (e.key && e.key.startsWith('rhythm_sync_')) { // Beat data updated by another tab
 				const target = e.key.slice('rhythm_sync_'.length);
 				const mine = sessionStorage.getItem('session');
 				if (mine !== target) return; // Not for this tab
 				const ses = this.get(mine);
 				if (!ses || ses[0] !== '0') return; // Invalid session
-				const flow = ses.split('_').slice(9).join('_');
+				const flow = ses.split('_').slice(9).join('_'); 
 				if (this.hasBeat) {
 					if (!this.beat) this.beat = new Beat();
 					this.beat.score = flow ? [flow] : [];
-					this.beat.tick = Date.now(); // Refresh memory from cookie
+					this.beat.tick = Date.now(); // Reset beat timing
 				}
 			}
 		});
-		this.cookieAttrs = '; Max-Age=' + RHYTHM.AGE + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // Cookie attributes reused for all writes
-		for (let i = 1; i <= RHYTHM.MAX; i++) { // Check security=1 // determined by Edge and executed blocking together
-			const ses = this.get('rhythm_' + i);
-			if (ses && ses.split('_')[1] === '1') {
-				if (location.pathname !== RHYTHM.DEF) {
-					window.location.href = RHYTHM.DEF; // Send to prison
-				}
-				return;
-			}
-		}
+		this.cookieAttrs = '; Max-Age=' + RHYTHM.AGE + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // Reusable cookie settings
 		this.tabId = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); // Unique tab identifier
-		try { localStorage.setItem('t' + this.tabId, '1'); } catch {} // Tab marker for multi-tab detection
-		this.clean(); // Clean normal termination sessions
-		this.batch(); // Clean abnormal termination sessions
-		this.session(); // Start session // create new or relocate from storage
+		try { localStorage.setItem('t' + this.tabId, '1'); } catch {} // Tab marker for cleanup
+		this.clean(); // Remove ping=1 sessions
+		this.batch(); // Send ping=0 sessions
+		this.session(); // Create or restore session
 		setInterval(() => {
-		    if (this.data && Math.floor(Date.now() / 1000) - this.data.time > RHYTHM.ACT / 2) this.save(); // Session heartbeat
+			if (this.data && Math.floor(Date.now() / 1000) - this.data.time > RHYTHM.ACT / 2) this.save(); // Session heartbeat
 		}, RHYTHM.ACT / 2 * 1000);
 		this.hasTempo ? tempo(this) : document.addEventListener('click', e => this.click(e.target, e), { capture: true }); // Tempo integration
 		this.scrolling = false; // Debounce to count once per scroll gesture
-		const scroll = () => {
+		const scroll = () => { // Scroll addon
 			this.data || this.session();
 			if (!this.scrolling) this.scrolling = true, this.data.scrolls++, this.save(); // Count and save immediately
 			clearTimeout(this.s), this.s = setTimeout(() => {
 				this.hasBeat && this.beat && RHYTHM.ADD?.SCR && (this.beat.time(), this.beat.score.push('^' + Math.round(window.scrollY))); // Record final scroll position
-				this.scrolling = false; // Reset after 150ms
-			}, 150);
+				this.scrolling = false;
+			}, 150); // Reset after 150ms
 		};
 		document.addEventListener('scroll', scroll, { capture: true, passive: true });
-		this.hasBeat && RHYTHM.ADD?.SPA && this.spa(); // Single Page Application addon
+		this.hasBeat && RHYTHM.ADD?.SPA && this.spa(); // SPA addon
 		const end = () => { // Rhythm engine stop
 			if (this.ended) return; // Prevent multiple executions
 			this.ended = true; // Set termination flag
@@ -463,8 +461,3 @@ class Rhythm {
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
-
-
-
-
-
