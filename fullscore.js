@@ -464,7 +464,6 @@ class Rhythm {
 		    setTimeout(elect, 1); // Start election process
 		};
 		window.addEventListener('pagehide', end, { capture: true }); // All pagehide events trigger termination check
-		window.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && !document.hasFocus()) end(); }, { capture: true }); // Mobile protection
 	}
 }
 
