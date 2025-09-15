@@ -208,7 +208,7 @@ class Rhythm {
 				const parts = ses.split('_'); // Keep session ping=0 if detected as abnormal termination pattern within RHYTHM.ACT time
 				if (!force) {
 					if (Math.floor(Date.now() / 1000) - (+parts[5] + +parts[6]) <= RHYTHM.ACT) {
-							if (!this.only) { // ACT cleaner guard per instance one time
+							if (!this.only && i > 1) { // ACT cleaner guard per instance one time
 							    try { for (let j = localStorage.length - 1; j >= 0; j--) { const k = localStorage.key(j); if (k?.startsWith('t') && k !== 't' + this.tabId) try { localStorage.removeItem(k); } catch {} } } catch {} // Clean old tab markers, preserve current tab
 							    this.only = 1;
 							}
@@ -461,6 +461,7 @@ class Rhythm {
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
