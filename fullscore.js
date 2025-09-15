@@ -159,7 +159,7 @@ class Beat { // Behavioral Event Analytics Transform
 		}
 		this.score.push(n);
 	}
-	element(e) { // Record element clicks - list DOM depth as 3D linear string
+	element(e) { // Record element clicks // list DOM depth as 3D linear string
 		if (!e || e.nodeType === 3 && !(e = e.parentElement)) return;
 		this.time();
 		const key = e.id ? '#' + e.id : typeof e.className === 'string' && e.className ? '.' + e.className.trim().split(/\s+/)[0] : null;
@@ -195,7 +195,7 @@ class Rhythm {
 		if (force) {
 			try { localStorage.setItem('rhythm_reset', Date.now()); } catch {} // Broadcast to other tabs
 			this.data = null; // Standby mode
-			sessionStorage.removeItem('session'); // Remove sessionStorage for invalid session
+			sessionStorage.removeItem('session'); // Remove sessionStorage for force reset
 		}
 	}
 	batch(force = false) { // Send expired ping=0 sessions as ping=1 beyond ACT time
@@ -208,10 +208,10 @@ class Rhythm {
 				const parts = ses.split('_'); // Keep session ping=0 if detected as abnormal termination pattern within RHYTHM.ACT time
 				if (!force) {
 					if (Math.floor(Date.now() / 1000) - (+parts[5] + +parts[6]) <= RHYTHM.ACT) {
-						if (!this.only) { // ACT cleaner guard per instance one time
-							try { for (let j = localStorage.length - 1; j >= 0; j--) { const k = localStorage.key(j); if (k?.startsWith('t')) try { localStorage.removeItem(k); } catch {} } } catch {} // Prevent localStorage access failures
-							this.only = 1; // Mark as executed
-						}
+							if (!this.only) { // ACT cleaner guard per instance one time
+							    try { for (let j = localStorage.length - 1; j >= 0; j--) { const k = localStorage.key(j); if (k?.startsWith('t') && k !== 't' + this.tabId) try { localStorage.removeItem(k); } catch {} } } catch {} // Clean old tab markers, preserve current tab
+							    this.only = 1;
+							}
 						return; // Preserve sessions that may still reconnect within ACT window
 					}
 				}
@@ -399,7 +399,7 @@ class Rhythm {
 		window.addEventListener('storage', (e) => {
 			if (e.key === 'rhythm_reset') { // Force reset signal from another tab
 				this.data = null;
-				sessionStorage.removeItem('session'); // Remove sessionStorage for invalid session
+				sessionStorage.removeItem('session'); // Remove sessionStorage for tab reset
 				window.addEventListener('focus', () => this.session(), { once: true });
 			} else if (e.key && e.key.startsWith('rhythm_sync_')) { // Reload BEAT flow written by another tab
 				const target = e.key.slice('rhythm_sync_'.length);
@@ -435,7 +435,7 @@ class Rhythm {
 			}, 150); // Reset after 150ms
 		};
 		document.addEventListener('scroll', scroll, { capture: true, passive: true });
-		this.hasBeat && RHYTHM.ADD?.SPA && this.spa(); // SPA addon
+		this.hasBeat && RHYTHM.ADD?.SPA && this.spa(); // Single Page Application addon (default: false)
 		const end = () => { // Rhythm engine stop
 			if (this.ended) return; // Prevent multiple executions
 			this.ended = true; // Set termination flag
@@ -461,5 +461,6 @@ class Rhythm {
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
