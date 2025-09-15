@@ -179,7 +179,7 @@ class Rhythm {
 		const cookie = '; ' + document.cookie; // Prepend '; ' to handle first cookie edge case - ensures consistent split pattern
 		const parts = cookie.split('; ' + g + '=');
 		if (parts.length === 2) return parts[1].split(';')[0];
-		if (RHYTHM.HIT !== '/') try { return localStorage.getItem(g); } catch { return null; } // Path-based fallback
+		if (RHYTHM.HIT !== '/') try { return localStorage.getItem(g); } catch { return null; } // localStorage fallback for path isolation
 		return null;
 	}
 	clean(force = false) { // Delete ping=1 sessions + force reset
@@ -189,7 +189,7 @@ class Rhythm {
 			if (ses && ses[0] === '1') {
 				document.cookie = name + '=; Max-Age=0; Path=' + RHYTHM.HIT + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
 				if (RHYTHM.HIT !== '/') document.cookie = name + '=; Max-Age=0; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
-				if (RHYTHM.HIT !== '/') try { localStorage.removeItem(name); } catch {} // Remove session backup
+				if (RHYTHM.HIT !== '/') try { localStorage.removeItem(name); } catch {} // Remove localStorage backup
 			}
 		}
 		if (force) {
@@ -198,7 +198,7 @@ class Rhythm {
 			sessionStorage.removeItem('session');
 		}
 	}
-	batch(force = false) { // Convert all sessions ping 0→1 and permit Edge transmission
+	batch(force = false) { // Send expired ping=0 sessions as ping=1 beyond ACT time
 		const batch = [];
 		let once = false;
 		for (let i = 1; i <= RHYTHM.MAX; i++) {
@@ -223,7 +223,7 @@ class Rhythm {
 				document.cookie = name + '=' + copy + '; Path=' + RHYTHM.HIT + this.cookieAttrs; // Normal termination changes ping=1
 				if (RHYTHM.HIT !== '/') {
 					try {
-						localStorage.setItem(name, copy); // Try localStorage update
+						localStorage.setItem(name, copy); // Update localStorage backup
 						if (this.fallback) document.cookie = name + '=' + copy + '; Path=/' + this.cookieAttrs; // Sync root if needed
 					} catch {
 						this.fallback = true; // Activate fallback
@@ -243,7 +243,7 @@ class Rhythm {
 		this.clean(force); // Completely delete transmitted ping=1 sessions
 	}
 	save() { // Save data with automatic fallback
-		if (RHYTHM.ADD?.TAB && this.hasBeat && this.beat && (this.data.clicks + this.data.scrolls > 0)) { // Tab switch tracking
+		if (RHYTHM.ADD?.TAB && this.hasBeat && this.beat && (this.data.clicks + this.data.scrolls > 0)) { // BEAT Tab switch tracking addon (default: true)
 			let prevName = '', prevAct = -1; // Find most recently active tab
 			for (let i = 1; i <= RHYTHM.MAX; i++) {
 				const name = 'rhythm_' + i;
@@ -262,7 +262,7 @@ class Rhythm {
 					const newSave = prevSes + marker; // Append to BEAT field
 					if (newSave.length <= RHYTHM.CAP) {
 						document.cookie = prevName + '=' + newSave + '; Path=' + RHYTHM.HIT + this.cookieAttrs;
-						if (RHYTHM.HIT !== '/') try { localStorage.setItem(prevName, newSave); } catch {}
+						if (RHYTHM.HIT !== '/') try { localStorage.setItem(prevName, newSave); } catch {} // Update localStorage backup
 						try { localStorage.setItem('rhythm_sync_' + prevName, Date.now()); } catch {} // Tab sync signal
 					}
 				}
@@ -272,7 +272,7 @@ class Rhythm {
 		document.cookie = this.data.name + '=' + save + '; Path=' + RHYTHM.HIT + this.cookieAttrs;
 		if (RHYTHM.HIT !== '/') { // Path isolation backup
 			try {
-				localStorage.setItem(this.data.name, save);
+				localStorage.setItem(this.data.name, save); // Save to localStorage backup
 				if (this.fallback) document.cookie = this.data.name + '=' + save + '; Path=/' + this.cookieAttrs;
 			} catch {
 				this.fallback = true; // Activate fallback mode
@@ -352,7 +352,7 @@ class Rhythm {
 		}
 		this.save(); // Save new session
 	}
-	click(el, e) { // Click action and cookie refresh // customizable considering trade-offs
+	click(el, e) { // Click action and cookie refresh // See README for customization options
 		this.data || this.session();
 		this.data.clicks++;
 		if (this.hasBeat && this.beat) this.beat.element(el);
@@ -365,7 +365,7 @@ class Rhythm {
 		}
 		return el; // Block click if null returned
 	}
-	spa() { // SPA only
+	spa() { // Single Page Application addon (default: false)
 		const self = this;
 		const push = history.pushState;
 		const replace = history.replaceState;
@@ -401,7 +401,7 @@ class Rhythm {
 				this.data = null;
 				sessionStorage.removeItem('session');
 				window.addEventListener('focus', () => this.session(), { once: true });
-			} else if (e.key && e.key.startsWith('rhythm_sync_')) { // Beat data updated by another tab
+			} else if (e.key && e.key.startsWith('rhythm_sync_')) { // Reload BEAT flow written by another tab
 				const target = e.key.slice('rhythm_sync_'.length);
 				const mine = sessionStorage.getItem('session');
 				if (mine !== target) return; // Not for this tab
@@ -419,14 +419,14 @@ class Rhythm {
 		this.tabId = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); // Unique tab identifier
 		try { localStorage.setItem('t' + this.tabId, '1'); } catch {} // Tab marker for cleanup
 		this.clean(); // Remove ping=1 sessions
-		this.batch(); // Send ping=0 sessions
+		this.batch(); // Send expired ping=0 sessions as ping=1 beyond ACT time
 		this.session(); // Create or restore session
 		setInterval(() => {
 			if (this.data && Math.floor(Date.now() / 1000) - this.data.time > RHYTHM.ACT / 2) this.save(); // Session heartbeat
 		}, RHYTHM.ACT / 2 * 1000);
 		this.hasTempo ? tempo(this) : document.addEventListener('click', e => this.click(e.target, e), { capture: true }); // Tempo integration
 		this.scrolling = false; // Debounce to count once per scroll gesture
-		const scroll = () => { // Scroll addon
+		const scroll = () => { // BEAT Scroll position tracking addon (default: false)
 			this.data || this.session();
 			if (!this.scrolling) this.scrolling = true, this.data.scrolls++, this.save(); // Count and save immediately
 			clearTimeout(this.s), this.s = setTimeout(() => {
@@ -442,7 +442,7 @@ class Rhythm {
 			try { localStorage.removeItem('t' + this.tabId); } catch {} // Remove tab marker
 			if (RHYTHM.DEL && this.data && this.data.clicks < RHYTHM.DEL) {
 				document.cookie = this.data.name + '=; Max-Age=0; Path=' + RHYTHM.HIT + '; SameSite=Lax' + (location.protocol==='https:'?'; Secure':'');
-				if (RHYTHM.HIT !== '/') { document.cookie = this.data.name + '=; Max-Age=0; Path=/; SameSite=Lax' + (location.protocol==='https:'?'; Secure':''); try { localStorage.removeItem(this.data.name); } catch {} }
+				if (RHYTHM.HIT !== '/') { document.cookie = this.data.name + '=; Max-Age=0; Path=/; SameSite=Lax' + (location.protocol==='https:'?'; Secure':''); try { localStorage.removeItem(this.data.name); } catch {} } // Remove localStorage backup
 				return;
 			}
 			setTimeout(() => { // Yield to next macrotask, adjusts execution order not waiting for page load
@@ -461,3 +461,4 @@ class Rhythm {
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
