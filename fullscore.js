@@ -122,48 +122,48 @@ function tempo(rhythm) { // Touch Event Maestro Performance Optimizer
 class Beat { // Behavioral Event Analytics Transform
 	constructor(config = {}) {
 		this.config = { timeUnit: BEAT.TIC, ...config };
-		this.sequence = [];
-		this.hashTable = {};
-		this.mappings = { pages: { ...BEAT.MAP.P }, elements: { ...BEAT.MAP.E } };
-		this.lastTime = Date.now();
+		this.score = [];
+		this.table = {};
+		this.maps = { pages: { ...BEAT.MAP.P }, elements: { ...BEAT.MAP.E } };
+		this.tick = Date.now();
 	}
 	time() { // Record elapsed time
-		const now = Date.now(), elapsed = Math.floor((now - this.lastTime) / this.config.timeUnit);
+		const now = Date.now(), elapsed = Math.floor((now - this.tick) / this.config.timeUnit);
 		if (elapsed > 0) {
-			this.sequence.push(BEAT.TOK.T + elapsed);
-			this.lastTime = now;
+			this.score.push(BEAT.TOK.T + elapsed);
+			this.tick = now;
 		}
 	}
 	page(p) { // Generate and record page hash
 		this.time();
-		if (this.mappings.pages[p]) return void this.sequence.push(BEAT.TOK.P + this.mappings.pages[p]); // Pre-mapped pages applied immediately
+		if (this.maps.pages[p]) return void this.score.push(BEAT.TOK.P + this.maps.pages[p]); // Pre-mapped pages applied immediately
 		let hash = 5381; // DJB2 hash algorithm
 		for (let i = 0; i < p.length; i++) hash = ((hash << 5) + hash) + p.charCodeAt(i);
 		const chars = '0123456789abcdefghijklmnopqrstuvwxyz', limit = p.length <= 7 ? 3 : p.length <= 14 ? 4 : 5; // Dynamic hash by URL length
 		let result = '', n = Math.abs(hash);
 		for (let j = 0; j < limit; j++) result += chars[n % 36], n = Math.floor(n / 36); // Base36 encoding
 		let token = BEAT.TOK.P + result, dots = ''; // Hash collision handling: add dots(.) in front to ensure uniqueness
-		while (this.hashTable[token] && this.hashTable[token] !== p) dots += BEAT.TOK.L, token = BEAT.TOK.P + dots + result;
-		this.hashTable[token] = p;
-		this.sequence.push(token);
+		while (this.table[token] && this.table[token] !== p) dots += BEAT.TOK.L, token = BEAT.TOK.P + dots + result;
+		this.table[token] = p;
+		this.score.push(token);
 	}
 	note(n) { // Compress repetitive elements
-		const len = this.sequence.length;
-		if (len > 1 && this.sequence[len - 1].startsWith(BEAT.TOK.T)) { // Time-based compression
-			const t = this.sequence[len - 1].substring(1), prev = this.sequence[len - 2];
+		const len = this.score.length;
+		if (len > 1 && this.score[len - 1].startsWith(BEAT.TOK.T)) { // Time-based compression
+			const t = this.score[len - 1].substring(1), prev = this.score[len - 2];
 			if (prev.endsWith(n)) {
-				this.sequence[len - 2] = prev.substring(0, prev.length - n.length) + BEAT.TOK.A + t + n;
-				this.sequence.pop(); // Remove time token
+				this.score[len - 2] = prev.substring(0, prev.length - n.length) + BEAT.TOK.A + t + n;
+				this.score.pop(); // Remove time token
 				return;
 			}
 		}
-		this.sequence.push(n);
+		this.score.push(n);
 	}
 	element(e) { // Record element clicks - list DOM depth as 3D linear string
 		if (!e || e.nodeType === 3 && !(e = e.parentElement)) return;
 		this.time();
 		const key = e.id ? '#' + e.id : typeof e.className === 'string' && e.className ? '.' + e.className.trim().split(/\s+/)[0] : null;
-		if (key && this.mappings.elements[key]) return void this.note(BEAT.TOK.E + this.mappings.elements[key]); // Pre-mapped elements applied immediately
+		if (key && this.maps.elements[key]) return void this.note(BEAT.TOK.E + this.maps.elements[key]); // Pre-mapped elements applied immediately
 		let depth = 0, el = e; // Calculate DOM depth
 		while (el && el !== document.body) depth++, el = el.parentElement;
 		const tag = e.tagName.toLowerCase();
@@ -171,7 +171,7 @@ class Beat { // Behavioral Event Analytics Transform
 		while (prev) prev.tagName.toLowerCase() === tag && index++, prev = prev.previousElementSibling;
 		this.note(BEAT.TOK.E + depth + tag + index);
 	}
-	flow() { return this.sequence.join(''); } // Generate final BEAT string
+	flow() { return this.score.join(''); } // Generate final BEAT string
 }
 
 class Rhythm {
@@ -255,7 +255,7 @@ class Rhythm {
 			if (prevName) {
 				const prevSes = this.get(prevName);
 				const marker = '___' + this.data.name.slice(7);
-				if (!prevSes.endsWith(marker)) { // Prevent duplicate markers
+				if (prevSes && !prevSes.endsWith(marker)) { // Prevent duplicate markers
 					const newSave = prevSes + marker; // Append to BEAT field
 					if (newSave.length <= RHYTHM.CAP) {
 						document.cookie = prevName + '=' + newSave + '; Path=' + RHYTHM.HIT + this.cookieAttrs;
@@ -460,4 +460,5 @@ class Rhythm {
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
