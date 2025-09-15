@@ -301,8 +301,8 @@ class Rhythm {
 					if (this.hasBeat) {
 						this.beat = new Beat();
 						if (beatStr) {
-							this.beat.sequence = [beatStr];
-							this.beat.lastTime = Date.now(); // Initialize timing
+							this.beat.score = [beatStr];
+							this.beat.tick = Date.now(); // Initialize timing
 						}
 						this.beat.page(location.pathname); // Add current page to BEAT
 					}
@@ -358,30 +358,30 @@ class Rhythm {
 		if (this.hasBeat && this.beat) this.beat.element(el);
 		this.save();
 		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 1: Performance type // cookie refresh rarely fails but consumes almost no network bandwidth
-			const c = new AbortController();
+			const ctrl = new AbortController();
 			fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?liveStreaming', 
-				{method: 'HEAD', signal: c.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
-			setTimeout(() => c.abort(), RHYTHM.THR);
+				{method: 'HEAD', signal: ctrl.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
+			setTimeout(() => ctrl.abort(), RHYTHM.THR);
 		}
 		return el; // Block click if null returned
 	}
 	spa() { // SPA only
-		const rhythm = this;
-		const originalPush = history.pushState;
-		const originalReplace = history.replaceState;
+		const self = this;
+		const push = history.pushState;
+		const replace = history.replaceState;
 		history.pushState = function(state, title, url) { // Detect browser page navigation
-			originalPush.call(history, state, title, url);
-			if (rhythm.hasBeat && rhythm.beat) rhythm.beat.page(location.pathname);
-			rhythm.save();
+			push.call(history, state, title, url);
+			if (self.hasBeat && self.beat) self.beat.page(location.pathname);
+			self.save();
 		};
 		history.replaceState = function(state, title, url) { // Detect browser filter/query changes etc.
-			originalReplace.call(history, state, title, url);
-			if (rhythm.hasBeat && rhythm.beat) rhythm.beat.page(location.pathname);
-			rhythm.save();
+			replace.call(history, state, title, url);
+			if (self.hasBeat && self.beat) self.beat.page(location.pathname);
+			self.save();
 		};
 		window.addEventListener('popstate', () => { // Detect browser forward/back buttons
-			if (rhythm.hasBeat && rhythm.beat) rhythm.beat.page(location.pathname);
-			rhythm.save();
+			if (self.hasBeat && self.beat) self.beat.page(location.pathname);
+			self.save();
 		});
 	}
 	constructor() { // Rhythm engine start
@@ -403,8 +403,8 @@ class Rhythm {
 				const beatStr = ses.split('_').slice(9).join('_');
 				if (this.hasBeat) {
 					if (!this.beat) this.beat = new Beat();
-					this.beat.sequence = beatStr ? [beatStr] : [];
-					this.beat.lastTime = Date.now(); // Refresh memory from cookie
+					this.beat.score = beatStr ? [beatStr] : [];
+					this.beat.tick = Date.now(); // Refresh memory from cookie
 				}
 			}
 		});
@@ -432,7 +432,7 @@ class Rhythm {
 			this.data || this.session();
 			if (!this.scrolling) this.scrolling = true, this.data.scrolls++, this.save(); // Count and save immediately
 			clearTimeout(this.s), this.s = setTimeout(() => {
-				this.hasBeat && this.beat && RHYTHM.ADD?.SCR && (this.beat.time(), this.beat.sequence.push('^' + Math.round(window.scrollY))); // Record final scroll position
+				this.hasBeat && this.beat && RHYTHM.ADD?.SCR && (this.beat.time(), this.beat.score.push('^' + Math.round(window.scrollY))); // Record final scroll position
 				this.scrolling = false; // Reset after 150ms
 			}, 150);
 		};
@@ -463,6 +463,7 @@ class Rhythm {
 
 if (document.readyState !== 'loading') new Rhythm();
 else document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
