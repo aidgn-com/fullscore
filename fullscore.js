@@ -377,9 +377,9 @@ class Rhythm {
 		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 2: Balance type // cookie refresh is stable but may consume network bandwidth
 			const controller = new AbortController(); // RTT automation example: wired 5ms→15ms, LTE 15ms→30ms, 3G 300ms→200ms(upper limit)
 			const timeout = navigator.connection?.rtt ? Math.max(15, Math.min(navigator.connection.rtt * 2, 200)) : RHYTHM.THR; // Use default if RTT check fails
-			const pingPath = RHYTHM.HIT === '/' ? '/?LiveStreaming' : RHYTHM.HIT + '/?LiveStreaming';
+			const pingPath = RHYTHM.HIT === '/' ? '/?liveStreaming' : RHYTHM.HIT + '/?liveStreaming';
 			fetch(pingPath, {method: 'HEAD', signal: controller.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
-			setTimeout(() => controller.abort(), timeout);
+			if (this.data.clicks > RHYTHM.TAP) setTimeout(() => controller.abort(), timeout); // First pass complete, subsequent abort
 		}
 		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 3: Safe type // cookie refresh is successful but consumes network bandwidth
 			fetch('/favicon.ico?ping=' + this.data.clicks, {method: 'HEAD', credentials: 'include'}).catch(() => {}); // Does not use RHYTHM.THR
@@ -487,6 +487,7 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
