@@ -398,6 +398,7 @@ class Rhythm {
 		this.hasTempo = typeof tempo !== 'undefined';
 		this.ended = false;
 		this.fallback = false; // Root cookie mode when localStorage fails
+		this.fallback = /iP(hone|ad|od)/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1); // iOS immediate fallback mode
 		try { localStorage.setItem('rhythm_test','1'); localStorage.removeItem('rhythm_test'); } catch { this.fallback = true; }
 		for (let i = 1; i <= RHYTHM.MAX; i++) { // Bot blocking check set by Edge and run by both sides
 			const ses = this.get('rhythm_' + i);
@@ -471,3 +472,4 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
