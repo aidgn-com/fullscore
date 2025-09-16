@@ -215,10 +215,10 @@ class Rhythm {
 				if (!force && !this.fallback) {
 					if (Math.floor(Date.now() / 1000) - (+parts[5] + +parts[6]) <= RHYTHM.ACT) { // Session within ACT recovery window
 						try {
-							if (!localStorage.getItem('rhythm_lock')) { // Multiple sessions cleanup with once-only execution lock
-								let count = 0;
-								for (let x = 1; x <= RHYTHM.MAX && count <= 1; x++) count += this.get('rhythm_' + x) ? 1 : 0;
-								if (count > 1) { for (let j = localStorage.length - 1; j >= 0; j--) { const k = localStorage.key(j); if (k?.startsWith('t') && k !== 't' + this.tabId) localStorage.removeItem(k); } localStorage.setItem('rhythm_lock', Date.now()); }
+							const lock = localStorage.getItem('rhythm_lock');
+							if (!lock || Date.now() - +lock > 9000) { // +로 숫자 변환
+								localStorage.setItem('rhythm_lock', Date.now());
+								for (let i = localStorage.length; i--;) { const k = localStorage.key(i); k?.[0] === 't' && k !== 't' + this.tabId && localStorage.removeItem(k); }
 							}
 						} catch {}
 						return; // Preserve sessions that may still reconnect within ACT window
@@ -445,12 +445,11 @@ class Rhythm {
 		this.cookieAttrs = '; Max-Age=' + RHYTHM.AGE + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // Reusable cookie settings
 		this.tabId = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); // Unique tab identifier
 		try { localStorage.setItem('t' + this.tabId, '1'); } catch {} // Tab marker for cleanup
+		setInterval(() => { if (this.data && Math.floor(Date.now() / 1000) - this.data.time > RHYTHM.ACT / 2) this.save(); }, RHYTHM.ACT / 2 * 1000); // Session heartbeat
+		setInterval(() => { try { localStorage.getItem('rhythm_lock') && localStorage.setItem('rhythm_lock', Date.now()); } catch {} }, 4000); // Lock heartbeat
 		this.clean(); // Remove ping=1 sessions
 		this.batch(); // Send expired ping=0 sessions as ping=1 beyond ACT time
 		this.session(); // Create or restore session
-		setInterval(() => {
-			if (this.data && Math.floor(Date.now() / 1000) - this.data.time > RHYTHM.ACT / 2) this.save(); // Session heartbeat
-		}, RHYTHM.ACT / 2 * 1000);
 		this.hasTempo ? tempo(this) : document.addEventListener('click', e => this.click(e.target, e), { capture: true }); // Tempo integration
 		this.scrolling = false; // Debounce to count once per scroll gesture
 		const scroll = () => { // BEAT Scroll position tracking addon (default: false)
@@ -488,3 +487,4 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
