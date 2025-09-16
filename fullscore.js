@@ -367,28 +367,11 @@ class Rhythm {
 		if (this.hasBeat && this.beat) this.beat.element(el);
 		this.save();
 		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 1: Performance type // cookie refresh rarely fails but consumes almost no network bandwidth
-		    const ctrl = new AbortController();
-		    fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?liveStreaming', 
-		        {method: 'HEAD', signal: ctrl.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
-		    if (this.data.clicks > RHYTHM.TAP) setTimeout(() => ctrl.abort(), RHYTHM.THR); // First pass complete, subsequent abort
+			const ctrl = new AbortController();
+			fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?liveStreaming', 
+				{method: 'HEAD', signal: ctrl.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
+			if (this.data.clicks > RHYTHM.TAP) setTimeout(() => ctrl.abort(), RHYTHM.THR); // First pass complete, subsequent abort
 		}
-
-		/*
-		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 2: Balance type // cookie refresh is stable but may consume network bandwidth
-			const ctrl = new AbortController(); // RTT automation example: wired 5ms→15ms, LTE 15ms→30ms, 3G 300ms→200ms(upper limit)
-			const timeout = navigator.connection?.rtt ? Math.max(15, Math.min(navigator.connection.rtt * 2, 200)) : RHYTHM.THR; // Use default if RTT check fails
-			const pingPath = RHYTHM.HIT === '/' ? '/?liveStreaming' : RHYTHM.HIT + '/?liveStreaming';
-			fetch(pingPath, {method: 'HEAD', signal: ctrl.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
-			if (this.data.clicks > RHYTHM.TAP) setTimeout(() => ctrl.abort(), timeout); // First pass complete, subsequent abort
-		}
-		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 3: Safe type // cookie refresh is successful but consumes network bandwidth
-			fetch('/favicon.ico?ping=' + this.data.clicks, {method: 'HEAD', credentials: 'include'}).catch(() => {}); // Does not use RHYTHM.THR
-		}
-		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 4: Power type // cookie refresh is very successful but consumes additional network bandwidth and complex setup
-			navigator.sendBeacon('/.well-known/ping'); // Requires Post and return 204 settings on server, does not use RHYTHM.THR
-		}
-		*/
-
 		return el; // Block click if null returned
 	}
 	spa() { // Single Page Application addon (default: false)
@@ -478,7 +461,8 @@ class Rhythm {
 			if (this.fallback) {
 				this.batch(true); // Fallback mode immediate batch execution
 			} else {
-				setTimeout(() => { try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith('t')) return; } } catch {} this.batch(true); }, 1); // Wait for other tabs
+				const elect = (r = 2) => { try { for (let i = localStorage.length; i--;) if (localStorage.key(i)?.[0] === 't') return r > 0 ? setTimeout(() => elect(r - 1), 120) : 0; } catch {}
+				this.batch(true); }; setTimeout(elect, 1); // Next tick election, retry up to 3 times
 			}
 		};
 		this.fallback && document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && end(), { capture: true }); // Fallback mode enhanced termination detection
@@ -487,8 +471,3 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
-
-
-
-
-
