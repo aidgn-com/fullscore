@@ -367,9 +367,10 @@ class Rhythm {
 		if (this.hasBeat && this.beat) this.beat.element(el);
 		this.save();
 		if (this.data.clicks % RHYTHM.TAP === 0) { // Option 1: Performance type // cookie refresh rarely fails but consumes almost no network bandwidth
-			const ctrl = new AbortController();
-			fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT), {method: 'HEAD', signal: ctrl.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
-			if (this.data.clicks > RHYTHM.TAP) setTimeout(() => ctrl.abort(), RHYTHM.THR); // First pass complete, subsequent abort
+		    const ctrl = new AbortController();
+		    fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?liveStreaming', 
+		        {method: 'HEAD', signal: ctrl.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
+		    if (this.data.clicks > RHYTHM.TAP) setTimeout(() => ctrl.abort(), RHYTHM.THR); // First pass complete, subsequent abort
 		}
 
 		/*
@@ -486,5 +487,6 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
