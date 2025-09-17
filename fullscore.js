@@ -35,11 +35,13 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 						// When POW=true, sends batch immediately on tab switch. More reliable delivery but fragments journey.
 						// When POW=false, preserves complete journey in just one batch. Some browsers may delay or lose data.
 	TAP: 3,				// Session refresh cycle (default: 3 clicks)
-	THR: 30,			// Session refresh throttle (default: 30ms)
+	THR: 30,			// Session refresh throttle (default: 30 ms)
 	AGE: 259200,		// Session retention period (default: 3 days)
 	MAX: 6,				// Maximum session count (default: 6)
 	CAP: 3500,			// Maximum session capacity (default: 3500 bytes)
-	ACT: 600,			// Session recovery time (default: 10 minutes) // Session recovery on reconnection after abnormal termination
+	ACT: 4,				// Session activity time (default: 4 sec) // Session recovery on reconnection after abnormal termination
+						// Minimum value is 4, cannot be set lower. Heartbeat runs at half this interval.
+        				// High values may cause unstable session recovery, not recommended.
 	DEL: 0,				// Session deletion criteria (default: 0 clicks) // Below threshold not batched, 0 means all sessions batched
 	REF: {				// Referrer mapping (0=direct, 1=internal, 2=unknown, 3-255=specific domains)
 		'google.com': 3,
@@ -217,16 +219,16 @@ class Rhythm {
 			if (ses && ses[0] === '0') {
 				const parts = ses.split('_'); // Keep session ping=0 if detected as abnormal termination pattern within RHYTHM.ACT time
 				if (!force && !this.fallback) {
-					if (Math.floor(Date.now() / 1000) - (+parts[5] + +parts[6]) <= RHYTHM.ACT) { // Session within ACT recovery window
-						try {
-							const lock = localStorage.getItem('rhythm_lock');
-							if (!lock || Date.now() - +lock > 9000) { // +로 숫자 변환
-								localStorage.setItem('rhythm_lock', Date.now());
-								for (let i = localStorage.length; i--;) { const k = localStorage.key(i); k?.[0] === 't' && k !== 't' + this.tabId && localStorage.removeItem(k); }
-							}
-						} catch {}
-						return; // Preserve sessions that may still reconnect within ACT window
-					}
+				    if (Date.now() - (parts[5] * 1000 + parts[6] * 1000) <= RHYTHM.ACT * 1000) { // Session within ACT recovery window
+				        try {
+				            const lock = localStorage.getItem('rhythm_lock');
+				            if (!lock || Date.now() - +lock > RHYTHM.ACT * 1000) {
+				                localStorage.setItem('rhythm_lock', Date.now());
+				                for (let i = localStorage.length; i--;) { const k = localStorage.key(i); k?.[0] === 't' && k !== 't' + this.tabId && localStorage.removeItem(k); }
+				            }
+				        } catch {}
+				        return; // Preserve sessions that may still reconnect within ACT window
+				    }
 				}
 				if (!once) { // Batch cleaner flag per function call
 					try { for (let j = localStorage.length - 1; j >= 0; j--) { const k = localStorage.key(j); if (k?.startsWith('t')) try { localStorage.removeItem(k); } catch {} } } catch {} // Prevent localStorage access failures
@@ -427,8 +429,12 @@ class Rhythm {
 		this.cookieAttrs = '; Max-Age=' + RHYTHM.AGE + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // Reusable cookie settings
 		this.tabId = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); // Unique tab identifier
 		try { localStorage.setItem('t' + this.tabId, '1'); } catch {} // Tab marker for cleanup
-		setInterval(() => { if (this.data && Math.floor(Date.now() / 1000) - this.data.time > RHYTHM.ACT / 2) this.save(); }, RHYTHM.ACT / 2 * 1000); // Session heartbeat
-		setInterval(() => { try { localStorage.getItem('rhythm_lock') && localStorage.setItem('rhythm_lock', Date.now()); } catch {} }, 4000); // Lock heartbeat
+		if (RHYTHM.ACT < 4) RHYTHM.ACT = 4; // Minimum ACT value enforcement
+		setInterval(() => { // Heartbeat interval: every ACT seconds
+		    const now = Date.now();
+		    if (this.data && now - this.data.time * 1000 >= (RHYTHM.ACT - 1) * 1000) this.save();
+		    try { localStorage.getItem('rhythm_lock') && localStorage.setItem('rhythm_lock', now + 1000); } catch {}
+		}, RHYTHM.ACT * 1000);
 		this.clean(); // Remove ping=1 sessions
 		this.batch(); // Send expired ping=0 sessions as ping=1 beyond ACT time
 		this.session(); // Create or restore session
@@ -470,6 +476,7 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
