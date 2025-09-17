@@ -257,8 +257,8 @@ class Rhythm {
 		}
 		this.clean(force); // Completely delete transmitted ping=1 sessions
 	}
-	save() { // Save data with automatic fallback
-		if (RHYTHM.ADD?.TAB && this.hasBeat && this.beat && (this.data.clicks + this.data.scrolls > 0)) { // BEAT Tab switch tracking addon (default: true)
+	save(force = false) { // Save data with automatic fallback
+		if (!force && RHYTHM.ADD?.TAB && this.hasBeat && this.beat && (this.data.clicks + this.data.scrolls > 0)) { // BEAT Tab switch tracking addon (default: true)
 			let prevName = '', prevAct = -1; // Find most recently active tab
 			for (let i = 1; i <= RHYTHM.MAX; i++) {
 				const name = 'rhythm_' + i;
@@ -432,7 +432,7 @@ class Rhythm {
 		if (RHYTHM.ACT < 4) RHYTHM.ACT = 4; // Minimum ACT value enforcement
 		setInterval(() => { // Heartbeat every ACT seconds
 		    const now = Date.now();
-		    if (this.data && now - this.data.time * 1000 >= (RHYTHM.ACT - 1) * 1000) this.save();
+		    if (this.data && now - this.data.time * 1000 >= (RHYTHM.ACT - 1) * 1000) this.save(true);
 		    try { localStorage.getItem('rhythm_lock') && localStorage.setItem('rhythm_lock', now); } catch {}
 		}, RHYTHM.ACT * 1000);
 		this.clean(); // Remove ping=1 sessions
@@ -476,10 +476,3 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
-
-
-
-
-
-
-
