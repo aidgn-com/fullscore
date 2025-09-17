@@ -402,8 +402,8 @@ class Rhythm {
 		this.hasTempo = typeof tempo !== 'undefined';
 		this.ended = false;
 		this.fallback = false; // Root cookie mode when localStorage fails
-		const ua = navigator.userAgent;
-		this.fallback = /iP(hone|ad|od)/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1); // iOS immediate fallback mode
+//		const ua = navigator.userAgent;
+//		this.fallback = /iP(hone|ad|od)/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1); // iOS immediate fallback mode
 		try { localStorage.setItem('rhythm_test','1'); localStorage.removeItem('rhythm_test'); } catch { this.fallback = true; }
 		window.addEventListener('storage', (e) => {
 			if (e.key === 'rhythm_reset') { // Force reset signal from another tab
@@ -470,5 +470,6 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
