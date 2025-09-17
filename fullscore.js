@@ -22,13 +22,16 @@
  */
 
 const RHYTHM = { // Real-time Hybrid Traffic History Monitor
+	HIT: '/rhythm',		// Session activation and Edge transmission (default: '/rhythm') // Path isolation enhances Edge network
 	PIN: [				// Session endpoint (default: '/rhythm/ping')
 		'/rhythm/ping',	// Edge can access cookies directly without webhooks - completely safe, no exposure
-		// 'https://n8n.yourdomain.com/webhook/yourcode' // Secondary: Webhook endpoint (optional fallback)
-		// ⚠️ CAUTION: Webhook URLs are public. Configure IP whitelist on webhook service
-		// 💡 RECOMMENDED: Use reverse proxy (nginx/caddy) or internal API for better security
+						// 'https://n8n.yourdomain.com/webhook/yourcode' // Secondary: Webhook endpoint (optional fallback)
+						// ⚠️ CAUTION: Webhook URLs are public. Configure IP whitelist on webhook service
+						// 💡 RECOMMENDED: Use reverse proxy (nginx/caddy) or internal API for better security
 	],
-	HIT: '/rhythm',		// Session activation and Edge transmission (default: '/rhythm') // Path isolation enhances Edge network
+	POW: false,			// Batch on every tab switch/minimize (default: false)
+						// When POW=true, sends batch immediately on tab switch. More reliable delivery but fragments journey.
+						// When POW=false, preserves complete journey in just one batch. Some browsers may delay or lose data.
 	TAP: 3,				// Session refresh cycle (default: 3 clicks)
 	THR: 30,			// Session refresh throttle (default: 30ms)
 	AGE: 259200,		// Session retention period (default: 3 days)
@@ -467,11 +470,9 @@ class Rhythm {
 				this.batch(true); }; setTimeout(elect, 1); // Next tick election, retry up to 3 times
 			}
 		};
-		this.fallback && document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && end(), { capture: true }); // Fallback mode enhanced termination detection
+		RHYTHM.POW && document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && end(), { capture: true }); // When POW=true: send batch on tab switch
 		window.addEventListener('pagehide', end, { capture: true }); // All pagehide events trigger termination check
 	}
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
-
-
