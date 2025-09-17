@@ -25,11 +25,11 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 	HIT: '/rhythm',		// Session activation and cookie resonance path (default: '/rhythm')
 						// Edge observes real-time cookie resonance without endpoints
 						// Edge Worker only monitors this specific path for analytics
-	PIN: [				// Session endpoint (default: '/rhythm/ping')
+	PIN: [				// Session endpoint and batch signal (default: '/rhythm/ping')
 		'/rhythm/ping',	// Should use same path prefix as HIT for cookie consistency
 						// Sends completion signal only, no need to specify exact endpoint paths
-						// You can replace or add custom endpoints for direct data: 'https://n8n.test.com/webhook/yourcode'
-						// ⚠️ Custom endpoints expose public URLs. Use IP whitelist or reverse proxy for security
+						// You can replace or add custom endpoints for direct data: 'https://n8n.yoursite.com/webhook/yourcode'
+						// Custom endpoints expose public URLs. Use IP whitelist or reverse proxy for security
 	],
 	POW: false,			// Batch on every tab switch/minimize (default: false)
 						// When POW=true, sends batch immediately on tab switch. More reliable delivery but fragments journey.
@@ -40,8 +40,7 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 	MAX: 6,				// Maximum session count (default: 6)
 	CAP: 3500,			// Maximum session capacity (default: 3500 bytes)
 	ACT: 600,			// Session recovery time (default: 10 minutes) // Session recovery on reconnection after abnormal termination
-	DEL: 0,				// Session deletion criteria (default: 0 clicks) // Below threshold not transmitted, 0 clicks means unlimited transmission
-	DEF: '/404',		// Bot blocking path (default: /404 page) - Path isolation between Edge and cookies temporarily prevents escape
+	DEL: 0,				// Session deletion criteria (default: 0 clicks) // Below threshold not batched, 0 means all sessions batched
 	REF: {				// Referrer mapping (0=direct, 1=internal, 2=unknown, 3-255=specific domains)
 		'google.com': 3,
 		'youtube.com': 4,
@@ -406,13 +405,6 @@ class Rhythm {
 		const ua = navigator.userAgent;
 		this.fallback = /iP(hone|ad|od)/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1); // iOS immediate fallback mode
 		try { localStorage.setItem('rhythm_test','1'); localStorage.removeItem('rhythm_test'); } catch { this.fallback = true; }
-		for (let i = 1; i <= RHYTHM.MAX; i++) { // Bot blocking check set by Edge and run by both sides
-			const ses = this.get('rhythm_' + i);
-			if (ses && ses.split('_')[1] === '1') {
-				if (location.pathname !== RHYTHM.DEF) window.location.href = RHYTHM.DEF; // Send to prison
-				return;
-			}
-		}
 		window.addEventListener('storage', (e) => {
 			if (e.key === 'rhythm_reset') { // Force reset signal from another tab
 				this.data = null;
@@ -472,10 +464,11 @@ class Rhythm {
 				this.batch(true); }; setTimeout(elect, 1); // Next tick election, retry up to 3 times
 			}
 		};
-		RHYTHM.POW && document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && end(), { capture: true }); // When POW=true: send batch on tab switch
+		RHYTHM.POW && document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && end(), { capture: true }); // When POW=true: batch on every tab switch/minimize
 		window.addEventListener('pagehide', end, { capture: true }); // All pagehide events trigger termination check
 	}
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
