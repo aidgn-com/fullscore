@@ -22,12 +22,14 @@
  */
 
 const RHYTHM = { // Real-time Hybrid Traffic History Monitor
-	HIT: '/rhythm',		// Session activation and Edge transmission (default: '/rhythm') // Path isolation enhances Edge network
+	HIT: '/rhythm',		// Session activation and cookie resonance path (default: '/rhythm')
+						// Edge observes real-time cookie resonance without endpoints
+						// Edge Worker only monitors this specific path for analytics
 	PIN: [				// Session endpoint (default: '/rhythm/ping')
-		'/rhythm/ping',	// Edge can access cookies directly without webhooks - completely safe, no exposure
-						// 'https://n8n.yourdomain.com/webhook/yourcode' // Secondary: Webhook endpoint (optional fallback)
-						// ⚠️ CAUTION: Webhook URLs are public. Configure IP whitelist on webhook service
-						// 💡 RECOMMENDED: Use reverse proxy (nginx/caddy) or internal API for better security
+		'/rhythm/ping',	// Should use same path prefix as HIT for cookie consistency
+						// Sends completion signal only, no need to specify exact endpoint paths
+						// You can replace or add custom endpoints for direct data: 'https://n8n.test.com/webhook/yourcode'
+						// ⚠️ Custom endpoints expose public URLs. Use IP whitelist or reverse proxy for security
 	],
 	POW: false,			// Batch on every tab switch/minimize (default: false)
 						// When POW=true, sends batch immediately on tab switch. More reliable delivery but fragments journey.
@@ -476,3 +478,4 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
