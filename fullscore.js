@@ -222,7 +222,7 @@ class Rhythm {
 				    if (Date.now() - (parts[5] * 1000 + parts[6] * 1000) <= RHYTHM.ACT * 1000) { // Session within ACT recovery window
 				        try {
 				            const lock = localStorage.getItem('rhythm_lock');
-				            if (!lock || Date.now() - +lock > RHYTHM.ACT * 1000) {
+				            if (!lock || Date.now() - +lock > (RHYTHM.ACT + 1) * 1000) {
 				                localStorage.setItem('rhythm_lock', Date.now());
 				                for (let i = localStorage.length; i--;) { const k = localStorage.key(i); k?.[0] === 't' && k !== 't' + this.tabId && localStorage.removeItem(k); }
 				            }
@@ -430,10 +430,10 @@ class Rhythm {
 		this.tabId = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); // Unique tab identifier
 		try { localStorage.setItem('t' + this.tabId, '1'); } catch {} // Tab marker for cleanup
 		if (RHYTHM.ACT < 4) RHYTHM.ACT = 4; // Minimum ACT value enforcement
-		setInterval(() => { // Heartbeat interval: every ACT seconds
+		setInterval(() => { // Heartbeat every ACT seconds
 		    const now = Date.now();
 		    if (this.data && now - this.data.time * 1000 >= (RHYTHM.ACT - 1) * 1000) this.save();
-		    try { localStorage.getItem('rhythm_lock') && localStorage.setItem('rhythm_lock', now + 1000); } catch {}
+		    try { localStorage.getItem('rhythm_lock') && localStorage.setItem('rhythm_lock', now); } catch {}
 		}, RHYTHM.ACT * 1000);
 		this.clean(); // Remove ping=1 sessions
 		this.batch(); // Send expired ping=0 sessions as ping=1 beyond ACT time
@@ -476,6 +476,7 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
