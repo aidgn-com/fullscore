@@ -39,7 +39,7 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 	AGE: 259200,		// Session retention period (default: 3 days)
 	MAX: 6,				// Maximum session count (default: 6)
 	CAP: 3500,			// Maximum session capacity (default: 3500 bytes)
-	ACT: 4,				// Session activity time (default: 4 sec) // Session recovery on reconnection after abnormal termination
+	ACT: 5,				// Session activity time (default: 5 sec) // Session recovery on reconnection after abnormal termination
 						// Minimum value is 4, cannot be set lower. Heartbeat runs every ACT seconds.
         				// Save triggers at ACT-1, lock expires at ACT+1. High values may cause unstable recovery, not recommended.
 	DEL: 0,				// Session deletion criteria (default: 0 clicks) // Below threshold not batched, 0 means all sessions batched
@@ -430,8 +430,8 @@ class Rhythm {
 		this.tabId = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); // Unique tab identifier
 		try { localStorage.setItem('t' + this.tabId, '1'); } catch {} // Tab marker for cleanup
 		if (RHYTHM.ACT < 4) RHYTHM.ACT = 4; // Minimum ACT value enforcement
-		setInterval(() => { // Heartbeat every ACT seconds
-		    const now = Date.now();
+		setInterval(() => {
+		    const now = Date.now(); // Heartbeat every ACT seconds
 		    if (this.data && now - this.data.time * 1000 >= (RHYTHM.ACT - 1) * 1000) this.save(true);
 		    try { localStorage.getItem('rhythm_lock') && localStorage.setItem('rhythm_lock', now); } catch {}
 		}, RHYTHM.ACT * 1000);
@@ -476,3 +476,4 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
