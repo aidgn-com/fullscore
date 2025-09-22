@@ -18,7 +18,7 @@
  * The resulting music resonates naturally through the cookie soundboard,
  * and Edge immediately interprets this resonance.
  * 
- * Data isn't collected—it's music already playing in the air.
+ * Data isn't collected. It's music already playing in the air.
  * 
  * Everything is contained within this small Full Score.
  * Will you join the performance?
@@ -394,4 +394,5 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
