@@ -269,7 +269,7 @@ export default {
 }
 ```
 
-Every decision is analyzed in milliseconds through Edge's livestreaming. Edge simply reads and analyzes cookies already included in users' standard HTTP requests in real-time.
+Every decision is analyzed in milliseconds through Edge's livestreaming. Edge simply reads and analyzes cookies already included in users' standard HTTP requests in real-time. No separate data endpoints needed.
 
 No separate analytics servers or central database queries needed. Browser and Edge connect closely in spacetime like sympathetic resonance—fast and vivid. Processing delays are imperceptibly low.
 
