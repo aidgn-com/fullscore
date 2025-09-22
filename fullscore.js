@@ -60,7 +60,7 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 	AGE: 259200,		// Session retention period (default: 3 days)
 	MAX: 7,				// Maximum session count (default: 7)
 	CAP: 3500,			// Maximum session capacity (default: 3500 bytes)
-	DEL: 0,				// Session deletion criteria (default: 0 clicks)
+	DEL: 1,				// Session deletion criteria (default: 1 clicks)
 						// Below threshold not batched, 0 means all sessions batched
 	REF: {				// Referrer mapping (0=direct, 1=internal, 2=unknown, 3-255=specific domains)
 		'google.com': 3,
@@ -394,5 +394,6 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
