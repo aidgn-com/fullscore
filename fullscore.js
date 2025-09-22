@@ -8,15 +8,15 @@
  * 
  * Web cookies resonate too. With every page request, cookies automatically travel
  * in HTTP headers. No developer instructions needed, no code required—this
- * resonance has continued since 1994.
+ * web resonance phenomenon has continued since 1994.
  * 
  * Traditional analytics tools ignored this natural resonance to build separate
  * synthesizers. They collect data with scripts, transmit via APIs, process on servers.
  * 
  * Full Score tunes this resonance. TEMPO aligns the beat of touches and clicks,
  * RHYTHM records user behavior in the browser, BEAT encodes it into sheet music.
- * The resulting music resonates naturally through the cookie soundboard, and Edge
- * immediately interprets this resonance.
+ * The resulting music resonates naturally through the cookie soundboard,
+ * and Edge immediately interprets this resonance.
  * 
  * Data isn't collected—it's music already playing in the air.
  * 
@@ -394,3 +394,4 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
