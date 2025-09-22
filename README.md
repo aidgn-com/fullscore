@@ -775,13 +775,13 @@ See individual source files for detailed license information.
 ## Resources
 
 - **Live Demo**: [YouTube Video](링크)
-- **GitHub**: [github.com/your-username/fullscore](링크)
+- **GitHub**: [github.com/aidgn-com/fullscore](https://github.com/aidgn-com/fullscore/)
 - **Edge Worker**: Under Development (Ultra-lightweight analytics and security engine running on edge)
 
 <br />
 
 ## Author
 
-[Your Name] - [GitHub Profile](링크)
+Aidgn - [GitHub Profile](https://github.com/aidgn-com/)
 
 <br />
