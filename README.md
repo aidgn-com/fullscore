@@ -730,9 +730,9 @@ The singer-songwriter finally realized. New web technology doesn't suddenly appe
 The singer-songwriter strikes a new chord.
 The result of practice's TEMPO, composition's RHYTHM, performance's BEAT.
 
-The audacity to eliminate problems rather than add complexity.
-The insight to create perfect analytics without servers.
-The intuition to understand users without personal information.
+The choice to eliminate rather than add complexity.
+The approach to create analytics without servers.
+The method to understand users without personal information.
 
 Everything is contained within this small Full Score.
 
