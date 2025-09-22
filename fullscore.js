@@ -81,7 +81,7 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 	}
 };
 
-function tempo(rhythm) { // Touch Event Maestro Performance Optimizer
+function tempo(rhythm) { // Tap Event Method Performance Optimizer
 	if (document.tempo) return;
 	document.tempo = true;
 	if ("ontouchstart" in window || navigator.maxTouchPoints > 0) { // Mobile environment detection
@@ -396,6 +396,7 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
