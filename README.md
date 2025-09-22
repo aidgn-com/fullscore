@@ -24,17 +24,17 @@ The name Full Score symbolizes a musical score or composition. Just as a full sc
 
 Full Score consists of three independent technologies. Each is useful alone, yet more powerful together.
 
-**TEMPO (Touch Event Maestro Performance Optimizer)** is a 50-line snippet that improves touch event speed and accuracy. Like an orchestra conductor synchronizing different instruments' tempos, it harmonizes mobile and desktop interactions. Without offbeats, every touch and click completes as a single note. While it provides immediate improvements standalone, when used with Rhythm, it becomes a gateway for collecting user interaction data.
+**TEMPO (Touch Event Maestro Performance Optimizer)** is a 50-line snippet that improves touch event speed and accuracy. Like an orchestra conductor synchronizing different instruments' tempos, it harmonizes mobile and desktop interactions. Without offbeats, every touch and click completes as a single note. While it provides immediate improvements standalone, when used with RHYTHM, it becomes a gateway for collecting user interaction data.
 
 **RHYTHM (Real-time Hybrid Traffic History Monitor)** is a client-side engine that leverages users' browsers like auxiliary databases. Unlike traditional approaches that send, store, and process data on servers, it embeds core functionality in the browser. Connected with Edge Computing, it enables real-time analysis and immediate response without server intervention. It proposes a new paradigm with minimal data transfer costs, server operation costs, and processing delays.
 
-**BEAT (Behavioral Event Analytics Transform)** is a domain-specific language (DSL) that serializes 3D behavioral data—time (X), action (Y), and depth (Z)—into linear sequences. It compresses complex user journeys into single strings, written to be readable by both humans and AI. While it's Rhythm's core data format, it has versatility for use in other systems.
+**BEAT (Behavioral Event Analytics Transform)** is a domain-specific language (DSL) that serializes 3D behavioral data—time (X), action (Y), and depth (Z)—into linear sequences. It compresses complex user journeys into single strings, written to be readable by both humans and AI. While it's RHYTHM's core data format, it has versatility for use in other systems.
 
 These three technologies are like a jazz trio—each solo performance is excellent, but together they create true harmony.
 
 <br />
 
-## Second Movement: Tempo - The Piano Tuner's Gift
+## Second Movement: TEMPO - The Piano Tuner's Gift
 
 ### Two Different Instruments
 
@@ -87,15 +87,15 @@ Final click processing
 
 Through these complex layers, touch responsiveness degrades further. As touches accumulate, erroneous events can pile up. In severe cases, touches become completely unresponsive. Like a piano on a humid day—keys that won't press or won't return.
 
-### Tempo's Tuning
+### TEMPO's Tuning
 
-Tempo, like a piano tuner, standardizes every key's depth and response. It strives to create beautifully matched tempo across both desktop and mobile.
+TEMPO, like a piano tuner, standardizes every key's depth and response. It strives to create beautifully matched tempo across both desktop and mobile.
 
 ```javascript
 // Traditional: Asynchronous chain
 touchend → [queue] → [loop] → [wait] → click
 
-// Tempo: Direct execution
+// TEMPO: Direct execution
 touchend → el.click()  // Synchronous immediate execution!
 ```
 
@@ -103,7 +103,7 @@ This simple tuning creates meaningful effects. Touches now bypass the event loop
 
 Even when DOM changes rapidly—like ad banners or lazy-loading UIs—post-touch delays disappear, improving accuracy.
 
-But browsers still generate native clicks at their own tempo. Tempo handles this offbeat elegantly.
+But browsers still generate native clicks at their own tempo. TEMPO handles this offbeat elegantly.
 
 ```javascript
 // The Phantom of the Opera trap
@@ -119,11 +119,11 @@ const block = (ev) => {
 };
 ```
 
-Like pressing the damper pedal at the perfect moment to eliminate unwanted resonance, Tempo silently absorbs duplicate clicks.
+Like pressing the damper pedal at the perfect moment to eliminate unwanted resonance, TEMPO silently absorbs duplicate clicks.
 
 ### A 50-Line Score
 
-Tempo's entire code fits within 50 lines. Like Bach's Inventions, it creates music with minimal notes.
+TEMPO's entire code fits within 50 lines. Like Bach's Inventions, it creates music with minimal notes.
 
 ```javascript
 function tempo(rhythm) { // Touch Event Maestro Performance Optimizer
@@ -155,7 +155,7 @@ function tempo(rhythm) { // Touch Event Maestro Performance Optimizer
             let t = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY); // Get target at touch point
             const label = t?.closest('label');
             t = label?.control || label?.querySelector('input,textarea,select,button') || t; // Label to control redirect
-            rhythm && (t = rhythm.click(t, e)); // Rhythm integration, null blocks click
+            rhythm && (t = rhythm.click(t, e)); // RHYTHM integration, null blocks click
             if (t) for (let i = 0; i < 8; i++) { // Find clickable parent, max 8 levels
                 if (typeof t.click === "function") {t.click(); break;} // Native click method
                 if (t.onclick) {t.dispatchEvent(new MouseEvent("click", {bubbles: true, cancelable: true})); break;} // Onclick handler
@@ -182,19 +182,19 @@ These 50 lines synchronize tempo across all devices. Like a perfectly tuned conc
 
 <br />
 
-## Third Movement: Rhythm - Music in the Browser
+## Third Movement: RHYTHM - Music in the Browser
 
 ### A Paradigm Shift
 
 Traditional web analytics is complex like a massive symphony. Instruments for collecting data, transmitting data, storing data, processing data—all playing separately. Each part operates independently, requiring enormous time and cost just to tune them.
 
-Rhythm is like a singer-songwriter's creative process. Starting composition in a quiet room, building melodies note by note on staff paper to complete a Full Score. Then taking that score to the streets to perform freely. The browser becomes the chosen stage, with no interruptions.
+RHYTHM is like a singer-songwriter's creative process. Starting composition in a quiet room, building melodies note by note on staff paper to complete a Full Score. Then taking that score to the streets to perform freely. The browser becomes the chosen stage, with no interruptions.
 
 ### The Browser and Cookie Stage
 
 Browsers have various storage options. LocalStorage boasts concert hall capacity but complex setup. SessionStorage is intimate like a live house but only open for a day. IndexedDB is glamorous like an opera house but has demanding entry procedures.
 
-The cookie Rhythm chose is like street busking. All you need is one small stage. No fancy lights or sound equipment required. But there's one crucial feature: whenever you want, you can livestream your performance in real-time. Your reliable friend and manager, Edge Computing, helps with the livestreaming.
+The cookie RHYTHM chose is like street busking. All you need is one small stage. No fancy lights or sound equipment required. But there's one crucial feature: whenever you want, you can livestream your performance in real-time. Your reliable friend and manager, Edge Computing, helps with the livestreaming.
 
 ```javascript
 document.cookie = `rhythm_01=${data}; Max-Age=259200; Path=/rhythm`;
@@ -203,9 +203,9 @@ document.cookie = `rhythm_01=${data}; Max-Age=259200; Path=/rhythm`;
 
 Like busking that leaves no trace when finished, cookies delete themselves after a few days. No performance permits needed, no teardown requests. Like the city's rhythm, it naturally begins and ends.
 
-### Rhythm Created by Data
+### RHYTHM Created by Data
 
-Rhythm stores session data like a melody composed of notes on a staff. Each note carries unique meaning.
+RHYTHM stores session data like a melody composed of notes on a staff. Each note carries unique meaning.
 
 ```javascript
 const rhythm_01 = {
@@ -219,7 +219,7 @@ const rhythm_01 = {
     clicks: 45,         // Guitar strings plucked (audience engagement)
     scrolls: 23,        // Engagement prompts (passersby who stopped)
     beat: "!home~10*1"  // Performance record (BEAT format)
-//  custom: Users can freely adjust Rhythm field formats to match their performance style
+//  custom: Users can freely adjust RHYTHM field formats to match their performance style
 }
 ```
 
@@ -229,11 +229,11 @@ When stored in cookies, this data becomes a single line of sheet music separated
 "0_0_0_0_1_1735680000_300_45_23_!home~10*1"
 ```
 
-A single line expresses an entire session. If JSON is conducting each orchestra section, Rhythm is as concise as playing guitar tabs.
+A single line expresses an entire session. If JSON is conducting each orchestra section, RHYTHM is as concise as playing guitar tabs.
 
 ### Livestreaming with Edge Computing
 
-Edge is the singer-songwriter's reliable companion, an indispensable friend. When the singer-songwriter performs their Rhythm, Edge livestreams it to the world.
+Edge is the singer-songwriter's reliable companion, an indispensable friend. When the singer-songwriter performs their RHYTHM, Edge livestreams it to the world.
 
 ```javascript
 export default {
@@ -289,7 +289,7 @@ Edge is a good friend who asks for no compensation for management activities, bu
 
 Subdomains allow more generous header transmission. But even passionate hour-long performances rarely fill 4KB with BEAT notation. Not recommended.
 
-Rhythm turns users' browser cookies into small personal storage. With 100 million users, it's like having 100 million auxiliary databases. Browsers provide isolated execution environments at the user level, operating directly on devices with no perceptible delay. For even more speed, HTTP/2 or HTTP/3 environments are recommended. Cookies become lighter by reusing values registered in compression tables.
+RHYTHM turns users' browser cookies into small personal storage. With 100 million users, it's like having 100 million auxiliary databases. Browsers provide isolated execution environments at the user level, operating directly on devices with no perceptible delay. For even more speed, HTTP/2 or HTTP/3 environments are recommended. Cookies become lighter by reusing values registered in compression tables.
 
 ### Stage Beginning and End
 
@@ -328,7 +328,7 @@ BEAT records performance order as follows:
 **Time (~) - Rests and beats**
 - ~10: 1 second of breath
 - ~250: 25 seconds of meditation
-- .10.20.30: Rhythm repetition (repeat times separated by dots)
+- .10.20.30: RHYTHM repetition (repeat times separated by dots)
 
 ### Automatic Hash Generation and Mapping
 
@@ -453,15 +453,15 @@ This means 50x smaller total data volume compared to traditional analytics, enab
 
 Full Score's three elements are like a singer-songwriter building skill, composing original music, and performing for people.
 
-1. **Tempo (Practice)** - Consistent beat across all interactions
-2. **Rhythm (Composition)** - Composing and storing your own rhythm
+1. **TEMPO (Practice)** - Consistent beat across all interactions
+2. **RHYTHM (Composition)** - Composing and storing your own rhythm
 3. **BEAT (Performance)** - Freely performing practiced songs
 
 ```javascript
 // Singer-songwriter's creative process
-Touch/Click (Tempo = Consistent skill anywhere through steady practice)
+Touch/Click (TEMPO = Consistent skill anywhere through steady practice)
     ↓
-rhythm.click() (Rhythm = Recording and experience of composed music)
+rhythm.click() (RHYTHM = Recording and experience of composed music)
     ↓
 BEAT encoding (Real-time performance on stage)
     ↓
@@ -596,7 +596,7 @@ Web cookies resonate too. With every page request, cookies automatically travel 
 
 Traditional analytics tools ignored this natural resonance to build separate synthesizers. They collect data with scripts, transmit via APIs, process on servers.
 
-Full Score tunes this resonance. Tempo aligns the beat of touches and clicks, Rhythm records user behavior in the browser, BEAT encodes it into sheet music. The resulting music resonates naturally through the cookie soundboard, and Edge immediately interprets this resonance.
+Full Score tunes this resonance. TEMPO aligns the beat of touches and clicks, RHYTHM records user behavior in the browser, BEAT encodes it into sheet music. The resulting music resonates naturally through the cookie soundboard, and Edge immediately interprets this resonance.
 
 Data isn't collected—it's music already playing in the air.
 
@@ -612,13 +612,13 @@ tag('event', 'click', {...}); // Active "transmission"
 
 Major concert hall performances require dozens of performers. Each with their instruments, sheet music, conductor, stage equipment, sound systems. But street busking is different. One guitar, one voice is enough.
 
-Traditional analytics is a concert hall performance. Collection servers, processing servers, storage servers, analytics servers each play their parts. Selling tickets, arranging seats, printing programs. Full Score is busking. Compose your own music directly, just need free Rhythm. The rest was already on the street. The browser stage, HTTP street resonance, Edge's natural and endless amplification.
+Traditional analytics is a concert hall performance. Collection servers, processing servers, storage servers, analytics servers each play their parts. Selling tickets, arranging seats, printing programs. Full Score is busking. Compose your own music directly, just need free RHYTHM. The rest was already on the street. The browser stage, HTTP street resonance, Edge's natural and endless amplification.
 
 Cookies were originally made to remember state, Edge was originally made to respond quickly from nearby, browsers could always store data. We just created a stage for them to sing together.
 
 The long-forgotten essence of the web, rediscovered through the metaphor of music in the AI era. Past simplicity and future possibility meet in the present, creating beautiful harmony.
 
-### Time Compression, Behavioral Language in Rhythm
+### Time Compression, Behavioral Language in RHYTHM
 
 BEAT transforms time into music. "!home~300*3input1~1200!page~50*button"—this short score captures an hour's journey. 30 seconds of decision is short like staccato, 120 seconds of exploration flows like legato, 5 seconds of clicking is intense like an accent.
 
@@ -652,7 +652,7 @@ Before music begins, the moment of silence as the conductor holds the baton is m
 
 Since no personal information is collected, there's nothing to leak. With nothing stored on servers, there's nothing to hack. Without network requests, there's nothing to intercept. Hacking Full Score's data means hacking every user's browser visiting the website. Though only simple patterns are recorded, not sensitive personal information (PII).
 
-Faster page loads are just the beginning. The real key is that without requesting or sending data, Edge completes real-time analysis just by listening to Rhythm already flowing in the air. While traditional tools prepare numerous instruments for collection, transmission, processing, and storage, Full Score quickly begins the next performance.
+Faster page loads are just the beginning. The real key is that without requesting or sending data, Edge completes real-time analysis just by listening to RHYTHM already flowing in the air. While traditional tools prepare numerous instruments for collection, transmission, processing, and storage, Full Score quickly begins the next performance.
 
 Cookies automatically disappear after a few days. GDPR risk is much lower than existing analytics tools. Like street music scattering in the wind, data naturally dissipates over time. Free because it doesn't promise eternity.
 
@@ -674,12 +674,12 @@ The browser stage was already perfect. No additional installation needed, no com
 
 The singer-songwriter needed just three chords rather than a bigger, fancier stage.
 
-**C Chord - Tempo**
+**C Chord - TEMPO**
 ```javascript
 touchend → el.click()  // Instantly responsive fingertips
 ```
 
-**G Chord - Rhythm**  
+**G Chord - RHYTHM**  
 ```javascript
 document.cookie = `rhythm=${beat}`  // Melody the browser remembers
 ```
@@ -728,7 +728,7 @@ The singer-songwriter finally realized. New web technology doesn't suddenly appe
 ## And the Harmony Begins
 
 The singer-songwriter strikes a new chord.
-The result of practice's Tempo, composition's Rhythm, performance's BEAT.
+The result of practice's TEMPO, composition's RHYTHM, performance's BEAT.
 
 The audacity to eliminate problems rather than add complexity.
 The insight to create perfect analytics without servers.
@@ -764,8 +764,8 @@ For real-time bot detection logic, we recommend implementing it in Edge Workers 
 
 ## License
 
-- **Tempo** - MIT License
-- **Rhythm** - GPL-3.0 License  
+- **TEMPO** - MIT License
+- **RHYTHM** - GPL-3.0 License  
 - **BEAT** - AGPL-3.0 License
 
 See individual source files for detailed license information.
