@@ -219,6 +219,7 @@ class Rhythm {
 				const ses = this.get(this.data.name);
 				if (ses && ses[0] === '0') document.cookie = this.data.name + '=' + ('1' + ses.slice(1)) + this.tail; // Mark as echo=1
 			}
+			if (RHYTHM.ADD.POW) return this.batch(true); // Batch on every tab switch/minimize (default: false)
 			setTimeout(() => { // Defer execution to check all pagehide results
 				for (let i = 1; i <= RHYTHM.MAX; i++) {
 					const ses = this.get('rhythm_' + i);
@@ -227,7 +228,7 @@ class Rhythm {
 				this.batch(true); // Batch confirmed
 			}, 1);
 		};
-		RHYTHM.ADD.POW && document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && end(), { capture: true }); // Batch on every tab switch/minimize (default: false)
+		RHYTHM.ADD.POW && document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && end(), { capture: true });
 		window.addEventListener('pagehide', end, { capture: true }); // All pagehide events trigger termination check
 	}
 	click(el) { // Click action and cookie refresh
@@ -262,8 +263,9 @@ class Rhythm {
 			}
 			if (RHYTHM.ADD.REC === true) return; // Crashed session recovery controls immediate or deferred batch (default: false)
 		}
+		document.cookie = 'score=; Max-Age=0; Path=/'; // Remove score before batch
 		const payload = []; // Gather echo data
-		for (let i = 1; i <= RHYTHM.MAX; i++) { // Maximum session count (default: 7)
+		for (let i = 1; i <= RHYTHM.MAX; i++) {
 			const ses = this.get('rhythm_' + i);
 			if (ses && ses[0] !== '2') { // Find unresonated sessions
 				const coda = '2' + ses.slice(1);
@@ -303,7 +305,7 @@ class Rhythm {
 			}
 		}
 		let name = null; // Available session slot finder
-		for (let i = 1; i <= RHYTHM.MAX; i++) {
+		for (let i = 1; i <= RHYTHM.MAX; i++) { // Maximum session count (default: 7)
 			if (!this.get('rhythm_' + i)) {
 				name = 'rhythm_' + i;
 				break;
@@ -394,6 +396,7 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
