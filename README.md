@@ -209,7 +209,7 @@ RHYTHM stores session data like a melody composed of notes on a staff. Each note
 
 ```javascript
 const rhythm_01 = {
-    echo: 0,            // Performance stage (0=performing, 1=closing, 2=archived)
+    echo: 0,            // Performance stage (0=performing, 1=ending, 2=leaving)
     device: 0,          // Instrument type (0=electric keyboard, 1=acoustic guitar, 2=drums)
     referrer: 1,        // Performance spot (0=home street, 1=regular spot, 2=new venue, 3-255=special venues)
     time: 1735680000,   // Performance start time
@@ -217,7 +217,6 @@ const rhythm_01 = {
     clicks: 45,         // Guitar strings plucked (audience engagement)
     scrolls: 23,        // Engagement prompts (passersby who stopped)
     beat: "!home~10*1"  // Performance record (BEAT format)
-//  custom: Users can freely adjust RHYTHM field formats to match their performance style
 }
 ```
 
