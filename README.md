@@ -209,9 +209,7 @@ RHYTHM stores session data like a melody composed of notes on a staff. Each note
 
 ```javascript
 const rhythm_01 = {
-    ping: 0,            // Performance start (0) or end (1)
-    security: 0,        // Performance volume (0-100, too loud risks noise complaints)
-    addon: 0,           // Special performance equipment (0=none, 1-255=amps, lights, etc.)
+    echo: 0,            // Performance stage (0=performing, 1=closing, 2=archived)
     device: 0,          // Instrument type (0=electric keyboard, 1=acoustic guitar, 2=drums)
     referrer: 1,        // Performance spot (0=home street, 1=regular spot, 2=new venue, 3-255=special venues)
     time: 1735680000,   // Performance start time
@@ -226,7 +224,7 @@ const rhythm_01 = {
 When stored in cookies, this data becomes a single line of sheet music separated by underscores (_).
 
 ```
-"0_0_0_0_1_1735680000_300_45_23_!home~10*1"
+"0_0_1_1735680000_300_45_23_!home~10*1"
 ```
 
 A single line expresses an entire session. If JSON is conducting each orchestra section, RHYTHM is as concise as playing guitar tabs.
@@ -281,7 +279,7 @@ Singer-songwriters can manage multiple sessions simultaneously. For smooth perfo
 
 Limiting to 7 sessions prevents audience confusion from constantly changing setlists during one performance. Exceeding this number suggests noise pollution rather than pure busking—likely a bot signal.
 
-Edge also has limits. Famous CDN/edge networks typically set header size limits at 8~32KB. While sufficient for streaming 4KB cookie sessions, too many sessions risk disconnection. When performances run too long, livestreaming stops at the singer-songwriter's signal (ping=1). The performance data archives privately, then new streaming begins. This circular structure enables practically unlimited performances.
+Edge also has limits. Famous CDN/edge networks typically set header size limits at 8~32KB. While sufficient for streaming 4KB cookie sessions, too many sessions risk disconnection. When performances run too long, livestreaming stops at the singer-songwriter's signal (echo=2). The performance data archives privately, then new streaming begins. This circular structure enables practically unlimited performances.
 
 Edge is a good friend who asks for no compensation for management activities, but may grumble and request small rewards if livestreaming restarts too frequently.
 
@@ -293,9 +291,9 @@ RHYTHM turns users' browser cookies into small personal storage. With 100 millio
 
 ### Stage Beginning and End
 
-Ping signals the performance's start and end. 0 means the singer-songwriter takes the stage to begin performing, 1 means ending the performance and leaving the stage.
+Echo signals the performance's start and end. 0 means the singer-songwriter takes the stage to begin performing, 1 means ending the performance, and 2 means leaving the stage.
 
-When the singer-songwriter finishes a wonderful performance and leaves the stage, Edge detects ping=1 and ends livestreaming. Today's performance—recording nothing but pure rhythm without IP or names—archives privately or disappears as a one-time performance remaining only briefly in people's memories.
+When the singer-songwriter finishes a wonderful performance and leaves the stage, Edge detects echo=2 and ends livestreaming. Today's performance—recording nothing but pure rhythm without IP or names—archives privately or disappears as a one-time performance remaining only briefly in people's memories.
 
 <br />
 
