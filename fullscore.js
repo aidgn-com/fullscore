@@ -75,9 +75,9 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 		SCR: false,		// BEAT Scroll position tracking addon (default: false)
 		REC: false,		// Crashed session recovery controls immediate or deferred batch (default: false)
 		SPA: false,		// Single Page Application addon (default: false)
-		POW: false,		// Batch on every tab switch/minimize (default: false)
+		POW: false,		// Immediate batch on visibility change (default: false)
 						// When POW=false, preserves complete journey in just one batch. Some browsers may delay or lose data.
-						// When POW=true, sends batch immediately on tab switch. More reliable delivery but fragments journey.
+						// When POW=true, sends batch immediately on visibility change. More reliable delivery but fragments journey.
 	}
 };
 
@@ -219,7 +219,7 @@ class Rhythm {
 				const ses = this.get(this.data.name);
 				if (ses && ses[0] === '0') document.cookie = this.data.name + '=' + ('1' + ses.slice(1)) + this.tail; // Mark as echo=1
 			}
-			if (RHYTHM.ADD.POW) return this.batch(true); // Batch on every tab switch/minimize (default: false)
+			if (RHYTHM.ADD.POW) return this.batch(true); // Immediate batch on visibility change (default: false)
 			setTimeout(() => { // Defer execution to check all pagehide results
 				for (let i = 1; i <= RHYTHM.MAX; i++) {
 					const ses = this.get('rhythm_' + i);
@@ -396,6 +396,7 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
