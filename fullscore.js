@@ -73,7 +73,7 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 	ADD: { 		// Addon features
 		TAB: true,		// BEAT Cross-tab tracking addon (default: true)
 		SCR: false,		// BEAT Scroll position tracking addon (default: false)
-		REC: false,		// Crashed session recovery controls immediate or deferred batch (default: false)
+		REC: false,		// Keep crashed sessions for recovery after abnormal exit (default: false)
 		SPA: false,		// Single Page Application addon (default: false)
 		POW: false,		// Immediate batch on visibility change (default: false)
 						// When POW=false, preserves complete journey in just one batch. May be delayed or lost depending on user behavior.
@@ -261,7 +261,7 @@ class Rhythm {
 				const ses = this.get('rhythm_' + i);
 				if (ses && ses[0] === '0') document.cookie = 'rhythm_' + i + '=' + ('1' + ses.slice(1)) + this.tail;
 			}
-			if (RHYTHM.ADD.REC === true) return; // Crashed session recovery controls immediate or deferred batch (default: false)
+			if (RHYTHM.ADD.REC === true) return; // Keep crashed sessions for recovery after abnormal exit (default: false)
 		}
 		document.cookie = 'score=; Max-Age=0; Path=/'; // Remove score before batch
 		const payload = []; // Gather echo data
@@ -396,6 +396,7 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
