@@ -277,9 +277,9 @@ A traditional concert hall would be different. Without complex broadcast equipme
 
 ### Session Management
 
-Singer-songwriters can manage multiple sessions simultaneously. For smooth performances, we recommend limiting to rhythm_01 through rhythm_06. New sessions are created when cookies fill up or when switching browser tabs.
+Singer-songwriters can manage multiple sessions simultaneously. For smooth performances, we recommend limiting to rhythm_01 through rhythm_07. New sessions are created when cookies fill up or when switching browser tabs.
 
-Limiting to 6 sessions prevents audience confusion from constantly changing setlists during one performance. Exceeding this number suggests noise pollution rather than pure busking—likely a bot signal.
+Limiting to 7 sessions prevents audience confusion from constantly changing setlists during one performance. Exceeding this number suggests noise pollution rather than pure busking—likely a bot signal.
 
 Edge also has limits. Famous CDN/edge networks typically set header size limits at 8~32KB. While sufficient for streaming 4KB cookie sessions, too many sessions risk disconnection. When performances run too long, livestreaming stops at the singer-songwriter's signal (ping=1). The performance data archives privately, then new streaming begins. This circular structure enables practically unlimited performances.
 
