@@ -24,7 +24,7 @@ The name Full Score symbolizes a musical score or composition. Just as a full sc
 
 Full Score consists of three independent technologies. Each is useful alone, yet more powerful together.
 
-**TEMPO (Touch Event Maestro Performance Optimizer)** is a 50-line snippet that improves touch event speed and accuracy. Like an orchestra conductor synchronizing different instruments' tempos, it harmonizes mobile and desktop interactions. Without offbeats, every touch and click completes as a single note. While it provides immediate improvements standalone, when used with RHYTHM, it becomes a gateway for collecting user interaction data.
+**TEMPO (Tap Event Method Performance Optimizer)** is a 50-line snippet that improves touch event speed and accuracy. Like an orchestra conductor synchronizing different instruments' tempos, it harmonizes mobile and desktop interactions. Without offbeats, every touch and click completes as a single note. While it provides immediate improvements standalone, when used with RHYTHM, it becomes a gateway for collecting user interaction data.
 
 **RHYTHM (Real-time Hybrid Traffic History Monitor)** is a client-side engine that leverages users' browsers like auxiliary databases. Unlike traditional approaches that send, store, and process data on servers, it embeds core functionality in the browser. Connected with Edge Computing, it enables real-time analysis and immediate response without server intervention. It proposes a new paradigm with minimal data transfer costs, server operation costs, and processing delays.
 
@@ -126,7 +126,7 @@ Like pressing the damper pedal at the perfect moment to eliminate unwanted reson
 TEMPO's entire code fits within 50 lines. Like Bach's Inventions, it creates music with minimal notes.
 
 ```javascript
-function tempo(rhythm) { // Touch Event Maestro Performance Optimizer
+function tempo(rhythm) { // Tap Event Method Performance Optimizer
     if (document.tempo) return;
     document.tempo = true;
     if ("ontouchstart" in window || navigator.maxTouchPoints > 0) { // Mobile environment detection
