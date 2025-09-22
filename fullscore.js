@@ -76,7 +76,7 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 		REC: false,		// Crashed session recovery controls immediate or deferred batch (default: false)
 		SPA: false,		// Single Page Application addon (default: false)
 		POW: false,		// Immediate batch on visibility change (default: false)
-						// When POW=false, preserves complete journey in just one batch. Some browsers may delay or lose data.
+						// When POW=false, preserves complete journey in just one batch. May be delayed or lost depending on user behavior.
 						// When POW=true, sends batch immediately on visibility change. More reliable delivery but fragments journey.
 	}
 };
@@ -396,6 +396,7 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
