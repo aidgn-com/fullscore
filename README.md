@@ -24,11 +24,11 @@ The name Full Score symbolizes a musical score or composition. Just as a full sc
 
 Full Score consists of three independent technologies. Each is useful alone, yet more powerful together.
 
-**Tempo** is a 50-line snippet that improves touch event speed and accuracy. Like an orchestra conductor synchronizing different instruments' tempos, it harmonizes mobile and desktop interactions. Without offbeats, every touch and click completes as a single note. While it provides immediate improvements standalone, when used with Rhythm, it becomes a gateway for collecting user interaction data.
+**TEMPO (Touch Event Maestro Performance Optimizer)** is a 50-line snippet that improves touch event speed and accuracy. Like an orchestra conductor synchronizing different instruments' tempos, it harmonizes mobile and desktop interactions. Without offbeats, every touch and click completes as a single note. While it provides immediate improvements standalone, when used with Rhythm, it becomes a gateway for collecting user interaction data.
 
-**Rhythm** is a client-side engine that leverages users' browsers like auxiliary databases. Unlike traditional approaches that send, store, and process data on servers, it embeds core functionality in the browser. Connected with Edge Computing, it enables real-time analysis and immediate response without server intervention. It proposes a new paradigm with minimal data transfer costs, server operation costs, and processing delays.
+**RHYTHM (Real-time Hybrid Traffic History Monitor)** is a client-side engine that leverages users' browsers like auxiliary databases. Unlike traditional approaches that send, store, and process data on servers, it embeds core functionality in the browser. Connected with Edge Computing, it enables real-time analysis and immediate response without server intervention. It proposes a new paradigm with minimal data transfer costs, server operation costs, and processing delays.
 
-**BEAT (Behavior Encoding And Tracking)** is a domain-specific language (DSL) that serializes 3D behavioral data—time (X), action (Y), and depth (Z)—into linear sequences. It compresses complex user journeys into single strings, written to be readable by both humans and AI. While it's Rhythm's core data format, it has versatility for use in other systems.
+**BEAT (Behavioral Event Analytics Transform)** is a domain-specific language (DSL) that serializes 3D behavioral data—time (X), action (Y), and depth (Z)—into linear sequences. It compresses complex user journeys into single strings, written to be readable by both humans and AI. While it's Rhythm's core data format, it has versatility for use in other systems.
 
 These three technologies are like a jazz trio—each solo performance is excellent, but together they create true harmony.
 
