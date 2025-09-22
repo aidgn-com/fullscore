@@ -269,9 +269,9 @@ export default {
 }
 ```
 
-Every decision is analyzed in milliseconds through Edge's livestreaming. Edge simply reads and analyzes cookies already included in users' standard HTTP requests in real-time. No data endpoints required.
+Every decision is analyzed in milliseconds through Edge's livestreaming. Edge simply reads and analyzes cookies already included in users' standard HTTP requests in real-time.
 
-No separate analytics servers or central database queries needed. Browser and Edge connect closely in spacetime like sympathetic resonance—fast and vivid. Processing delays are imperceptibly low.
+No data endpoints required. No separate analytics servers or central database queries needed. Browser and Edge connect closely in spacetime like sympathetic resonance—fast and vivid. Processing delays are imperceptibly low.
 
 A traditional concert hall would be different. Without complex broadcast equipment, without separate studios, street music spreads worldwide.
 
