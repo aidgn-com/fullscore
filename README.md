@@ -775,9 +775,8 @@ See individual source files for detailed license information.
 
 ## Resources
 
-- **Live Demo**: [YouTube Video](링크)
-- **GitHub**: [github.com/aidgn-com/fullscore](https://github.com/aidgn-com/fullscore/)
-- **Edge Worker**: Under Development (Ultra-lightweight analytics and security engine running on edge)
+- **Full Score**: Web's Native Analytics [github.com/aidgn-com/fullscore](https://github.com/aidgn-com/fullscore/)
+- **Edge Runner**: Cookie Resonance Interpreter (Beta) [github.com/aidgn-com/edgerunner](https://github.com/aidgn-com/edgerunner/)
 
 <br />
 
