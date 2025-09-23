@@ -761,8 +761,9 @@ For real-time bot detection logic, we recommend implementing it in Edge Workers 
 
 ## License
 
+**Full Score** - GPL-3.0 License
 - **TEMPO** - MIT License
-- **RHYTHM** - GPL-3.0 License  
+- **RHYTHM** - GPL-3.0 License
 - **BEAT** - AGPL-3.0 License
 
 **Important:** BEAT is the core component of Full Score. It stands for Behavioral Event Analytics Transform - a linear string format that humans and AI can intuitively understand. Modifications to this format specification must comply with AGPL-3.0 terms.
