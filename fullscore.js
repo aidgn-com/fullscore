@@ -264,6 +264,7 @@ class Rhythm {
 			}
 			if (RHYTHM.ADD.REC === true) return; // Keep crashed sessions for recovery after abnormal exit (default: false)
 		}
+		document.cookie = 'score=; Max-Age=0; Path=/'; // Remove score before batch
 		const payload = []; // Gather echo data
 		for (let i = 1; i <= RHYTHM.MAX; i++) {
 			const ses = this.get('rhythm_' + i);
@@ -396,4 +397,5 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
