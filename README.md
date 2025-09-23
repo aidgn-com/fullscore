@@ -753,7 +753,7 @@ Everything is contained within this small Full Score.
 
 Full Score is an incredibly lightweight tool. For detailed usage and customization, please refer to the comments in the fullscore.js file. The code works immediately when copied and pasted into your website without any additional configuration.
 
-Real-time analytics and security features can be implemented with client-side JavaScript alone, but configuring them on Edge eliminates the need for separate endpoints and minimizes network costs, creating excellent synergy. The Full Score developer is preparing Edge Runner (Cookie Resonance Interpreter) for this purpose, and you can check out the beta version on GitHub.
+Real-time analytics and security can run entirely in client-side JavaScript, but deploying at the Edge eliminates the need for separate endpoints and reduces network costs, creating strong synergy. To support this, the Full Score developer is building a lightweight Edge Runner (Cookie Resonance Interpreter), with a beta version available on GitHub.
 
 <br />
 
