@@ -767,7 +767,7 @@ For real-time bot detection logic, we recommend implementing it in Edge Workers 
 
 **Important:** BEAT is the core component of Full Score. It stands for Behavioral Event Analytics Transform - a linear string format that humans and AI can intuitively understand. Modifications to this format specification must comply with AGPL-3.0 terms.
 
-**Compatibility:** BEAT is considered compatible even if the symbols (! # $ % & ' ( ) * + - . / 0-9 : < = > ? @ A-Z [ ] ^ _ ` a-z { | } ~) [RFC 6265 cookie-octet set](https://www.rfc-editor.org/rfc/rfc6265) or the parser implementation differ, as long as the syntax (a linear string) is satisfied and an essentially identical semantic stream is produced and interpreted.
+**Compatibility:** BEAT is considered compatible even if the symbols (! # $ % & ' ( ) * + - . / 0-9 : < = > ? @ A-Z [ ] ^ _ ` a-z { | } ~) [RFC 6265 cookie-octet set](https://www.rfc-editor.org/rfc/rfc6265) or the parser implementation differ, as long as the syntax is satisfied and an essentially identical semantic stream is produced and interpreted.
 
 See individual source files for detailed license information.
 
