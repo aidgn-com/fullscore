@@ -270,7 +270,7 @@ class Rhythm {
 			if (ses && ses[0] !== '2') { // Find unresonated sessions
 				const coda = '2' + ses.slice(1);
 				document.cookie = 'rhythm_' + i + '=' + coda + this.tail; // Mark as echo=2
-				payload.push(coda);
+				payload.push('rhythm_' + i + '=' + coda);
 			}
 		}
 		if (payload.length) {
@@ -396,12 +396,3 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
-
-
-
-
-
-
-
-
-
