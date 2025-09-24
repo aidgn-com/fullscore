@@ -230,7 +230,6 @@ class Rhythm {
 					if (ses && ses[0] === '0') return; // Return if echo=0 session exists
 				}
 				this.batch(true); // Batch confirmed
-				document.cookie = 'score=; Max-Age=0; Path=/'; // Remove score before batch
 			}, 1);
 		};
 		RHYTHM.ADD.POW && document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && end(), { capture: true });
@@ -401,4 +400,5 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
