@@ -192,7 +192,7 @@ class Rhythm {
 		this.tail = '; Path=/; Max-Age=' + RHYTHM.AGE + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // Session retention period (default: 3 days)
 		this.clean(); // Remove echo=2 completed sessions
 		this.batch(); // Batch sessions to edge or custom endpoints
-		if (!this.get('score')) document.cookie = 'score=' + Date.now() + '_0_0___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // Browser session orchestrator
+		if (!this.get('score')) document.cookie = 'score=' + Date.now() + '_0_000___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // Browser session orchestrator
 		this.score = this.get('score'); // Store current score
 		this.session(); // Session management
 		this.hasTempo ? tempo(this) : document.addEventListener('click', e => this.click(e.target), {capture: true}); // Tempo integration
@@ -397,5 +397,3 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
-
-
