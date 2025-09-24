@@ -1,7 +1,11 @@
 /**
  * Full Score - Web's Native Analytics
  * Copyright (c) 2025 Aidgn
- * GPL-3.0-or-later - See LICENSE file for details
+ * GPL-3.0-or-later with component licenses:
+ * - TEMPO: MIT License
+ * - RHYTHM: GPL-3.0 License
+ * - BEAT: AGPL-3.0 License
+ * See LICENSE file for details
  *
  * Inside a piano lie over 230 strings. Strike one, and others with the same
  * frequency resonate naturally. This is sympathetic resonance.
@@ -397,3 +401,4 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
