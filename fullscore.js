@@ -263,29 +263,30 @@ class Rhythm {
 		}
 	}
 	batch(force = false) { // Batch sessions to edge or custom endpoints
-		if (!force) {
-			if (this.get('score')) return; // Score in progress
-			for (let i = 1; i <= RHYTHM.MAX; i++) { // Preserve crashed sessions as echo=1
-				const ses = this.get('rhythm_' + i);
-				if (ses && ses[0] === '0') document.cookie = 'rhythm_' + i + '=' + ('1' + ses.slice(1)) + this.tail;
-			}
-			if (RHYTHM.ADD.REC === true) return; // Keep crashed sessions for recovery after abnormal exit (default: false)
-		}
-		document.cookie = 'score=; Max-Age=0; Path=/'; // Remove score before batch
-		const cookies = document.cookie.match(/rhythm_\d+=[^;]*/g);
-		if (cookies) {
-			let data = '';
-			for (let i = 0; i < cookies.length; i++) { // Gather echo data
-				const updated = cookies[i].replace(/=./, '=2'); // Mark as echo=2
-				document.cookie = updated + this.tail;
-				data += updated;
-			}
-			for (const echo of RHYTHM.ECO) { // Session endpoint and batch signal (default: '/rhythm/echo')
-				const url = echo[0] === 'h' ? echo : location.origin + echo;
-				navigator.sendBeacon(url, data) || fetch(url, {method: 'POST', body: data, keepalive: true}).catch(() => {}); // Send with fallback
-			}
-		}
-		this.clean();
+	    const cookies = document.cookie.match(/rhythm_\d+=[^;]*/g);
+	    if (!force) {
+	        if (cookies) {
+	            for (let i = 0; i < cookies.length; i++) { // Preserve crashed sessions as echo=1
+	                const updated = cookies[i].replace(/=./, '=1');
+	                document.cookie = updated + this.tail;
+	            }
+	        }
+	        if (RHYTHM.ADD.REC === true) return; // Keep crashed sessions for recovery after abnormal exit (default: false)
+	    }
+	    document.cookie = 'score=; Max-Age=0; Path=/'; // Remove score before batch
+	    if (cookies) {
+	        let data = ''; // Gather echo data
+	        for (let i = 0; i < cookies.length; i++) {
+	            const updated = cookies[i].replace(/=./, '=2'); // Mark as echo=2
+	            document.cookie = updated + this.tail;
+	            data += updated;
+	        }
+	        for (const echo of RHYTHM.ECO) { // Session endpoint and batch signal (default: '/rhythm/echo')
+	            const url = echo[0] === 'h' ? echo : location.origin + echo;
+	            navigator.sendBeacon(url, data) || fetch(url, {method: 'POST', body: data, keepalive: true}).catch(() => {}); // Send with fallback
+	        }
+	    }
+	    this.clean();
 	}
 	session(force = false) { // Session management
 		if (!force) {
@@ -350,7 +351,7 @@ class Rhythm {
 		const tabs = parts[1] || '';
 		if (!tabs.endsWith('~' + number) && tabs !== number) { // RHYTHM Cross-tab tracking
 			document.cookie = 'score=' + parts[0] + '___' + (tabs ? tabs + '~' : '') + number + '; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
-			if (this.hasBeat && RHYTHM.ADD.TAB) { // Embed tab tracking into BEAT flow
+			if (this.hasBeat && RHYTHM.ADD.TAB) { // BEAT Cross-tab tracking addon (default: true)
 				const before = tabs.split('~').pop();
 				if (before && before !== number) {
 					const ses = this.get('rhythm_' + before); // Mark tab switch in previous session
@@ -403,4 +404,3 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
-
