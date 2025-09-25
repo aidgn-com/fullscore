@@ -196,8 +196,16 @@ class Rhythm {
 		this.tail = '; Path=/; Max-Age=' + RHYTHM.AGE + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // Session retention period (default: 3 days)
 		this.clean(); // Remove echo=2 completed sessions
 		this.batch(); // Batch sessions to edge or custom endpoints
-		if (!this.get('score')) document.cookie = 'score=' + Date.now() + '_0_000___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // Browser session orchestrator
+		if (!this.get('score')) { // Browser session orchestrator
+		    let mark = '';
+		    for (let i = 0; i < 5; i++) mark += String.fromCharCode(97 + Math.random() * 26 | 0);
+		    const time = Date.now();
+		    document.cookie = 'score=0000000000_' + time + '_' + mark + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+		}
 		this.score = this.get('score'); // Store current score
+		const parts = this.score.split('_');
+		this.time = Math.floor(+parts[1] / 100);
+		this.mark = parts[2];
 		this.session(); // Session management
 		this.hasTempo ? tempo(this) : document.addEventListener('click', e => this.click(e.target), {capture: true}); // Tempo integration
 		this.scrolling = false; // Debounce to count once per scroll gesture
@@ -292,8 +300,8 @@ class Rhythm {
 				const ses = this.get(window.name);
 				if (ses) { // Restore existing session
 					const parts = ses.split('_');
-					const flow = parts.slice(7).join('_'); // Extract BEAT flow from session
-					this.data = {name: window.name, device: +parts[1], referrer: +parts[2], time: +parts[3], clicks: +parts[5], scrolls: +parts[6]}; // Convert string to object
+					const flow = parts.slice(8).join('_'); // Extract BEAT flow from session
+					this.data = {name: window.name, time: +parts[1], mark: parts[2], device: +parts[3], referrer: +parts[4], clicks: +parts[5], scrolls: +parts[6]}; // Convert string to object
 					if (this.hasBeat) {
 						this.beat = new Beat();
 						if (flow) {
@@ -316,9 +324,11 @@ class Rhythm {
 			}
 		}
 		if (!name) { // If all sessions in use
-			document.cookie = 'score=' + Date.now() + this.score.replace(/^[0-9]+/, '') + '; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // New score signal
 			this.batch(true);
 			this.data = null;
+			const newTime = Date.now();
+			document.cookie = 'score=' + this.score.split('_')[0] + '_' + newTime + '_' + this.mark + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // New score signal
+			this.time = Math.floor(newTime / 100);
 			name = 'rhythm_1';
 		}
 		window.name = name; // Store session name in window.name
@@ -327,7 +337,7 @@ class Rhythm {
 		const domain = ref?.match(/^https?:\/\/([^\/]+)/)?.[1] || ''; // Parse hostname from referrer URL
 		let index = !ref ? 0 : domain === location.hostname ? 1 : 2;
 		if (index === 2 && domain) for (const key in RHYTHM.REF) if (domain === key || domain.endsWith('.' + key)) { index = RHYTHM.REF[key]; break; } // Referrer mapping (0=direct, 1=internal, 2=unknown, 3-255=specific domains)
-		this.data = {name: name, time: Math.floor(Date.now() / 100), device: /mobi/i.test(ua) ? 1 : /tablet|ipad/i.test(ua) ? 2 : 0, referrer: index, clicks: 0, scrolls: 0}; // Create new session
+		this.data = {name: name, time: this.time, mark: this.mark, device: /mobi/i.test(ua) ? 1 : /tablet|ipad/i.test(ua) ? 2 : 0, referrer: index, clicks: 0, scrolls: 0}; // Create new session
 		if (this.hasBeat) {
 			this.beat = new Beat(); // Create new BEAT instance
 			this.beat.page(location.pathname);
@@ -400,5 +410,6 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
