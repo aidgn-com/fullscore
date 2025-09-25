@@ -232,15 +232,9 @@ class Rhythm {
 				if (ses && ses[0] === '0') document.cookie = this.data.name + '=' + ('1' + ses.slice(1)) + this.tail; // Mark as echo=1
 			}
 			if (RHYTHM.ADD.POW) return this.batch(true); // Immediate batch on visibility change (default: false)
-			setTimeout(() => { // Defer execution to check all pagehide results
-				for (let i = 1; i <= RHYTHM.MAX; i++) {
-					const ses = this.get('rhythm_' + i);
-					if (ses && ses[0] === '0') return; // Return if echo=0 session exists
-				}
-				this.batch(true); // Batch confirmed
-			}, 1);
+			setTimeout(() => { document.cookie.match(/rhythm_\d+=0/) || this.batch(true); }, 1); // Batch confirmed
 		};
-		RHYTHM.ADD.POW && document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && end(), { capture: true });
+		document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && end(), { capture: true });
 		window.addEventListener('pagehide', end, { capture: true }); // All pagehide events trigger termination check
 	}
 	click(el) { // Click action and cookie refresh
@@ -276,19 +270,16 @@ class Rhythm {
 			if (RHYTHM.ADD.REC === true) return; // Keep crashed sessions for recovery after abnormal exit (default: false)
 		}
 		document.cookie = 'score=; Max-Age=0; Path=/'; // Remove score before batch
-		const payload = []; // Gather echo data
-		for (let i = 1; i <= RHYTHM.MAX; i++) {
-			const ses = this.get('rhythm_' + i);
-			if (ses && ses[0] !== '2') { // Find unresonated sessions
-				const coda = '2' + ses.slice(1);
-				document.cookie = 'rhythm_' + i + '=' + coda + this.tail; // Mark as echo=2
-				payload.push('rhythm_' + i + '=' + coda);
+		const cookies = document.cookie.match(/rhythm_\d+=[^;]*/g);
+		if (cookies) {
+			let data = '';
+			for (let i = 0; i < cookies.length; i++) { // Gather echo data
+				const updated = cookies[i].replace(/=./, '=2'); // Mark as echo=2
+				document.cookie = updated + this.tail;
+				data += updated;
 			}
-		}
-		if (payload.length) {
-			const data = payload.join('\n');
 			for (const echo of RHYTHM.ECO) { // Session endpoint and batch signal (default: '/rhythm/echo')
-				const url = echo.startsWith('http') ? echo : location.origin + echo;
+				const url = echo[0] === 'h' ? echo : location.origin + echo;
 				navigator.sendBeacon(url, data) || fetch(url, {method: 'POST', body: data, keepalive: true}).catch(() => {}); // Send with fallback
 			}
 		}
@@ -410,6 +401,7 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
