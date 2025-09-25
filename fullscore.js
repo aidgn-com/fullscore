@@ -61,8 +61,9 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 	],
 	TAP: 3,				// Session refresh cycle (default: 3 clicks)
 	THR: 30,			// Session refresh throttle (default: 30 ms)
+	KEY: 8,				// Session key length (default: 8 chars)
 	AGE: 259200,		// Session retention period (default: 3 days)
-	MAX: 7,				// Maximum session count (default: 7)
+	MAX: 7,				// Maximum session count (default: 7 slots)
 	CAP: 3500,			// Maximum session capacity (default: 3500 bytes)
 	DEL: 1,				// Session deletion criteria (default: 1 clicks)
 						// Below threshold not batched, 0 means all sessions batched
@@ -197,14 +198,15 @@ class Rhythm {
 		this.clean(); // Remove echo=2 completed sessions
 		this.batch(); // Batch sessions to edge or custom endpoints
 		if (!this.get('score')) { // Browser session orchestrator
-		    let mark = '';
-		    for (let i = 0; i < 5; i++) mark += String.fromCharCode(97 + Math.random() * 26 | 0);
+			let mark = '';
+			const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+			for (let i = 0; i < RHYTHM.KEY; i++) mark += chars[Math.random() * 36 | 0];
 		    const time = Date.now();
 		    document.cookie = 'score=0000000000_' + time + '_' + mark + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
 		}
 		this.score = this.get('score'); // Store current score
 		const parts = this.score.split('_');
-		this.time = Math.floor(+parts[1] / 100);
+		this.time = +parts[1];
 		this.mark = parts[2];
 		this.session(); // Session management
 		this.hasTempo ? tempo(this) : document.addEventListener('click', e => this.click(e.target), {capture: true}); // Tempo integration
@@ -319,7 +321,7 @@ class Rhythm {
 			this.data = null;
 			const newTime = Date.now();
 			document.cookie = 'score=' + this.score.split('_')[0] + '_' + newTime + '_' + this.mark + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // New score signal
-			this.time = Math.floor(newTime / 100);
+			this.time = newTime
 			name = 'rhythm_1';
 		}
 		window.name = name; // Store session name in window.name
@@ -328,7 +330,7 @@ class Rhythm {
 		const domain = ref?.match(/^https?:\/\/([^\/]+)/)?.[1] || ''; // Parse hostname from referrer URL
 		let index = !ref ? 0 : domain === location.hostname ? 1 : 2;
 		if (index === 2 && domain) for (const key in RHYTHM.REF) if (domain === key || domain.endsWith('.' + key)) { index = RHYTHM.REF[key]; break; } // Referrer mapping (0=direct, 1=internal, 2=unknown, 3-255=specific domains)
-		this.data = {name: name, time: this.time, mark: this.mark, device: /mobi/i.test(ua) ? 1 : /tablet|ipad/i.test(ua) ? 2 : 0, referrer: index, clicks: 0, scrolls: 0}; // Create new session
+		this.data = {name: name, device: /mobi/i.test(ua) ? 1 : /tablet|ipad/i.test(ua) ? 2 : 0, referrer: index, clicks: 0, scrolls: 0}; // Create new session
 		if (this.hasBeat) {
 			this.beat = new Beat(); // Create new BEAT instance
 			this.beat.page(location.pathname);
@@ -363,7 +365,7 @@ class Rhythm {
 		if (this.hasBeat && RHYTHM.ADD.TAB) { // BEAT Cross-tab tracking addon (default: true)
 			const ses = this.get(window.name);
 			if (ses && ses[0] === '0') {
-				const flow = ses.split('_').slice(7).join('_');
+				const flow = ses.split('_').slice(8).join('_');
 				if (flow.match(/___\d+$/)) { // Tab switch marker detected
 					const mem = this.beat.flow();
 					let i = 0;
@@ -373,6 +375,8 @@ class Rhythm {
 			}
 		}
 		const save = [0, this.data.device, this.data.referrer, this.data.time, Math.floor(Date.now() / 100) - this.data.time, this.data.clicks, this.data.scrolls, this.beat?.flow() || ''].join('_'); // Build session string
+		const save = [0, this.time, this.mark, this.data.device, this.data.referrer, this.data.clicks, this.data.scrolls, Math.floor(Date.now() / 100) - this.time, this.beat?.flow() || ''].join('_');
+		// 너무 길어서 읽기 어려움
 		document.cookie = this.data.name + '=' + save + this.tail;
 		if (save.length > RHYTHM.CAP) { // Maximum session capacity (default: 3500 bytes)
 			document.cookie = this.data.name + '=' + ('1' + save.slice(1)) + this.tail; // Mark as echo=1
@@ -401,6 +405,7 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
