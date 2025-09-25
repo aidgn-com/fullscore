@@ -195,9 +195,9 @@ class Rhythm {
 		this.hasTempo = typeof tempo !== 'undefined';
 		this.ended = false;
 		this.tail = '; Path=/; Max-Age=' + RHYTHM.AGE + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // Session retention period (default: 3 days)
-		this.clean(); // Remove echo=2 completed sessions
-		this.batch(); // Batch sessions to edge or custom endpoints
 		if (!this.get('score')) { // Browser session orchestrator
+			this.clean(); // Remove echo=2 completed sessions
+			this.batch(); // Batch sessions to edge or custom endpoints
 			let key = '';
 			const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
 			for (let i = 0; i < RHYTHM.KEY; i++) key += chars[Math.random() * 36 | 0];
@@ -404,3 +404,4 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
