@@ -201,7 +201,7 @@ class Rhythm {
 			let mark = '';
 			const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
 			for (let i = 0; i < RHYTHM.KEY; i++) mark += chars[Math.random() * 36 | 0];
-		    const time = Date.now();
+		    const time = Math.floor(Date.now() / 100);
 		    document.cookie = 'score=0000000000_' + time + '_' + mark + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
 		}
 		this.score = this.get('score'); // Store current score
@@ -319,7 +319,7 @@ class Rhythm {
 		if (!name) { // If all sessions in use
 			this.batch(true);
 			this.data = null;
-			const newTime = Date.now();
+			const newTime = Math.floor(Date.now() / 100);
 			document.cookie = 'score=' + this.score.split('_')[0] + '_' + newTime + '_' + this.mark + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // New score signal
 			this.time = newTime
 			name = 'rhythm_1';
@@ -330,7 +330,7 @@ class Rhythm {
 		const domain = ref?.match(/^https?:\/\/([^\/]+)/)?.[1] || ''; // Parse hostname from referrer URL
 		let index = !ref ? 0 : domain === location.hostname ? 1 : 2;
 		if (index === 2 && domain) for (const key in RHYTHM.REF) if (domain === key || domain.endsWith('.' + key)) { index = RHYTHM.REF[key]; break; } // Referrer mapping (0=direct, 1=internal, 2=unknown, 3-255=specific domains)
-		this.data = {name: name, device: /mobi/i.test(ua) ? 1 : /tablet|ipad/i.test(ua) ? 2 : 0, referrer: index, clicks: 0, scrolls: 0}; // Create new session
+		this.data = {name: name, time: this.time, mark: this.mark, device: /mobi/i.test(ua) ? 1 : /tablet|ipad/i.test(ua) ? 2 : 0, referrer: index, clicks: 0, scrolls: 0}; // Create new session
 		if (this.hasBeat) {
 			this.beat = new Beat(); // Create new BEAT instance
 			this.beat.page(location.pathname);
@@ -374,9 +374,7 @@ class Rhythm {
 				}
 			}
 		}
-		const save = [0, this.data.device, this.data.referrer, this.data.time, Math.floor(Date.now() / 100) - this.data.time, this.data.clicks, this.data.scrolls, this.beat?.flow() || ''].join('_'); // Build session string
-		const save = [0, this.time, this.mark, this.data.device, this.data.referrer, this.data.clicks, this.data.scrolls, Math.floor(Date.now() / 100) - this.time, this.beat?.flow() || ''].join('_');
-		// 너무 길어서 읽기 어려움
+		const save = [0, this.data.time, this.data.mark, this.data.device, this.data.referrer, this.data.clicks, this.data.scrolls, Math.floor(Date.now() / 100) - this.data.time, this.beat?.flow() || ''].join('_'); // Build session string
 		document.cookie = this.data.name + '=' + save + this.tail;
 		if (save.length > RHYTHM.CAP) { // Maximum session capacity (default: 3500 bytes)
 			document.cookie = this.data.name + '=' + ('1' + save.slice(1)) + this.tail; // Mark as echo=1
@@ -405,8 +403,3 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
-
-
-
-
-
