@@ -198,16 +198,16 @@ class Rhythm {
 		this.clean(); // Remove echo=2 completed sessions
 		this.batch(); // Batch sessions to edge or custom endpoints
 		if (!this.get('score')) { // Browser session orchestrator
-			let mark = '';
+			let key = '';
 			const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-			for (let i = 0; i < RHYTHM.KEY; i++) mark += chars[Math.random() * 36 | 0];
+			for (let i = 0; i < RHYTHM.KEY; i++) key += chars[Math.random() * 36 | 0];
 		    const time = Math.floor(Date.now() / 100);
-		    document.cookie = 'score=0000000000_' + time + '_' + mark + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+		    document.cookie = 'score=0000000000_' + time + '_' + key + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
 		}
 		this.score = this.get('score'); // Store current score
 		const parts = this.score.split('_');
 		this.time = +parts[1];
-		this.mark = parts[2];
+		this.key = parts[2];
 		this.session(); // Session management
 		this.hasTempo ? tempo(this) : document.addEventListener('click', e => this.click(e.target), {capture: true}); // Tempo integration
 		this.scrolling = false; // Debounce to count once per scroll gesture
@@ -226,7 +226,7 @@ class Rhythm {
 			if (RHYTHM.DEL > 0) { // Session deletion criteria (default: 0 clicks)
 				for (let i = 1; i <= RHYTHM.MAX; i++) {
 					const ses = this.get('rhythm_' + i);
-					if (ses && +(ses.split('_')[5] || 0) < RHYTHM.DEL) document.cookie = 'rhythm_' + i + '=; Max-Age=0; Path=/';
+					if (ses && +(ses.split('_')[6] || 0) < RHYTHM.DEL) document.cookie = 'rhythm_' + i + '=; Max-Age=0; Path=/';
 				}
 			}
 			if (this.data) { // Mark pagehide session as preserved
@@ -294,7 +294,7 @@ class Rhythm {
 				if (ses) { // Restore existing session
 					const parts = ses.split('_');
 					const flow = parts.slice(8).join('_'); // Extract BEAT flow from session
-					this.data = {name: window.name, time: +parts[1], mark: parts[2], device: +parts[3], referrer: +parts[4], clicks: +parts[5], scrolls: +parts[6]}; // Convert string to object
+					this.data = {name: window.name, time: +parts[1], key: parts[2], device: +parts[3], referrer: +parts[4], scrolls: +parts[5], clicks: +parts[6]}; // Convert string to object
 					if (this.hasBeat) {
 						this.beat = new Beat();
 						if (flow) {
@@ -320,8 +320,8 @@ class Rhythm {
 			this.batch(true);
 			this.data = null;
 			const newTime = Math.floor(Date.now() / 100);
-			document.cookie = 'score=' + this.score.split('_')[0] + '_' + newTime + '_' + this.mark + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // New score signal
-			this.time = newTime
+			document.cookie = 'score=' + this.score.split('_')[0] + '_' + newTime + '_' + this.key + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // New score signal
+			this.time = newTime;
 			name = 'rhythm_1';
 		}
 		window.name = name; // Store session name in window.name
@@ -330,7 +330,7 @@ class Rhythm {
 		const domain = ref?.match(/^https?:\/\/([^\/]+)/)?.[1] || ''; // Parse hostname from referrer URL
 		let index = !ref ? 0 : domain === location.hostname ? 1 : 2;
 		if (index === 2 && domain) for (const key in RHYTHM.REF) if (domain === key || domain.endsWith('.' + key)) { index = RHYTHM.REF[key]; break; } // Referrer mapping (0=direct, 1=internal, 2=unknown, 3-255=specific domains)
-		this.data = {name: name, time: this.time, mark: this.mark, device: /mobi/i.test(ua) ? 1 : /tablet|ipad/i.test(ua) ? 2 : 0, referrer: index, clicks: 0, scrolls: 0}; // Create new session
+		this.data = {name: name, time: this.time, key: this.key, device: /mobi/i.test(ua) ? 1 : /tablet|ipad/i.test(ua) ? 2 : 0, referrer: index, scrolls: 0, clicks: 0}; // Create new session
 		if (this.hasBeat) {
 			this.beat = new Beat(); // Create new BEAT instance
 			this.beat.page(location.pathname);
@@ -339,7 +339,7 @@ class Rhythm {
 	}
 	save() { // Save session data to cookie
 		const current = this.get('score') || this.score;
-		if (+current.split('_', 1)[0] !== +this.score.split('_', 1)[0]) { // Score change detection
+		if (+current.split('_', 2)[1] !== +this.score.split('_', 2)[1]) { // Score change detection
 			this.score = current;
 			this.data = null;
 			this.session(true); // Distributed systems theory in cookies
@@ -374,7 +374,7 @@ class Rhythm {
 				}
 			}
 		}
-		const save = [0, this.data.time, this.data.mark, this.data.device, this.data.referrer, this.data.clicks, this.data.scrolls, Math.floor(Date.now() / 100) - this.data.time, this.beat?.flow() || ''].join('_'); // Build session string
+		const save = [0, this.data.time, this.data.key, this.data.device, this.data.referrer, this.data.scrolls, this.data.clicks, Math.floor(Date.now() / 100) - this.data.time, this.beat?.flow() || ''].join('_'); // Build session string
 		document.cookie = this.data.name + '=' + save + this.tail;
 		if (save.length > RHYTHM.CAP) { // Maximum session capacity (default: 3500 bytes)
 			document.cookie = this.data.name + '=' + ('1' + save.slice(1)) + this.tail; // Mark as echo=1
@@ -403,3 +403,4 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
