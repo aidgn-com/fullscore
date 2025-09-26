@@ -59,6 +59,7 @@ const RHYTHM = { // Real-time Hybrid Traffic History Monitor
 						// You can replace or add custom endpoints for direct data: 'https://n8n.yoursite.com/webhook/yourcode'
 						// Custom endpoints expose public URLs. Use IP whitelist or reverse proxy for security
 	],
+	TIC: 100,			// Time (default: 100ms)
 	TAP: 3,				// Session refresh cycle (default: 3 clicks)
 	THR: 30,			// Session refresh throttle (default: 30 ms)
 	KEY: 8,				// Session key length (default: 8 chars)
@@ -201,7 +202,7 @@ class Rhythm {
 			let key = '';
 			const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
 			for (let i = 0; i < RHYTHM.KEY; i++) key += chars[Math.random() * 36 | 0];
-			const time = Math.floor(Date.now() / 100);
+			const time = Math.floor(Date.now() / RHYTHM.TIC);
 			document.cookie = 'score=0000000000_' + time + '_' + key + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
 		}
 		this.score = this.get('score'); // Store current score
@@ -322,7 +323,7 @@ class Rhythm {
 		if (!name) { // If all sessions in use
 			this.batch(true);
 			this.data = null;
-			const newTime = Math.floor(Date.now() / 100);
+			const newTime = Math.floor(Date.now() / RHYTHM.TIC);
 			document.cookie = 'score=' + this.score.split('_')[0] + '_' + newTime + '_' + this.key + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // New score signal
 			this.time = newTime;
 			name = 'rhythm_1';
@@ -377,7 +378,7 @@ class Rhythm {
 				}
 			}
 		}
-		const save = [0, this.data.time, this.data.key, this.data.device, this.data.referrer, this.data.scrolls, this.data.clicks, Math.floor(Date.now() / 100) - this.data.time, this.beat?.flow() || ''].join('_'); // Build session string
+		const save = [0, this.data.time, this.data.key, this.data.device, this.data.referrer, this.data.scrolls, this.data.clicks, Math.floor(Date.now() / RHYTHM.TIC) - this.data.time, this.beat?.flow() || ''].join('_'); // Build session string
 		document.cookie = this.data.name + '=' + save + this.tail;
 		if (save.length > RHYTHM.CAP) { // Maximum session capacity (default: 3500 bytes)
 			document.cookie = this.data.name + '=' + ('1' + save.slice(1)) + this.tail; // Mark as echo=1
@@ -406,6 +407,3 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
-
-
-
