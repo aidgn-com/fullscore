@@ -236,7 +236,7 @@ class Rhythm {
 			if (RHYTHM.ADD.POW) return this.batch(true); // Immediate batch on visibility change (default: false)
 			setTimeout(() => { document.cookie.match(/rhythm_\d+=0/) || this.batch(true); }, 1); // Batch confirmed
 		};
-		document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && end(), { capture: true });
+		RHYTHM.ADD.POW && document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && end(), { capture: true });
 		window.addEventListener('pagehide', end, { capture: true }); // All pagehide events trigger termination check
 	}
 	click(el) { // Click action and cookie refresh
@@ -406,4 +406,5 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
