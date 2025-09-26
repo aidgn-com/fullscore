@@ -246,7 +246,7 @@ class Rhythm {
 		this.save();
 		if (this.data.clicks % RHYTHM.TAP === 0) { // After first request, abort others to save bandwidth
 			const ctrl = new AbortController();
-			fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?liveStreaming', // Session activation and cookie resonance path (default: '/rhythm')
+			fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?livestreaming', // Session activation and cookie resonance path (default: '/rhythm')
 				{method: 'HEAD', signal: ctrl.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
 			if (this.data.clicks > RHYTHM.TAP) setTimeout(() => ctrl.abort(), RHYTHM.THR); // Session refresh cycle (default: 3 clicks)
 		}
@@ -406,5 +406,6 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
