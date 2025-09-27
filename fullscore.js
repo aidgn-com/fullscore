@@ -228,13 +228,15 @@ class Rhythm {
 					const ses = this.get(name);
 			        if (ses && +(ses.split('_')[6] || 0) < RHYTHM.DEL) {
 			            document.cookie = name + '=; Max-Age=0; Path=/';
-			            if (name === window.name) window.name = '';
+			            if (name === window.name) this.data = null, this.beat = null, window.name = '';
 			        }
 				}
 			}
 			if (RHYTHM.ADD.POW) return this.batch(true); // Immediate batch on visibility change (default: false)
-			setTimeout(() => document.cookie.replace(new RegExp(window.name + '=0[^;]*;?'), '').match(/rhythm_\d+=0/) || this.batch(true), 1); // Batch confirmed
-			document.cookie = window.name + '=1' + this.get(window.name)?.slice(1) + this.tail;
+			if (window.name) {
+			    setTimeout(() => document.cookie.replace(new RegExp(window.name + '=0[^;]*;?'), '').match(/rhythm_\d+=0/) || this.batch(true), 1);
+			    document.cookie = window.name + '=1' + this.get(window.name)?.slice(1) + this.tail;
+			}
 		};
 		RHYTHM.ADD.POW && document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && end(), { capture: true });
 		window.addEventListener('pagehide', end, { capture: true }); // All pagehide events trigger termination check
@@ -404,3 +406,4 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
