@@ -349,7 +349,7 @@ BEAT records performance order as follows:
 **Time (~) - Rests and beats**
 - ~10: 1 second of breath
 - ~250: 25 seconds of meditation
-- .10.20.30: RHYTHM repetition (repeat times separated by dots)
+- ~10.20.30: RHYTHM repetition (repeat times separated by dots)
 
 ### Automatic Hash Generation and Mapping
 
