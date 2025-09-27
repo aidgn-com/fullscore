@@ -30,7 +30,9 @@
 
 const BEAT = { 	// Behavioral Event Analytics Transform
 	TIC: 100,	// Time (default: 100ms)
-	TOK: {		// Actions (examples: P:@, E:#, T:> A:& L:+ ) // Free variations possible, but cookie-safe strings without encoding recommended
+	TOK: {		// Compatibility: BEAT is considered compatible even if the symbols
+				// (! # $ % & ' ( ) * + - . / 0-9 : < = > ? @ A-Z [ ] ^ _ ` a-z { | } ~) RFC 6265 cookie-octet or the parser implementation differ,
+				// as long as the syntax is satisfied and an essentially identical semantic stream is produced and interpreted.
 		P: '!',			// Page
 		E: '*',			// Element
 		T: '~',			// Time
@@ -406,3 +408,4 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
