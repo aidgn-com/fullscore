@@ -484,7 +484,7 @@ rhythm_1 = !home~237*nav-2~1908*nav-3~375.123*help~1128*more-1~43!prod~1034*butt
 rhythm_2 = !p1~2403*img-1~1194*buy-1~13.8.8*buy-1-up~532*review~14!review~2018*nav-1___1
 rhythm_3 = !cart
 
-// AI interpretation: "User arrived at homepage and clicked first navigation menu after 23.7 seconds. Stayed for about 3 minutes before clicking second navigation. In the help section, an interesting pattern emerges - clicks at 37.5 and 12.3 second intervals showing hesitation. After moving to product page, clicked a product link opening a new tab. Spent 4 minutes on product details, 2 minutes viewing images. Cart button clicked rapidly three times at 1.3, 0.8, and 0.8 second intervals - likely adjusting quantity or options. Moved to reviews for 3 minutes reading customer feedback. Upon returning to the original tab, 11 minutes had passed since opening tab 2. Without hesitation, immediately clicked cart link opening third tab. This pattern shows a typical careful comparison shopper thoroughly evaluating before purchase."
+// AI interpretation: "User arrived at homepage and clicked first navigation menu after 23.7 seconds. Stayed for about 3 minutes before clicking second navigation. In the help section, an interesting pattern emerges - clicks at 37.5 and 12.3 second intervals showing hesitation. After moving to product page, clicked a product link opening a new tab. Spent 4 minutes on product details, 2 minutes viewing images. Cart button clicked rapidly three times at 1.3, 0.8, and 0.8 second intervals - likely adjusting quantity or options. Moved to reviews for 3 minutes reading customer feedback. Upon returning to the original tab, 11 minutes had elapsed since opening tab 2. Without hesitation, immediately clicked cart link opening third tab. This pattern shows a typical careful comparison shopper thoroughly evaluating before purchase."
 ```
 
 Like a singer-songwriter switching between a ballad and an uptempo number on the same stage, users naturally flow between tabs while shopping. The ballad performance (rhythm_1) pauses mid-song, transitions to an uptempo performance (rhythm_2), then returns to the original mood. The `___N` notation captures these transitions precisely. All tabs perform on the same stage (sharing time and key), each delivering its own rhythm.
@@ -649,7 +649,7 @@ Today's performances, recording nothing but pure rhythm without IP or names, eac
 
 Inside a piano lie over 230 strings. Strike one, and others with the same frequency resonate naturally. This is sympathetic resonance.
 
-Web cookies resonate too. With every page request, cookies automatically travel in HTTP headers. No developer instructions needed, no code required—this web resonance phenomenon has continued since 1994.
+Web cookies resonate too. With every page request, cookies automatically travel in HTTP headers. No developer instructions needed, no extra endpoint code required. This web resonance phenomenon has continued since 1994.
 
 Traditional analytics tools ignored this natural resonance to build separate synthesizers. They collect data with scripts, transmit via APIs, process on servers.
 
