@@ -201,9 +201,9 @@ class Rhythm {
 			this.batch(); // Batch sessions to edge or custom endpoints
 			let key = '';
 			for (let i = 0; i < RHYTHM.KEY; i++) key += '0123456789abcdefghijklmnopqrstuvwxyz'[Math.random() * 36 | 0];
-			const time = Math.floor(Date.now() / RHYTHM.TIC);
+			const time = Math.floor(Date.now() / RHYTHM.TIC); // Time (default: 100ms)
 			document.cookie = 'score=0000000000_' + time + '_' + key + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
-		}
+		} // Score fields modified by edge worker analyzing BEAT patterns to identify bot vs human behaviors ([0]=bot security level, [1-9]=human behavior flags)
 		this.score = this.get('score'); // Store current score
 		const parts = this.score.split('_');
 		this.time = +parts[1];
@@ -222,11 +222,11 @@ class Rhythm {
 		RHYTHM.ADD.SPA && this.spa(); // Single Page Application addon (default: false)
 		const end = () => { // RHYTHM engine stop
 			if (this.ended) return; this.ended = true; // Prevent duplicate execution
-			if (RHYTHM.DEL > 0) { // Session deletion criteria (default: 1 clicks)
+			if (RHYTHM.DEL > 0) {
 				for (let i = 1; i <= RHYTHM.MAX; i++) {
 					const name = 'rhythm_' + i;
 					const ses = this.get(name);
-					if (ses && +(ses.split('_')[6] || 0) < RHYTHM.DEL) {
+					if (ses && +(ses.split('_')[6] || 0) < RHYTHM.DEL) { // Session deletion criteria (default: 1 clicks)
 						document.cookie = name + '=; Max-Age=0; Path=/';
 						if (name === window.name) this.data = null, this.beat = null, window.name = '';
 					}
@@ -248,7 +248,7 @@ class Rhythm {
 		if (this.data.clicks % RHYTHM.TAP === 0) { // After first request, abort others to save bandwidth
 			const ctrl = new AbortController();
 			fetch(location.origin + (RHYTHM.HIT === '/' ? '' : RHYTHM.HIT) + '/?livestreaming', // Session activation and cookie resonance path (default: '/rhythm')
-				{method: 'HEAD', signal: ctrl.signal, credentials: 'include', redirect: 'manual'}).catch(() => {});
+				{method: 'HEAD', signal: ctrl.signal, credentials: 'include', redirect: 'manual', keepalive: true}).catch(() => {}); // Abort+keepalive trick fires and forgets with guaranteed delivery
 			if (this.data.clicks > RHYTHM.TAP) setTimeout(() => ctrl.abort(), RHYTHM.THR); // Session refresh cycle (default: 3 clicks)
 		}
 		return el;
@@ -321,7 +321,7 @@ class Rhythm {
 		}
 		if (!name) { // If all sessions in use
 			this.batch(true);
-			this.data = null;
+			this.data = null; // Cookie-based leader election without coordination overhead
 			const newTime = Math.floor(Date.now() / RHYTHM.TIC);
 			document.cookie = 'score=' + this.score.split('_')[0] + '_' + newTime + '_' + this.key + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // New score signal
 			this.time = newTime;
@@ -406,6 +406,7 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
