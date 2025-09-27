@@ -229,7 +229,7 @@ When stored in cookies, this data becomes a single line of sheet music separated
 
 A single line expresses an entire session. If JSON is conducting each orchestra section, RHYTHM is as concise as playing guitar tabs.
 
-A singer-songwriter can manage multiple sessions simultaneously. For smooth performances, we recommend limiting to rhythm_01 through rhythm_07. New sessions are created when cookies fill up or when switching browser tabs.
+A singer-songwriter can manage multiple sessions simultaneously. For smooth performances, we recommend limiting to rhythm_1 through rhythm_7. New sessions are created when cookies fill up or when switching browser tabs.
 
 Limiting to 7 sessions prevents audience confusion from constantly changing setlists during one performance. Exceeding this number suggests noise pollution rather than pure busking—likely a bot signal.
 
