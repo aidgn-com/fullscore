@@ -357,16 +357,25 @@ Pre-mapping every page is difficult. BEAT generates automatic hashes using a lig
 
 ```javascript
 function hashPage(pathname) {
-    if (pathname === '/') return '!home';
+    if (pathname === '/') return '!home';  // Homepage reserved word
     
-    let hash = 5381;
+    let hash = 5381;  // DJB2 algorithm
     for (let i = 0; i < pathname.length; i++) {
         hash = ((hash << 5) + hash) + pathname.charCodeAt(i);
-        hash = hash >>> 0;  // unsigned 32-bit
     }
     
+    // Dynamic hash length based on URL length
     const limit = pathname.length <= 7 ? 3 : pathname.length <= 14 ? 4 : 5;
-    return '!' + hash.toString(36).substring(0, limit);
+    const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+    let result = '', n = Math.abs(hash);
+    
+    // Base36 encoding
+    for (let j = 0; j < limit; j++) {
+        result += chars[n % 36];
+        n = Math.floor(n / 36);
+    }
+    
+    return '!' + result;
 }
 ```
 
