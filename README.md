@@ -235,7 +235,7 @@ Limiting to 7 sessions prevents audience confusion from constantly changing setl
 
 Edge also has limits. Famous CDN/edge networks typically set header size limits at 8~32KB. While sufficient for streaming 4KB cookie sessions, too many sessions risk disconnection. When performances run too long, livestreaming stops at the singer-songwriter's signal (echo=2). The performance data archives privately, then new streaming begins. This circular structure enables practically unlimited performances.
 
-Edge only asks for coffee money, but may grumble if livestreaming restarts too frequently.
+For its efforts, Edge only asks for coffee money, but may grumble if livestreaming restarts too frequently.
 
 ### Score Orchestration
 
