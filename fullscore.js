@@ -230,12 +230,9 @@ class Rhythm {
 					if (ses && +(ses.split('_')[6] || 0) < RHYTHM.DEL) document.cookie = 'rhythm_' + i + '=; Max-Age=0; Path=/';
 				}
 			}
-			if (this.data) { // Mark pagehide session as preserved
-				const ses = this.get(this.data.name);
-				if (ses && ses[0] === '0') document.cookie = this.data.name + '=' + ('1' + ses.slice(1)) + this.tail; // Mark as echo=1
-			}
 			if (RHYTHM.ADD.POW) return this.batch(true); // Immediate batch on visibility change (default: false)
-			setTimeout(() => { document.cookie.match(/rhythm_\d+=0/) || this.batch(true); }, 1); // Batch confirmed
+			setTimeout(() => document.cookie.replace(new RegExp(window.name + '=0[^;]*;?'), '').match(/rhythm_\d+=0/) || this.batch(true), 1); // Batch confirmed
+			document.cookie = window.name + '=1' + this.get(window.name)?.slice(1) + this.tail;
 		};
 		RHYTHM.ADD.POW && document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && end(), { capture: true });
 		window.addEventListener('pagehide', end, { capture: true }); // All pagehide events trigger termination check
@@ -407,3 +404,4 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
