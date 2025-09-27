@@ -211,22 +211,25 @@ class Rhythm {
 		this.session(); // Session management
 		this.hasTempo ? tempo(this) : document.addEventListener('click', e => this.click(e.target), {capture: true}); // Tempo integration
 		this.scrolling = false; // Debounce to count once per scroll gesture
-		const scroll = () => { // BEAT Scroll position tracking addon (default: false)
+		document.addEventListener('scroll', () => { // BEAT Scroll position tracking addon (default: false)
 			this.data || this.session();
 			if (!this.scrolling) this.scrolling = true, this.data.scrolls++, this.save(); // Count and save immediately
 			clearTimeout(this.s), this.s = setTimeout(() => {
-				this.hasBeat && RHYTHM.ADD?.SCR && (this.beat.time(), this.beat.notes.push('^' + Math.round(window.scrollY))); // Record final scroll position
+				this.hasBeat && RHYTHM.ADD.SCR && (this.beat.time(), this.beat.notes.push('^' + Math.round(window.scrollY))); // Record final scroll position
 				this.scrolling = false;
 			}, 150); // Reset after 150ms
-		};
-		document.addEventListener('scroll', scroll, { capture: true, passive: true });
-		this.hasBeat && RHYTHM.ADD?.SPA && this.spa(); // Single Page Application addon (default: false)
+		}, {capture: true, passive: true});
+		RHYTHM.ADD.SPA && this.spa(); // Single Page Application addon (default: false)
 		const end = () => { // RHYTHM engine stop
 			if (this.ended) return; this.ended = true; // Prevent duplicate execution
-			if (RHYTHM.DEL > 0) { // Session deletion criteria (default: 0 clicks)
+			if (RHYTHM.DEL > 0) { // Session deletion criteria (default: 1 clicks)
 				for (let i = 1; i <= RHYTHM.MAX; i++) {
-					const ses = this.get('rhythm_' + i);
-					if (ses && +(ses.split('_')[6] || 0) < RHYTHM.DEL) document.cookie = 'rhythm_' + i + '=; Max-Age=0; Path=/';
+					const name = 'rhythm_' + i;
+					const ses = this.get(name);
+			        if (ses && +(ses.split('_')[6] || 0) < RHYTHM.DEL) {
+			            document.cookie = name + '=; Max-Age=0; Path=/';
+			            if (name === window.name) window.name = '';
+			        }
 				}
 			}
 			if (RHYTHM.ADD.POW) return this.batch(true); // Immediate batch on visibility change (default: false)
@@ -401,5 +404,3 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
-
-
