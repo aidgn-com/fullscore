@@ -276,12 +276,13 @@ class Rhythm {
 			if (RHYTHM.ADD.REC === true) return; // Keep crashed sessions for recovery after abnormal exit (default: false)
 		}
 		if (cookies) {
-			let data = ''; // Gather echo data
+			const updates = []; // Gather echo data
 			for (let i = 0; i < cookies.length; i++) {
 				const updated = cookies[i].replace(/=./, '=2'); // Mark as echo=2
 				document.cookie = updated + this.tail;
-				data += updated;
+				updates.push(updated);
 			}
+			const data = updates.join('');
 			for (const echo of RHYTHM.ECO) { // Session endpoint and batch signal (default: '/rhythm/echo')
 				const url = echo[0] === 'h' ? echo : location.origin + echo;
 				navigator.sendBeacon(url, data) || fetch(url, {method: 'POST', body: data, keepalive: true}).catch(() => {}); // Send with fallback
@@ -405,5 +406,6 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
