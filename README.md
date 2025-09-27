@@ -194,7 +194,7 @@ RHYTHM is like a singer-songwriter's creative process. Starting composition in a
 
 Browsers have various storage options. LocalStorage boasts concert hall capacity but complex setup. SessionStorage is intimate like a live house but only open for a day. IndexedDB is glamorous like an opera house but has demanding entry procedures.
 
-The cookie RHYTHM chose is like street busking. All you need is one small stage. No fancy lights or sound equipment required. But there's one crucial feature: whenever you want, you can livestream your performance in real-time. Your reliable friend and manager, Edge Computing, helps with the livestreaming.
+The cookie RHYTHM chose is like a singer-songwriter's street performance. All you need is one small stage. No fancy lights or sound equipment required. But there's one crucial feature: whenever you want, you can livestream your performance in real-time. Your reliable friend and manager, Edge Computing, helps with the livestreaming.
 
 ```javascript
 document.cookie = `rhythm_01=${data}; Max-Age=259200; Path=/rhythm`;
