@@ -314,7 +314,7 @@ RHYTHM turns users' browser cookies into small personal storage. With 100 millio
 
 ### Stage Beginning and End
 
-Echo signals the performance status. 0 means actively performing on stage, 1 means taking an intermission backstage while keeping instruments ready, and 2 means the final curtain call before archival.
+Echo signals the performance status. 0 means actively performing on stage, 1 means finished the setlist but still holding the guitar, and 2 means packing up for archival.
 
 When the singer-songwriter finishes a wonderful performance and leaves the stage, Edge detects echo=2 and ends livestreaming. Today's performance—recording nothing but pure rhythm without IP or names—archives privately or disappears as a one-time performance remaining only briefly in people's memories.
 
