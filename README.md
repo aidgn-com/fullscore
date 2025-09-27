@@ -413,7 +413,7 @@ This compression reduces hour-long sessions to about 1KB of sheet music. If JSON
 
 Yet DOM depth inherent in BEAT is rich like musical depth (octaves). Multiple strings and frets must harmonize for rich resonance, but repeating the same note doesn't sound like performance.
 
-It's as if JSON places individual notes as dots, while BEAT connects those dots into melody. Despite maximum compression, the music within remains clear.
+It's as if JSON places individual notes as dots, while BEAT connects those dots into rhythm. Despite maximum compression, the music within remains clear.
 
 ```
 Human performance: *15span2, *12div3, *8button1 (deep, rich harmony)
@@ -662,7 +662,7 @@ Human: !home~37*5nav1~3*5nav1~218*12button1~1847!1 (Rubato)
 ```
 3.7 seconds of curiosity, 0.3 seconds of mistake, 21.8 seconds of exploration, 3 minutes of hesitation. Imperfect but alive, like music.
 
-DOM depth also layers like musical harmony. Real buttons usually hide 8 layers deep. From bass lows to violin highs, web pages create different timbres by depth. Bots play only monophony. The shallowest layer, monotonous melody. No harmony, no counterpoint, just mechanical repetition.
+DOM depth also layers like musical harmony. Real buttons usually hide 8 layers deep. From bass lows to violin highs, web pages create different timbres by depth. Bots play only monophony. The shallowest layer, monotonous rhythm. No harmony, no counterpoint, just mechanical repetition.
 
 AI connected with Edge immediately knows the difference. Average depth below 3 means bot, click interval standard deviation near 0 means bot, no hesitation means bot. Without complex algorithms, just simple rhythm distinguishes authenticity. Like perfect pitch instantly identifying D, AI distinguishes humans and bots through BEAT patterns. Musical intuition reborn as data analysis.
 
@@ -703,7 +703,7 @@ touchend → el.click()  // Instantly responsive fingertips
 
 **G Chord - RHYTHM**  
 ```javascript
-document.cookie = `rhythm=${beat}`  // Melody the browser remembers
+document.cookie = `rhythm=${beat}`  // Rhythm the browser remembers
 ```
 
 **Am Chord - BEAT**
@@ -741,7 +741,7 @@ The guitar in hand was made in the 1980s. Steel strings were invented centuries 
 cookie.meet(edge) // Harmony transcending spacetime
 ```
 
-The browser was the eternal stage that was always there. Cookies were the music of all musicians who performed on this street, Edge became the channel connecting that music to the world in real-time. AI heard the BEAT created by every user click and scroll, immediately understanding the melody drawn by human behavior.
+The browser was the eternal stage that was always there. Cookies were the music of all musicians who performed on this street, Edge became the channel connecting that music to the world in real-time. AI heard the BEAT created by every user click and scroll, immediately understanding the pattern drawn by human behavior.
 
 The singer-songwriter finally realized. New web technology doesn't suddenly appear some future day. When cookies and Edge meet in the AI era, like Bach's fugue meeting jazz swing, harmony transcending time resonates. We just hadn't realized—perfection was always there.
 
