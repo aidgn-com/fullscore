@@ -408,4 +408,3 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
-
