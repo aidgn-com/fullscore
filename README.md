@@ -247,14 +247,14 @@ score=0000000000_1735680000_x7n4kb2p___1~2~1~3~2
 // 0000000000  = Bot/Human flags (first digit: bot level, rest: behavior flags)
 // 1735680000  = Stage start time (synchronization reference for all tabs)
 // x7n4kb2p    = Stage key (random string for data integrity)
-// 1~2~1~3~2   = Tab chain (also embedded in BEAT as addon: ___2)
+// 1~2~1~3~2   = Tab chain (also embedded in BEAT as addon: ___N)
 ```
 
 This score acts as the reference point for every performance (rhythm session). The first digit indicates bot dissonance levels, while the remaining nine digits serve as independent human harmony signals. Edge analyzes BEAT patterns to update these notes in real-time, introducing a new behavioral analytics and security layer.
 
 Each tab represents a different performance (rhythm session) on the same stage. All performances share the same stage time. When the singer-songwriter begins a new stage, all ongoing performances reset to that new time. This cookie-based synchronization keeps all separate performances as part of the same stage.
 
-The tab chain (1~2~1~3~2) records the sequence as users switch between tabs. This also appears in BEAT strings as `___2`, precisely tracking tab movements. Full Score captures a single user's complete browsing journey, including all cross-tab flows.
+The tab chain (1~2~1~3~2) records the sequence as users switch between tabs. This also appears in BEAT strings as `___N`, precisely tracking tab movements. Full Score captures a single user's complete browsing journey, including all cross-tab flows.
 
 ### Livestreaming with Edge Computing
 
