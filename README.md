@@ -188,7 +188,7 @@ These 50 lines synchronize tempo across all devices. Like a perfectly tuned conc
 
 Traditional web analytics is complex like a massive symphony. Instruments for collecting data, transmitting data, storing data, processing data—all playing separately. Each part operates independently, requiring enormous time and cost just to tune them.
 
-RHYTHM is like a singer-songwriter's creative process. Starting composition in a quiet room, building melodies note by note on staff paper to complete a Full Score. Then taking that score to the streets to perform freely. The browser becomes the chosen stage, with no interruptions.
+RHYTHM is like a singer-songwriter's creative process. Starting composition in a quiet room, building melodies note by note on staff paper to complete a Full Score. Then taking that score to the streets to perform freely. The browser becomes the chosen stage, without interruptions.
 
 ### The Browser and Cookie Stage
 
@@ -235,7 +235,7 @@ Limiting to 7 sessions prevents audience confusion from constantly changing setl
 
 Edge also has limits. Famous CDN/edge networks typically set header size limits at 8~32KB. While sufficient for streaming 4KB cookie sessions, too many sessions risk disconnection. When performances run too long, livestreaming stops at the singer-songwriter's signal (echo=2). The performance data archives privately, then new streaming begins. This circular structure enables practically unlimited performances.
 
-Edge is a good friend who asks for no compensation for management activities, but may grumble and request small rewards if livestreaming restarts too frequently.
+Edge only asks for coffee money, but may grumble if livestreaming restarts too frequently.
 
 ### Score Orchestration
 
