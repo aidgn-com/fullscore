@@ -211,7 +211,7 @@ RHYTHM stores session data like a rhythm composed of notes on a staff. Each note
 const rhythm_01 = {
 	echo: 0,            // Performance status (0=performing, 1=ending, 2=completed)
 	time: 1735680000,   // Stage start time (synchronization reference for all tabs)
-	key: x7n4kb2p,    	// Stage name (random string for data integrity)
+	key: 'x7n4kb2p',    // Stage name (random string for data integrity)
 	device: 1,          // Instrument type (0=desktop, 1=mobile, 2=tablet)
 	referrer: 3,        // Performance spot (0=direct, 1=internal, 2=unknown, 3-255=specific domains)
 	scrolls: 23,        // Scroll gestures (passersby who stopped)
@@ -229,7 +229,7 @@ When stored in cookies, this data becomes a single line of sheet music separated
 
 A single line expresses an entire session. If JSON is conducting each orchestra section, RHYTHM is as concise as playing guitar tabs.
 
-Singer-songwriters can manage multiple sessions simultaneously. For smooth performances, we recommend limiting to rhythm_01 through rhythm_07. New sessions are created when cookies fill up or when switching browser tabs.
+A singer-songwriter can manage multiple sessions simultaneously. For smooth performances, we recommend limiting to rhythm_01 through rhythm_07. New sessions are created when cookies fill up or when switching browser tabs.
 
 Limiting to 7 sessions prevents audience confusion from constantly changing setlists during one performance. Exceeding this number suggests noise pollution rather than pure busking—likely a bot signal.
 
@@ -499,10 +499,10 @@ A user arrives at the site for the first time. The browser is like a singer-song
 
 The system first checks for cookies with ping=1. These are traces of ended performances. If found, it cleans the stage. Then it checks for cookies with ping=0 to confirm no performance is in progress.
 
-Creating new rhythm_01 starting with ping=0. This means the singer-songwriter has taken the stage. Edge detects ping=0 and immediately begins livestreaming. This stage's first song begins with the singer-songwriter's signature !home.
+Creating new rhythm_1 starting with ping=0. This means the singer-songwriter has taken the stage. Edge detects ping=0 and immediately begins livestreaming. This stage's first song begins with the singer-songwriter's signature !home.
 
 ```javascript
-rhythm_01 = "0_0_1_1735714800_0_0_0_!home"
+rhythm_1 = "0_0_1_1735714800_0_0_0_!home"
 ```
 
 **7:30 PM - Day One Performance Begins (First Recording)**
@@ -510,21 +510,21 @@ rhythm_01 = "0_0_1_1735714800_0_0_0_!home"
 Thirty minutes of passionate performance unfold. The user explores 5 pages (performs 5 songs), executes 50 clicks (plucks guitar strings) and 23 scrolls (prompts engagement). Edge's livestreaming captures every moment.
 
 ```javascript
-rhythm_01 = "0_0_1_1735714800_1800_50_23_!home~100*3nav1~300!1~50*1~200*2!2~100*15img1..."
+rhythm_1 = "0_0_1_1735714800_1800_50_23_!home~100*3nav1~300!1~50*1~200*2!2~100*15img1..."
 ```
 
 **8:00 PM - Performance Change (Additional Session from Tab Switch)**
 
-The singer-songwriter changes sessions mid-performance at audience request. Existing rhythm_01 remains, new rhythm_02 is created. Edge's livestreaming records all changes seamlessly. The rhythm_01 session can return anytime.
+The singer-songwriter changes sessions mid-performance at audience request. Existing rhythm_1 remains, new rhythm_02 is created. Edge's livestreaming records all changes seamlessly. The rhythm_1 session can return anytime.
 
 **10:00 PM - Catching Breath (Additional Session from Capacity Overflow)**
 
-After 2 hours, rhythm_02 exceeds 3.9KB, switching to new rhythm_03. Existing rhythm_01 and rhythm_02 maintain ping=0 state, Edge smoothly streams all transitions.
+After 2 hours, rhythm_02 exceeds 3.9KB, switching to new rhythm_03. Existing rhythm_1 and rhythm_02 maintain ping=0 state, Edge smoothly streams all transitions.
 
 ```javascript
-rhythm_01 = "0_0_1_1735714800_3600_80_40_!home~..."
-rhythm_02 = "0_0_1_1735718400_7200_220_100_!3~..."  
-rhythm_03 = "0_0_1_1735725600_0_0_0_!1"
+rhythm_1 = "0_0_1_1735714800_3600_80_40_!home~..."
+rhythm_2 = "0_0_1_1735718400_7200_220_100_!3~..."  
+rhythm_3 = "0_0_1_1735725600_0_0_0_!1"
 ```
 
 **11:00 PM - Day One Performance Ends (Browser Close)**
@@ -532,9 +532,9 @@ rhythm_03 = "0_0_1_1735725600_0_0_0_!1"
 Wrapping up busking. Change all rhythm pings from 0 to 1. This means the singer-songwriter leaves the stage. Edge detects ping=1 and ends livestreaming. Today's performance—recording nothing but pure rhythm without IP or names—archives privately or disappears as a one-time performance remaining only briefly in people's memories.
 
 ```javascript
-rhythm_01 = "1_0_1_1735714800_3600_80_40_..."
-rhythm_02 = "1_0_1_1735718400_7200_220_100_..."
-rhythm_03 = "1_0_1_1735725600_3600_60_25_..."
+rhythm_1 = "1_0_1_1735714800_3600_80_40_..."
+rhythm_2 = "1_0_1_1735718400_7200_220_100_..."
+rhythm_3 = "1_0_1_1735725600_3600_60_25_..."
 ```
 
 **Next Day 7:00 PM - Day Two Performance Begins (Second Recording)**
@@ -542,7 +542,7 @@ rhythm_03 = "1_0_1_1735725600_3600_60_25_..."
 A new day's performance begins. If the system finds cookies with ping=1, it cleanly tidies yesterday's performance spot. After deleting all ping=1 cookies, it creates new rhythm_01 to begin today's performance. Today also opens with the signature song !home.
 
 ```javascript
-rhythm_01 = "0_0_1_1735801200_0_0_0_!home"
+rhythm_1 = "0_0_1_1735801200_0_0_0_!home"
 ```
 
 ### Scenario 2: Encore on a Rainy Day
@@ -552,9 +552,9 @@ rhythm_01 = "0_0_1_1735801200_0_0_0_!home"
 The performance reaches its peak. The audience is completely captivated by melodies flowing from the singer-songwriter's fingertips. Clicks and scrolls follow the rhythm, BEAT draws complex yet beautiful patterns. Edge streams every moment without missing anything.
 
 ```javascript
-rhythm_01 = "0_0_1_1735720800_10800_220_100_!home~30*3nav1~150!1~50*1~20*2~20*3~300!2~180*15div4..."
-rhythm_02 = "0_0_1_1735731600_7200_215_95_!2~25*6div3~200!3~100*4~350!4~50*8span2..."
-rhythm_03 = "0_0_1_1735738800_1800_45_23_!1~80*12button1~50!home~150*5..."
+rhythm_1 = "0_0_1_1735720800_10800_220_100_!home~30*3nav1~150!1~50*1~20*2~20*3~300!2~180*15div4..."
+rhythm_2 = "0_0_1_1735731600_7200_215_95_!2~25*6div3~200!3~100*4~350!4~50*8span2..."
+rhythm_3 = "0_0_1_1735738800_1800_45_23_!1~80*12button1~50!home~150*5..."
 ```
 
 **8:35 PM - Performance Interrupted by Downpour (Browser Crash)**
@@ -562,9 +562,9 @@ rhythm_03 = "0_0_1_1735738800_1800_45_23_!1~80*12button1~50!home~150*5..."
 Wind and rain strike without warning, the browser freezes. The performance cannot continue, but cookies remain in the browser at ping=0 state. The audience watching the performance endures the storm, staying in place. Edge cannot record the performance but doesn't stop livestreaming.
 
 ```javascript
-rhythm_01 = "0_0_1_1735720800_11100_235_108_!home~30*3nav1~150!1~50*1~20*2~20*3~300!2~180*15div4~250!3~100*6..." 
-rhythm_02 = "0_0_1_1735731600_7500_228_102_!2~25*6div3~200!3~100*4~350!4~50*8span2~180!5~120*7..."
-rhythm_03 = "0_0_1_1735738800_2100_52_27_!1~80*12button1~50!home~150*5~200!2~30*8..."
+rhythm_1 = "0_0_1_1735720800_11100_235_108_!home~30*3nav1~150!1~50*1~20*2~20*3~300!2~180*15div4~250!3~100*6..." 
+rhythm_2 = "0_0_1_1735731600_7500_228_102_!2~25*6div3~200!3~100*4~350!4~50*8span2~180!5~120*7..."
+rhythm_3 = "0_0_1_1735738800_2100_52_27_!1~80*12button1~50!home~150*5~200!2~30*8..."
 // Remains in cookies at ping=0 - time frozen by crash
 ```
 
@@ -576,11 +576,11 @@ The system changes existing rhythms to ping=1 to finish. Edge detects ping=1, en
 
 ```javascript
 // Recovery process
-rhythm_01 = "1_0_1_1735720800_11100_235_108_..." // ping 0→1 change
-rhythm_02 = "1_0_1_1735731600_7500_228_102_..." // ping 0→1 change
-rhythm_03 = "1_0_1_1735738800_2100_52_27_..." // ping 0→1 change
+rhythm_1 = "1_0_1_1735720800_11100_235_108_..." // ping 0→1 change
+rhythm_2 = "1_0_1_1735731600_7500_228_102_..." // ping 0→1 change
+rhythm_3 = "1_0_1_1735738800_2100_52_27_..." // ping 0→1 change
 // New encore performance begins
-rhythm_01 = "0_0_1_1735740600_0_0_0_!home"
+rhythm_1 = "0_0_1_1735740600_0_0_0_!home"
 ```
 
 **8:45 PM - Encore Performance (Second Recording)**
@@ -589,7 +589,7 @@ The singer-songwriter who experienced interruption performs more passionately. S
 
 ```javascript
 // Fast tempo (~20, ~10) rushing clicks → Performance responding to audience cheers
-rhythm_01 = "0_0_1_1735740600_900_89_45_!home~20*1~10*2~30!1~50*15button1~100!2~80*3~20*4..."
+rhythm_1 = "0_0_1_1735740600_900_89_45_!home~20*1~10*2~30!1~50*15button1~100!2~80*3~20*4..."
 ```
 
 **9:00 PM - Memorable Performance (Browser Close)**
@@ -597,10 +597,10 @@ rhythm_01 = "0_0_1_1735740600_900_89_45_!home~20*1~10*2~30!1~50*15button1~100!2~
 The encore performance ends. The singer-songwriter takes a final bow and leaves the stage. Today had four performances. Three interrupted performances, one short but perfect encore. Edge treasured every performance in its records.
 
 ```javascript
-// rhythm_01 = "1_0_1_1735720800_11100_235_108_..."
-// rhythm_02 = "1_0_1_1735731600_7500_228_102_..."
-// rhythm_03 = "1_0_1_1735738800_2100_52_27_..." // Performance records before browser crash
-rhythm_01 = "1_0_1_1735740600_900_89_45_..." // All performances perfectly recorded
+// rhythm_1 = "1_0_1_1735720800_11100_235_108_..."
+// rhythm_2 = "1_0_1_1735731600_7500_228_102_..."
+// rhythm_3 = "1_0_1_1735738800_2100_52_27_..." // Performance records before browser crash
+rhythm_1 = "1_0_1_1735740600_900_89_45_..." // All performances perfectly recorded
 ```
 
 Today's performances—recording nothing but pure rhythm without IP or names—each carrying their own stories, archive privately or disappear as special experiences remaining only briefly in people's memories.
