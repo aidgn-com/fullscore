@@ -200,8 +200,7 @@ class Rhythm {
 			this.clean(); // Remove echo=2 completed sessions
 			this.batch(); // Batch sessions to edge or custom endpoints
 			let key = '';
-			const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-			for (let i = 0; i < RHYTHM.KEY; i++) key += chars[Math.random() * 36 | 0];
+			for (let i = 0; i < RHYTHM.KEY; i++) key += '0123456789abcdefghijklmnopqrstuvwxyz'[Math.random() * 36 | 0];
 			const time = Math.floor(Date.now() / RHYTHM.TIC);
 			document.cookie = 'score=0000000000_' + time + '_' + key + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
 		}
@@ -255,12 +254,10 @@ class Rhythm {
 		return i < 0 ? null : c.slice(i + g.length + 3, c.indexOf(';', i + g.length + 3));
 	}
 	clean(force = false) { // Remove echo=2 completed sessions
-	    for (let i = 1; i <= RHYTHM.MAX; i++) {
-	        const name = 'rhythm_' + i;
-	        if (force || this.get(name)?.[0] === '2') {
-	            document.cookie = name + '=; Max-Age=0; Path=/';
-	        }
-	    }
+		for (let i = 1; i <= RHYTHM.MAX; i++) {
+		    const name = 'rhythm_' + i;
+		    if (force || this.get(name)?.[0] === '2') document.cookie = name + '=; Max-Age=0; Path=/';
+		}
 	    if (force) this.data = null, this.beat = null, window.name = '';
 	}
 	batch(force = false) { // Batch sessions to edge or custom endpoints
@@ -404,4 +401,5 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
