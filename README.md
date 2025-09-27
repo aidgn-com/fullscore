@@ -242,7 +242,7 @@ For its efforts, Edge only asks for coffee money, but may grumble if livestreami
 The score cookie serves as a musical score tracking the entire browsing journey.
 
 ```javascript
-score=0000000000_1735680000_x7n4kb2p___1~3~2
+score=0000000000_1735680000_x7n4kb2p___1~2~1~3~2
 
 // 0000000000  = Bot/Human flags (first digit: bot level, rest: behavior flags)
 // 1735680000  = Stage start time (synchronization reference for all tabs)
