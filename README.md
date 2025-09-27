@@ -205,19 +205,19 @@ Like busking that leaves no trace when finished, cookies delete themselves after
 
 ### RHYTHM Created by Data
 
-RHYTHM stores session data like a melody composed of notes on a staff. Each note carries unique meaning.
+RHYTHM stores session data like a rhythm composed of notes on a staff. Each note carries unique meaning.
 
 ```javascript
 const rhythm_01 = {
-    echo: 0,            // Performance stage (0=performing, 1=ending, 2=completed)
-    time: 1735680000,   // Performance start time
-    key: 'x7n4kb2p',    // Performance key (random string)
-    device: 1,          // Instrument type (0=desktop, 1=mobile, 2=tablet)
-    referrer: 3,        // Performance spot (0=direct, 1=internal, 2=unknown, 3-255=specific domains)
-    scrolls: 23,        // Scroll gestures (passersby who stopped)
-    clicks: 45,         // Click actions (audience engagement)
-    duration: 300,      // Performance duration
-    beat: "!home~10*1~" // Performance record (BEAT format)
+	echo: 0,            // Performance stage (0=performing, 1=ending, 2=completed)
+	time: 1735680000,   // Performance start time
+	key: x7n4kb2p,    	// Performance key (random string)
+	device: 1,          // Instrument type (0=desktop, 1=mobile, 2=tablet)
+	referrer: 3,        // Performance spot (0=direct, 1=internal, 2=unknown, 3-255=specific domains)
+	scrolls: 23,        // Scroll gestures (passersby who stopped)
+	clicks: 45,         // Click actions (audience engagement)
+	duration: 300,      // Performance duration
+	beat: "!home~10*1~" // Performance record (BEAT format)
 }
 ```
 
@@ -244,15 +244,15 @@ The score cookie serves as a musical score tracking the entire browsing journey.
 ```javascript
 score=0000000000_1735680000_x7n4kb2p___1~3~2
 
-// 0000000000  = Bot/Human flags (first digit: bot level 0-9, rest: behavior flags)
+// 0000000000  = Bot/Human flags (first digit: bot level, rest: behavior flags)
 // 1735680000  = Performance time (synchronization reference for all tabs)
 // x7n4kb2p    = Session key (random string for data integrity)
 // 1~3~2       = Tab chain (also embedded in BEAT as addon: ___2)
 ```
 
-This score acts as the reference point for every performance (rhythm session). The first digit indicates bot dissonance levels (0-9), while the remaining nine digits serve as independent human harmony signals. Edge analyzes BEAT patterns to update these notes in real-time, introducing a new behavioral analytics and security layer.
+This score acts as the reference point for every performance (rhythm session). The first digit indicates bot dissonance levels, while the remaining nine digits serve as independent human harmony signals. Edge analyzes BEAT patterns to update these notes in real-time, introducing a new behavioral analytics and security layer.
 
-All tabs share the same performance time. When one tab starts a new performance, every other tab immediately synchronizes to that time. This cookie-based score synchronization creates a perfect ensemble without a central conductor, with all performers reading from the same score.
+Each tab represents a different performance (rhythm session) within the same show. All performances share the same show time. When the singer-songwriter begins a new show, all ongoing performances reset to that new time. This cookie-based synchronization keeps all separate performances as part of the same concert.
 
 The tab chain (1~3~2) records the sequence as users switch between tabs. This also appears in BEAT strings as `___2`, precisely tracking tab movements. Full Score captures a single user's complete browsing journey, including all cross-tab flows.
 
