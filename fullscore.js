@@ -320,7 +320,7 @@ class Rhythm {
 			}
 		}
 		if (!name) { // If all sessions in use
-			this.batch(true);
+			this.batch(true); 
 			this.data = null; // Cookie-based leader election without coordination overhead
 			const newTime = Math.floor(Date.now() / RHYTHM.TIC);
 			document.cookie = 'score=' + this.score.split('_')[0] + '_' + newTime + '_' + this.key + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); // New score signal
@@ -344,8 +344,8 @@ class Rhythm {
 		const current = this.get('score') || this.score;
 		if (+current.split('_', 2)[1] !== +this.score.split('_', 2)[1]) { // Score change detection
 			this.score = current;
-			this.data = null;
-			this.session(true); // Distributed systems theory in cookies
+			this.data = null; // Follow the new time signal from leader
+			this.session(true);
 			return; // Restart with fresh session
 		}
 		const number = window.name.slice(7);
@@ -406,6 +406,7 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
 
 
 
