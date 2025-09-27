@@ -210,8 +210,8 @@ RHYTHM stores session data like a rhythm composed of notes on a staff. Each note
 ```javascript
 const rhythm_01 = {
 	echo: 0,            // Performance stage (0=performing, 1=ending, 2=completed)
-	time: 1735680000,   // Performance start time
-	key: x7n4kb2p,    	// Performance key (random string)
+	time: 1735680000,   // Performance start time (synchronization reference for all tabs)
+	key: x7n4kb2p,    	// Stage key (random string for data integrity)
 	device: 1,          // Instrument type (0=desktop, 1=mobile, 2=tablet)
 	referrer: 3,        // Performance spot (0=direct, 1=internal, 2=unknown, 3-255=specific domains)
 	scrolls: 23,        // Scroll gestures (passersby who stopped)
@@ -246,13 +246,13 @@ score=0000000000_1735680000_x7n4kb2p___1~3~2
 
 // 0000000000  = Bot/Human flags (first digit: bot level, rest: behavior flags)
 // 1735680000  = Performance time (synchronization reference for all tabs)
-// x7n4kb2p    = Session key (random string for data integrity)
+// x7n4kb2p    = Stage key (random string for data integrity)
 // 1~3~2       = Tab chain (also embedded in BEAT as addon: ___2)
 ```
 
 This score acts as the reference point for every performance (rhythm session). The first digit indicates bot dissonance levels, while the remaining nine digits serve as independent human harmony signals. Edge analyzes BEAT patterns to update these notes in real-time, introducing a new behavioral analytics and security layer.
 
-Each tab represents a different performance (rhythm session) within the same show. All performances share the same show time. When the singer-songwriter begins a new show, all ongoing performances reset to that new time. This cookie-based synchronization keeps all separate performances as part of the same concert.
+Each tab represents a different performance (rhythm session) on the same stage. All performances share the same stage time. When the singer-songwriter begins a new stage, all ongoing performances reset to that new time. This cookie-based synchronization keeps all separate performances as part of the same stage.
 
 The tab chain (1~3~2) records the sequence as users switch between tabs. This also appears in BEAT strings as `___2`, precisely tracking tab movements. Full Score captures a single user's complete browsing journey, including all cross-tab flows.
 
