@@ -209,9 +209,9 @@ RHYTHM stores session data like a rhythm composed of notes on a staff. Each note
 
 ```javascript
 const rhythm_01 = {
-	echo: 0,            // Performance stage (0=performing, 1=ending, 2=completed)
-	time: 1735680000,   // Performance start time (synchronization reference for all tabs)
-	key: x7n4kb2p,    	// Stage key (random string for data integrity)
+	echo: 0,            // Performance status (0=performing, 1=ending, 2=completed)
+	time: 1735680000,   // Stage start time (synchronization reference for all tabs)
+	key: x7n4kb2p,    	// Stage name (random string for data integrity)
 	device: 1,          // Instrument type (0=desktop, 1=mobile, 2=tablet)
 	referrer: 3,        // Performance spot (0=direct, 1=internal, 2=unknown, 3-255=specific domains)
 	scrolls: 23,        // Scroll gestures (passersby who stopped)
@@ -245,7 +245,7 @@ The score cookie serves as a musical score tracking the entire browsing journey.
 score=0000000000_1735680000_x7n4kb2p___1~3~2
 
 // 0000000000  = Bot/Human flags (first digit: bot level, rest: behavior flags)
-// 1735680000  = Performance time (synchronization reference for all tabs)
+// 1735680000  = Stage start time (synchronization reference for all tabs)
 // x7n4kb2p    = Stage key (random string for data integrity)
 // 1~3~2       = Tab chain (also embedded in BEAT as addon: ___2)
 ```
