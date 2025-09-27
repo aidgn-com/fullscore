@@ -475,6 +475,32 @@ No encoding/decoding process needed, with 60-75% compression versus JSON expecte
 
 This means 50x smaller total data volume compared to traditional analytics, enabling real-time analysis without delays in both browsers and Edge.
 
+### Amplifying the Performance
+
+BEAT captures cross-tab browsing journeys in a complete Full Score.
+
+```
+rhythm_1 = !home~237*nav-2~1908*nav-3~375.123*help~1128*more-1~43!prod~1034*button-12~1050*p1___2~6590*mycart___3
+rhythm_2 = !p1~2403*img-1~1194*buy-1~13.8.8*buy-1-up~532*review~14!review~2018*nav-1___1
+rhythm_3 = !cart
+
+// AI interpretation: "User arrived at homepage and clicked first navigation menu after 23.7 seconds. Stayed for about 3 minutes before clicking second navigation. In the help section, an interesting pattern emerges - clicks at 37.5 and 12.3 second intervals showing hesitation. After moving to product page, clicked a product link opening a new tab. Spent 4 minutes on product details, 2 minutes viewing images. Cart button clicked rapidly three times at 1.3, 0.8, and 0.8 second intervals - likely adjusting quantity or options. Moved to reviews for 3 minutes reading customer feedback. Upon returning to the original tab, 11 minutes had passed since opening tab 2. Without hesitation, immediately clicked cart link opening third tab. This pattern shows a typical careful comparison shopper thoroughly evaluating before purchase."
+```
+
+Like a singer-songwriter switching between a ballad and an uptempo number on the same stage, users naturally flow between tabs while shopping. The ballad performance (rhythm_1) pauses mid-song, transitions to an uptempo performance (rhythm_2), then returns to the original mood. The `___N` notation captures these transitions precisely. All tabs perform on the same stage (sharing time and key), each delivering its own rhythm.
+
+For those seeking richer performances, scroll depth (^) can be added. Like reverb deepening a guitar's resonance, scroll positions show how deeply users engage:
+
+```
+rhythm_1 = !home~237*nav-2~542^600~282^150~1084*nav-3~328^800~47.123*help~894^1800~234*more-1~43!prod~1034*button-12~894^2100~156*p1___2~6323^100~267*mycart___3
+rhythm_2 = !p1~142^200~527^800~1200^1280~534*img-1~156^750~1038*buy-1~13.8.8*buy-1-up~532*review~14!review~702^800~334^1400~982*nav-1___1
+rhythm_3 = !cart
+```
+
+Even without depth markers, click patterns alone reveal remarkably detailed stories. Help-seeking moments (~375.123), purchase hesitation (~13.8.8), long contemplation (~2403).
+
+How you orchestrate Full Score is your choice.
+
 <br />
 
 ## Fifth Movement: System Integration and Practice
