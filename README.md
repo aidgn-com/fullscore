@@ -197,7 +197,7 @@ Browsers have various storage options. LocalStorage boasts concert hall capacity
 The cookie RHYTHM chose is like a singer-songwriter's street performance. All you need is one small stage. No fancy lights or sound equipment required. But there's one crucial feature: whenever you want, you can livestream your performance in real-time. Your reliable friend and manager, Edge Computing, helps with the livestreaming.
 
 ```javascript
-document.cookie = `rhythm_01=${data}; Max-Age=259200; Path=/rhythm`;
+document.cookie = `rhythm_1=${data}; Max-Age=259200; Path=/rhythm`;
 // Max-Age=259200 = Auto-delete after 3 days (actual RHYTHM.AGE value in code)
 ```
 
@@ -208,8 +208,8 @@ Like busking that leaves no trace when finished, cookies delete themselves after
 RHYTHM stores session data like a rhythm composed of notes on a staff. Each note carries unique meaning.
 
 ```javascript
-const rhythm_01 = {
-	echo: 0,            // Performance status (0=performing, 1=ending, 2=completed)
+const rhythm_1 = {
+	echo: 0,            // Performance status (0=performing, 1=storing, 2=archiving)
 	time: 1735680000,   // Stage start time (synchronization reference for all tabs)
 	key: 'x7n4kb2p',    // Stage name (random string for data integrity)
 	device: 1,          // Instrument type (0=desktop, 1=mobile, 2=tablet)
