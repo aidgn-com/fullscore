@@ -205,7 +205,7 @@ class Rhythm {
 			for (let i = 0; i < RHYTHM.KEY; i++) key += '0123456789abcdefghijklmnopqrstuvwxyz'[Math.random() * 36 | 0];
 			const time = Math.floor(Date.now() / RHYTHM.TIC); // Time (default: 100ms)
 			document.cookie = 'score=0000000000_' + time + '_' + key + '___; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
-		} // Score fields modified by edge worker analyzing BEAT patterns to identify bot vs human behaviors ([0]=bot security level, [1-9]=human behavior flags)
+		} // Score fields modified by edge worker analyzing BEAT patterns to identify bot vs human behaviors ([0] bot security level, [1-9] human behavior flags)
 		this.score = this.get('score'); // Store current score
 		const parts = this.score.split('_');
 		this.time = +parts[1];
@@ -408,3 +408,4 @@ class Rhythm {
 }
 
 document.addEventListener('DOMContentLoaded', () => new Rhythm()); // Cue the performance
+
