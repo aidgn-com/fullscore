@@ -261,40 +261,46 @@ The tab chain (1~3~2) records the sequence as users switch between tabs. This al
 Edge is the singer-songwriter's reliable companion, an indispensable friend. When the singer-songwriter performs their RHYTHM, Edge livestreams it to the world.
 
 ```javascript
-export default {
-    async fetch(request) {
-        const cookies = request.headers.get('Cookie') || '';
-        const rhythmPattern = /rhythm_(\d{2})=([^;]+)/g;
-        let premium = false;
-
-        for (const match of cookies.matchAll(rhythmPattern)) {
-            const parts = match[2].split('_');
-            const security  = Number(parts[1]); // Bot score (0~100)
-            const duration  = Math.max(Number(parts[6]), 1);
-            const clicks    = Number(parts[7]);
-            const scrolls   = Number(parts[8]);
-
-            // If bot, stop performance and request ban
-            if (security > 80) 
-                return new Response('Bot Detected', { status: 403 });
-
-            // Scout passionate singer-songwriters for pro debut
-            const engagement = (clicks + scrolls) / duration;
-            if (engagement > 2) { premium = true; break; }
-        }
-
-        if (premium) {
-            const headers = new Headers(request.headers);
-            headers.set('X-User-Segment', 'premium');
-            request = new Request(request, { headers });
-        }
-
-        return fetch(request);
+// Live streaming handler - watches /rhythm path for real-time cookie resonance
+if (url.pathname === "/rhythm" && url.searchParams.has("livestreaming")) {
+    const match = scan(cookies); // Parse score & rhythm cookies
+    
+    // Bot detection - updates score cookie's first digit (0-9)
+    if (match.bot) {
+        score[0] = Math.min(+score[0] + 1, 9);
+        console.log('⛔ Bot: MachineGun:12 (level 3)');
     }
+    
+    // Human pattern recognition - updates remaining 9 digits as flags
+    if (match.human) {
+        score[match.human] = '1';
+        console.log('✅ Human: 0100000000 (flag 1 activated)');
+    }
+    
+    // Only update cookie when values change (reduces network overhead)
+    if (score !== original) {
+        return new Response(null, {
+            status: 204,
+            headers: {'Set-Cookie': `score=${score}; Path=/; Secure`}
+        });
+    }
+}
+
+// Batch archiving handler - collects completed performances
+if (url.pathname === "/rhythm/echo" && request.method === "POST") {
+    const sessions = await request.text(); // rhythm_1=2_time_key_device...
+    
+    // Optional AI analysis of complete user journey
+    if (ARCHIVING.AI && env.AI) {
+        const analysis = await analyzeJourney(sessions);
+        console.log('♪ Performance archived:', analysis);
+    }
+    
+    return new Response('OK');
 }
 ```
 
-Every decision is analyzed in milliseconds through Edge's livestreaming. Edge simply reads and analyzes cookies already included in users' standard HTTP requests in real-time.
+Edge analyzes every performance in real-time. The `/rhythm` path monitors cookie resonance through HEAD requests, while `/rhythm/echo` archives completed performances. Bot patterns like MachineGun (rapid clicks), Metronome (exact intervals), or Surface (shallow DOM) trigger security flags. Human patterns activate behavior flags for personalization. If someone hesitates before purchasing, you could show them a coupon.
 
 No data endpoints required. No separate analytics servers or central database queries needed. Browser and Edge connect closely in spacetime like sympathetic resonance—fast and vivid. Processing delays are imperceptibly low.
 
