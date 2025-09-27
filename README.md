@@ -127,52 +127,52 @@ TEMPO's entire code fits within 50 lines. Like Bach's Inventions, it creates mus
 
 ```javascript
 function tempo(rhythm) { // Tap Event Method Performance Optimizer
-    if (document.tempo) return;
-    document.tempo = true;
-    if ("ontouchstart" in window || navigator.maxTouchPoints > 0) { // Mobile environment detection
-        const pending = new Set(); // Track pending native click blockers
-        let moved = false;
-        document.addEventListener("touchstart", () => (moved = false, pending.forEach(b => document.removeEventListener("click", b, true)), pending.clear()), {capture: true, passive: true}); // Reset moved
-        document.addEventListener("touchmove", () => moved = true, {capture: true, passive: true}); // Mark as moved
-        document.addEventListener("touchcancel", () => moved = true, {capture: true, passive: true}); // Mark as cancelled
-        document.addEventListener("touchend", (e) => {
-
-            // if (e.target.closest(".nofasttouch")) return; // Uncomment to exclude specific elements
-
-            if (moved || !e.changedTouches?.[0]) return; // Skip if moved or no touch
-            let once = true;
-            const block = (ev) => { // Block native click once
-                if (once && ev.isTrusted) {
-                    ev.preventDefault();
-                    ev.stopImmediatePropagation();
-                    once = false;
-                    document.removeEventListener("click", block, true);
-                    pending.delete(block);
-                }
-            };
-            pending.add(block);
-            document.addEventListener("click", block, {capture: true}); // Register blocker
-            let t = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY); // Get target at touch point
-            const label = t?.closest('label');
-            t = label?.control || label?.querySelector('input,textarea,select,button') || t; // Label to control redirect
-            rhythm && (t = rhythm.click(t, e)); // RHYTHM integration, null blocks click
-            if (t) for (let i = 0; i < 8; i++) { // Find clickable parent, max 8 levels
-                if (typeof t.click === "function") {t.click(); break;} // Native click method
-                if (t.onclick) {t.dispatchEvent(new MouseEvent("click", {bubbles: true, cancelable: true})); break;} // Onclick handler
-                if (!(t = t.parentElement)) break; // Move to parent or exit
-            }
-        }, {capture: true, passive: true});
-    } else if (rhythm) { // Desktop environment detection
-        let used = false; // Gesture already used
-        document.addEventListener("mousedown", () => used = false, {capture: true}); // Reset on mouse down
-        document.addEventListener("keydown", e => !e.repeat && (e.key === "Enter" || e.key === " ") && (used = false), {capture: true}); // Reset on Enter/Space
-        document.addEventListener("click", e => {
-            if (used) return; // Skip if already used
-            used = true, rhythm.click(e.target.closest('label')?.control || e.target, e); // Process once, label to control redirect
-        }, {capture: true});
-    }
+	if (document.tempo) return;
+	document.tempo = true;
+	if ("ontouchstart" in window || navigator.maxTouchPoints > 0) { // Mobile environment detection
+		const pending = new Set(); // Track pending native click blockers
+		let moved = false;
+		document.addEventListener("touchstart", () => {
+			moved = false; for (const b of pending) document.removeEventListener("click", b, true); pending.clear(); // Reset moved
+		}, {capture: true, passive: true});
+		document.addEventListener("touchmove", () => moved = true, {capture: true, passive: true}); // Mark as moved
+		document.addEventListener("touchcancel", () => moved = true, {capture: true, passive: true}); // Mark as cancelled
+		document.addEventListener("touchend", (e) => {
+			if (moved || !e.changedTouches?.[0]) return; // Skip if moved or no touch
+			let once = true;
+			const block = (ev) => { // Block native click once
+				if (once && ev.isTrusted) {
+					ev.preventDefault();
+					ev.stopImmediatePropagation();
+					once = false;
+					document.removeEventListener("click", block, true);
+					pending.delete(block);
+				}
+			};
+			pending.add(block);
+			document.addEventListener("click", block, {capture: true}); // Register blocker
+			let el = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY); // Get target at touch point
+			const label = el?.closest('label');
+			el = label?.control || label?.querySelector('input,textarea,select,button') || el; // Label to control redirect
+			rhythm && (el = rhythm.click(el)); // Mobile RHYTHM integration
+			if (el) for (let i = 0; i < 8; i++) { // Find clickable parent, max 8 levels
+				if (typeof el.click === "function") {el.click(); break;} // Native click method
+				if (el.onclick) {el.dispatchEvent(new MouseEvent("click", {bubbles: true, cancelable: true})); break;} // Onclick handler
+				if (!(el = el.parentElement)) break; // Move to parent or exit
+			}
+		}, {capture: true, passive: true});
+	} else if (rhythm) { // Desktop environment detection
+		let used = false; // Gesture already used
+		document.addEventListener("mousedown", () => used = false, {capture: true}); // Reset on mouse down
+		document.addEventListener("keydown", e => !e.repeat && (e.key === "Enter" || e.key === " ") && (used = false), {capture: true}); // Reset on Enter/Space
+		document.addEventListener("click", e => {
+			if (used) return; // Skip if already used
+			used = true;
+			const el = e.target.closest('label')?.control || e.target; // Process once, label to control redirect
+			rhythm.click(el); // desktop RHYTHM integration
+		}, {capture: true});
+	}
 }
-
 // tempo(); // Uncomment for standalone use
 ```
 
@@ -209,24 +209,52 @@ RHYTHM stores session data like a melody composed of notes on a staff. Each note
 
 ```javascript
 const rhythm_01 = {
-    echo: 0,            // Performance stage (0=performing, 1=ending, 2=leaving)
-    device: 0,          // Instrument type (0=electric keyboard, 1=acoustic guitar, 2=drums)
-    referrer: 1,        // Performance spot (0=home street, 1=regular spot, 2=new venue, 3-255=special venues)
+    echo: 0,            // Performance stage (0=performing, 1=ending, 2=completed)
     time: 1735680000,   // Performance start time
+    key: 'x7n4kb2p',    // Performance key (random string)
+    device: 1,          // Instrument type (0=desktop, 1=mobile, 2=tablet)
+    referrer: 3,        // Performance spot (0=direct, 1=internal, 2=unknown, 3-255=specific domains)
+    scrolls: 23,        // Scroll gestures (passersby who stopped)
+    clicks: 45,         // Click actions (audience engagement)
     duration: 300,      // Performance duration
-    clicks: 45,         // Guitar strings plucked (audience engagement)
-    scrolls: 23,        // Engagement prompts (passersby who stopped)
-    beat: "!home~10*1"  // Performance record (BEAT format)
+    beat: "!home~10*1~" // Performance record (BEAT format)
 }
 ```
 
 When stored in cookies, this data becomes a single line of sheet music separated by underscores (_).
 
 ```
-"0_0_1_1735680000_300_45_23_!home~10*1"
+"0_1735680000_x7n4kb2p_1_3_23_45_300_!home~10*1~"
 ```
 
 A single line expresses an entire session. If JSON is conducting each orchestra section, RHYTHM is as concise as playing guitar tabs.
+
+Singer-songwriters can manage multiple sessions simultaneously. For smooth performances, we recommend limiting to rhythm_01 through rhythm_07. New sessions are created when cookies fill up or when switching browser tabs.
+
+Limiting to 7 sessions prevents audience confusion from constantly changing setlists during one performance. Exceeding this number suggests noise pollution rather than pure busking—likely a bot signal.
+
+Edge also has limits. Famous CDN/edge networks typically set header size limits at 8~32KB. While sufficient for streaming 4KB cookie sessions, too many sessions risk disconnection. When performances run too long, livestreaming stops at the singer-songwriter's signal (echo=2). The performance data archives privately, then new streaming begins. This circular structure enables practically unlimited performances.
+
+Edge is a good friend who asks for no compensation for management activities, but may grumble and request small rewards if livestreaming restarts too frequently.
+
+### Score Orchestration
+
+The score cookie serves as a musical score tracking the entire browsing journey.
+
+```javascript
+score=0000000000_1735680000_x7n4kb2p___1~3~2
+
+// 0000000000  = Bot/Human flags (first digit: bot level 0-9, rest: behavior flags)
+// 1735680000  = Performance time (synchronization reference for all tabs)
+// x7n4kb2p    = Session key (random string for data integrity)
+// 1~3~2       = Tab chain (also embedded in BEAT as addon: ___2)
+```
+
+This score acts as the reference point for every performance (rhythm session). The first digit indicates bot dissonance levels (0-9), while the remaining nine digits serve as independent human harmony signals. Edge analyzes BEAT patterns to update these notes in real-time, introducing a new behavioral analytics and security layer.
+
+All tabs share the same performance time. When one tab starts a new performance, every other tab immediately synchronizes to that time. This cookie-based score synchronization creates a perfect ensemble without a central conductor, with all performers reading from the same score.
+
+The tab chain (1~3~2) records the sequence as users switch between tabs. This also appears in BEAT strings as `___2`, precisely tracking tab movements. Full Score captures a single user's complete browsing journey, including all cross-tab flows.
 
 ### Livestreaming with Edge Computing
 
@@ -271,16 +299,6 @@ Every decision is analyzed in milliseconds through Edge's livestreaming. Edge si
 No data endpoints required. No separate analytics servers or central database queries needed. Browser and Edge connect closely in spacetime like sympathetic resonance—fast and vivid. Processing delays are imperceptibly low.
 
 A traditional concert hall would be different. Without complex broadcast equipment, without separate studios, street music spreads worldwide.
-
-### Session Management
-
-Singer-songwriters can manage multiple sessions simultaneously. For smooth performances, we recommend limiting to rhythm_01 through rhythm_07. New sessions are created when cookies fill up or when switching browser tabs.
-
-Limiting to 7 sessions prevents audience confusion from constantly changing setlists during one performance. Exceeding this number suggests noise pollution rather than pure busking—likely a bot signal.
-
-Edge also has limits. Famous CDN/edge networks typically set header size limits at 8~32KB. While sufficient for streaming 4KB cookie sessions, too many sessions risk disconnection. When performances run too long, livestreaming stops at the singer-songwriter's signal (echo=2). The performance data archives privately, then new streaming begins. This circular structure enables practically unlimited performances.
-
-Edge is a good friend who asks for no compensation for management activities, but may grumble and request small rewards if livestreaming restarts too frequently.
 
 ### Performance Techniques
 
