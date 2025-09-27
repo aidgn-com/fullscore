@@ -254,7 +254,7 @@ This score acts as the reference point for every performance (rhythm session). T
 
 Each tab represents a different performance (rhythm session) on the same stage. All performances share the same stage time. When the singer-songwriter begins a new stage, all ongoing performances reset to that new time. This cookie-based synchronization keeps all separate performances as part of the same stage.
 
-The tab chain (1~3~2) records the sequence as users switch between tabs. This also appears in BEAT strings as `___2`, precisely tracking tab movements. Full Score captures a single user's complete browsing journey, including all cross-tab flows.
+The tab chain (1~2~1~3~2) records the sequence as users switch between tabs. This also appears in BEAT strings as `___2`, precisely tracking tab movements. Full Score captures a single user's complete browsing journey, including all cross-tab flows.
 
 ### Livestreaming with Edge Computing
 
