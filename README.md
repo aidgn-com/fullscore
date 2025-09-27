@@ -247,7 +247,7 @@ score=0000000000_1735680000_x7n4kb2p___1~2~1~3~2
 // 0000000000  = Bot/Human flags (first digit: bot level, rest: behavior flags)
 // 1735680000  = Stage start time (synchronization reference for all tabs)
 // x7n4kb2p    = Stage key (random string for data integrity)
-// 1~3~2       = Tab chain (also embedded in BEAT as addon: ___2)
+// 1~2~1~3~2   = Tab chain (also embedded in BEAT as addon: ___2)
 ```
 
 This score acts as the reference point for every performance (rhythm session). The first digit indicates bot dissonance levels, while the remaining nine digits serve as independent human harmony signals. Edge analyzes BEAT patterns to update these notes in real-time, introducing a new behavioral analytics and security layer.
